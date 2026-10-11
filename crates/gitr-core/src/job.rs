@@ -11,10 +11,7 @@
 
 use windows::Win32::Foundation::{CloseHandle, HANDLE};
 use windows::Win32::System::Diagnostics::ToolHelp::{CreateToolhelp32Snapshot, TH32CS_SNAPTHREAD, THREADENTRY32, Thread32First, Thread32Next};
-use windows::Win32::System::JobObjects::{
-    AssignProcessToJobObject, CreateJobObjectW, JOB_OBJECT_LIMIT_BREAKAWAY_OK, JOBOBJECT_EXTENDED_LIMIT_INFORMATION,
-    JobObjectExtendedLimitInformation, SetInformationJobObject, TerminateJobObject,
-};
+use windows::Win32::System::JobObjects::{AssignProcessToJobObject, CreateJobObjectW, TerminateJobObject};
 use windows::Win32::System::Threading::{OpenProcess, OpenThread, PROCESS_SET_QUOTA, PROCESS_TERMINATE, ResumeThread, THREAD_SUSPEND_RESUME};
 use windows::core::PCWSTR;
 
@@ -60,18 +57,10 @@ impl Job {
         // SAFETY: plain Win32 calls on handles this function owns; each is closed on every path
         // (the job by `Job`'s Drop).
         unsafe {
+            // No limits set, deliberately not JOB_OBJECT_LIMIT_BREAKAWAY_OK: Cygwin, and so Git for
+            // Windows' MSYS shell, starts every process with CREATE_BREAKAWAY_FROM_JOB when its job
+            // allows breakaway, which would take a hook's commands out of the job again.
             let job = Job(CreateJobObjectW(None, PCWSTR::null()).ok()?);
-            // A program that explicitly asks to outlive its parent (CREATE_BREAKAWAY_FROM_JOB)
-            // may; without this, Windows would refuse to start it at all. Everything else stays in.
-            let mut limits = JOBOBJECT_EXTENDED_LIMIT_INFORMATION::default();
-            limits.BasicLimitInformation.LimitFlags = JOB_OBJECT_LIMIT_BREAKAWAY_OK;
-            SetInformationJobObject(
-                job.0,
-                JobObjectExtendedLimitInformation,
-                &limits as *const _ as *const core::ffi::c_void,
-                size_of::<JOBOBJECT_EXTENDED_LIMIT_INFORMATION>() as u32,
-            )
-            .ok()?;
             let process = OpenProcess(PROCESS_SET_QUOTA | PROCESS_TERMINATE, false, pid).ok()?;
             let assigned = AssignProcessToJobObject(job.0, process);
             let _ = CloseHandle(process);
