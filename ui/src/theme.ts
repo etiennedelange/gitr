@@ -1,9 +1,18 @@
+import { useSyncExternalStore } from 'react'
 import { getCurrentWindow } from '@tauri-apps/api/window'
 
 /** "system" follows the Windows light/dark setting (which Windows can schedule). */
 export type ThemePref = 'system' | 'light' | 'dark'
 
 const KEY = 'theme'
+
+// Everything showing the theme (the sidebar toggle, the Settings select) re-renders through these.
+const listeners = new Set<() => void>()
+const changed = () => listeners.forEach((fn) => fn())
+const subscribe = (fn: () => void) => {
+  listeners.add(fn)
+  return () => void listeners.delete(fn)
+}
 
 const prefersDark = () => typeof window.matchMedia === 'function' && window.matchMedia('(prefers-color-scheme: dark)').matches
 
@@ -40,13 +49,24 @@ export function saveThemePref(pref: ThemePref) {
     // Storage unavailable: the choice still applies for this session.
   }
   applyTheme(pref)
+  changed()
+}
+
+/** The chosen preference and the theme it shows now; follows changes from anywhere. */
+export function useTheme(): { pref: ThemePref; resolved: 'light' | 'dark' } {
+  const pref = useSyncExternalStore(subscribe, loadThemePref)
+  const resolved = useSyncExternalStore(subscribe, () => resolveTheme(loadThemePref()))
+  return { pref, resolved }
 }
 
 /** Re-applies the theme when Windows switches light/dark while "system" is chosen. */
 export function watchSystemTheme(): () => void {
   if (typeof window.matchMedia !== 'function') return () => {}
   const media = window.matchMedia('(prefers-color-scheme: dark)')
-  const onChange = () => loadThemePref() === 'system' && applyTheme('system')
+  const onChange = () => {
+    if (loadThemePref() === 'system') applyTheme('system')
+    changed()
+  }
   media.addEventListener('change', onChange)
   return () => media.removeEventListener('change', onChange)
 }
