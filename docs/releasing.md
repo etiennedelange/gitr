@@ -22,8 +22,8 @@ pnpm release 1.2.0
 It checks first: no uncommitted changes to tracked files, `gh` signed in, `v1.2.0` not tagged yet and not older than the newest tag, and entries under the CHANGELOG's `[Unreleased]`. After you confirm, it does what you'd otherwise do by hand:
 
 1. On a `release/1.2.0` branch from `origin/main`, `pnpm release:version 1.2.0` sets the version, updates `Cargo.lock`, and turns the `[Unreleased]` entries into a dated `## [1.2.0]` section. It commits that as "Release 1.2.0" (signed, if your git signs commits) and pushes it.
-2. It opens the PR "Release 1.2.0" with the `skip-changelog` label and turns on squash auto-merge, so the PR merges itself once CI is green.
-3. It waits for the merge, tags the merge commit `v1.2.0`, pushes the tag, and switches you back to an up-to-date `main`.
+2. It opens the PR "Release 1.2.0" with the `skip-changelog` label and turns on squash auto-merge, so the PR merges itself once CI is green. CI recognises a version-only change (`release.mjs version-only`: only the version in `Cargo.toml` and the workspace crates in `Cargo.lock`, plus the CHANGELOG) and skips the Rust build and tests, which already passed when the code merged; the `rust (…)` checks still report success. Any other change on the release branch gets the full run.
+3. It waits for the merge (checking every 10 seconds), tags the merge commit `v1.2.0`, pushes the tag, and switches you back to an up-to-date `main`.
 4. It follows the Release workflow below and prints the release page.
 
 Ctrl+C is safe at any point. Run the same command again and it carries on from where it stopped (branch pushed, PR open, PR merged, tag pushed). `--yes` skips the question. If CI fails, fix it on the release branch and run it again.
@@ -31,7 +31,6 @@ Ctrl+C is safe at any point. Run the same command again and it carries on from w
 `.github/workflows/release.yml` then:
 
 - checks that the tag is on `main` and matches the version in `Cargo.toml`;
-- checks that `THIRD_PARTY_NOTICES.txt` is current;
 - builds `Gitr_1.2.0_x64-setup.exe` with `pnpm tauri build --bundles nsis` on `windows-latest`, and its updater signature `Gitr_1.2.0_x64-setup.exe.sig`;
 - writes `latest.json` for the in-app updater (see below);
 - publishes a GitHub Release with the installer, its `.sig`, `latest.json` and `SHA256SUMS.txt`. The notes are the CHANGELOG's `[1.2.0]` section followed by GitHub's generated list of merged PRs since the previous tag.
