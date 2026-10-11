@@ -27,8 +27,30 @@
   },
   "bundle": {
     "active": true,
-    "targets": ["nsis"],
-    "resources": { "../THIRD_PARTY_NOTICES.txt": "THIRD_PARTY_NOTICES.txt" },
-    "icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.ico"]
+    "targets": [
+      "nsis"
+    ],
+    "createUpdaterArtifacts": true,
+    "publisher": "Etienne de Lange",
+    "resources": {
+      "../THIRD_PARTY_NOTICES.txt": "THIRD_PARTY_NOTICES.txt"
+    },
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.ico"
+    ]
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEY2QkE3QTM4RDFGNTRBNkYKUldSdlN2WFJPSHE2OXRTbnpWKzF1S01FVWhPanpDVUxOV1A2amEwMzJwV2hkT3pZdjI1cjIwRWoK",
+      "endpoints": [
+        "https://github.com/etiennedelange/gitr/releases/latest/download/latest.json"
+      ],
+      "windows": {
+        "installMode": "passive"
+      }
+    }
   }
 }

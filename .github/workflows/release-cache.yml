@@ -52,4 +52,5 @@ jobs:
           key: tauri-tools-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: tauri-tools-
 
-      - run: pnpm tauri build --bundles nsis
+      # No secrets here, so no updater signature (that needs the private key).
+      - run: pnpm tauri build --bundles nsis --config '{"bundle":{"createUpdaterArtifacts":false}}'

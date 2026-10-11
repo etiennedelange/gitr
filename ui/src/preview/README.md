@@ -81,6 +81,7 @@ Useful for bookmarks and for scripted screenshots. All of them are optional.
 | `generate` | `error`: reject commit-message generation to test that an existing draft survives |
 | `hooks` | `pass`, `fail`: Commit and Push run simulated hooks that print output for a few seconds, then pass or fail (also in the toolbar's Hooks menu). Try Stop while they run, or **Commit without hooks** after a failure |
 | `signin` | `expired`: Fetch all and Pull all need a sign-in (also in the toolbar's Sign-in menu) |
+| `update` | `available`: version 0.3.0 is out, so the update banner appears 5 seconds after load and Settings → Updates offers it (**Restart and update** shows Updating… and then fails, as the preview installs nothing). `error`: the check fails (quiet at startup; Settings shows the error). `store`: the Microsoft Store build, with no banner and "Updates come from the Microsoft Store." in Settings. Without it, Gitr is up to date |
 | `history` | `slow`, `error`: the History tab stays loading, or fails to read the history |
 | `revert` | `conflict`: Revert in History stops on a conflict and the repo enters the Reverting state |
 | `chrome` | `0` hides the toolbar |

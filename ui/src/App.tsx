@@ -13,6 +13,7 @@ import { RepoView } from './components/RepoView'
 import { Settings } from './components/Settings'
 import { Toasts } from './components/Toasts'
 import { GitBanner } from './components/GitBanner'
+import { UpdateBanner } from './components/UpdateBanner'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { RepoSwitcher } from './components/RepoSwitcher'
 import { cyclePane } from './lib/panes'
@@ -113,6 +114,7 @@ export default function App() {
       <Sidebar />
       <main className="main">
         <GitBanner />
+        <UpdateBanner />
         <ErrorBoundary key={view.kind === 'repo' ? `repo:${view.path}` : view.kind}>
           {view.kind === 'dashboard' && <Dashboard />}
           {view.kind === 'settings' && <Settings />}

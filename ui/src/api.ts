@@ -1,5 +1,6 @@
 import { invoke as tauriInvoke } from '@tauri-apps/api/core'
 import type {
+  AppVersion,
   BatchOp,
   BatchProgress,
   Branch,
@@ -25,6 +26,7 @@ import type {
   ResetMode,
   ResetPreview,
   Strategy,
+  UpdateCheck,
 } from './types'
 
 type Invoke = <T>(cmd: string, args?: Record<string, unknown>) => Promise<T>
@@ -108,6 +110,13 @@ export const api = {
   resetBranch: (path: string, sha: string, mode: ResetMode) => invoke<string>('reset_branch', { path, sha, mode }),
   /** Puts the branch back where the last reset found it (only if that branch is still checked out; the working tree is never touched). */
   undoReset: (path: string, previousHead: string) => invoke<void>('undo_reset', { path, previousHead }),
+  /** The running version and its update channel; no network. */
+  appVersion: () => invoke<AppVersion>('app_version'),
+  /** Asks GitHub Releases for a newer version (the Store channel answers without asking). */
+  checkUpdate: () => invoke<UpdateCheck>('check_update'),
+  /** Downloads and installs the update; Gitr exits and the installer restarts it. */
+  installUpdate: () => invoke<void>('install_update'),
+  openReleasePage: (version: string) => invoke<void>('open_release_page', { version }),
 }
 
 export function errorMessage(e: unknown): string {

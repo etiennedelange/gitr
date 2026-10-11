@@ -31,6 +31,8 @@ jobs:
       - run: pnpm --filter ui exec vp check
       - run: pnpm --filter ui build
       - run: pnpm --filter ui test
+      # Release and packaging scripts (tools/**/*.test.mjs).
+      - run: pnpm test:tools
 
   rust:
     # Windows is the target platform; Linux matches the dev container; macOS keeps the non-Windows paths honest.
