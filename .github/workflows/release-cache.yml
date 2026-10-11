@@ -55,5 +55,6 @@ jobs:
       # As in release.yml, so a notices check that breaks on Windows fails here, not on a tag.
       - run: pnpm notices:check
 
-      # No secrets here, so no updater signature (that needs the private key).
-      - run: pnpm tauri build --bundles nsis --config '{"bundle":{"createUpdaterArtifacts":false}}'
+      # No secrets here, so no updater signature (that needs the private key). A file, not inline
+      # JSON: Windows PowerShell strips the inner quotes before pnpm sees them.
+      - run: pnpm tauri build --bundles nsis --config src-tauri/tauri.no-updater.conf.json
