@@ -115,6 +115,31 @@ async fn cancel_kills_hooks_too() {
     assert_eq!(git_out(&dir, &["rev-parse", "HEAD"]), before, "nothing was committed");
 }
 
+/// Cancelling also ends what the hook itself started, not just the hook's shell. On Windows, Git
+/// for Windows' shell (MSYS) starts each command as a new process whose parent is gone, so
+/// `taskkill /T` missed it: the command (a lint or test run, in a real hook) ran on after Stop.
+#[tokio::test]
+async fn cancel_kills_what_the_hook_started() {
+    let (_t, dir) = repo_with_commit();
+    let hook = "#!/bin/sh\necho started > .git/hook-started\nsh -c 'sleep 2; echo survived > .git/hook-child-survived'\n";
+    write_hook(&dir, "pre-commit", hook);
+    write(&dir, "a.txt", "two\n");
+    git(&dir, &["add", "a.txt"]);
+
+    let (g, d) = (isolated_git(), dir.clone());
+    let commit = tokio::spawn(async move { g.commit(&d, "cancelled", false).await });
+    let started = Instant::now();
+    while !dir.join(".git/hook-started").exists() {
+        assert!(started.elapsed() < Duration::from_secs(20), "hook never started");
+        tokio::time::sleep(Duration::from_millis(20)).await;
+    }
+    commit.abort();
+    assert!(commit.await.unwrap_err().is_cancelled());
+
+    tokio::time::sleep(Duration::from_secs(4)).await;
+    assert!(!dir.join(".git/hook-child-survived").exists(), "a process the hook started kept running after cancel");
+}
+
 /// Fact 13: one log line per call with op, args, cwd, duration and exit code; stderr on failure.
 #[tokio::test]
 async fn every_call_is_logged() {
