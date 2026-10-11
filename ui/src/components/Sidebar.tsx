@@ -1,7 +1,7 @@
 import { useMemo, useRef, useState, type KeyboardEvent } from 'react'
 import { useConfig, useRepos } from '../hooks'
 import { useApp } from '../store'
-import { ChevronDown, ChevronRight, FolderPlus, LayoutGrid, Settings as SettingsIcon } from 'lucide-react'
+import { ChevronDown, ChevronRight, FolderPlus, LayoutGrid, Moon, Settings as SettingsIcon, Sun } from 'lucide-react'
 import { useRepoMenu } from '../repoMenu'
 import { plainInput } from '../lib/inputProps'
 import { BusyDot } from './Busy'
@@ -10,6 +10,7 @@ import { needsAttention } from '../lib/git'
 import { useAddFolder } from '../lib/addFolder'
 import { groupMenu } from '../lib/menus'
 import { showMenu } from '../nativeMenu'
+import { saveThemePref, useTheme } from '../theme'
 
 export function Sidebar() {
   const config = useConfig()
@@ -197,15 +198,29 @@ export function Sidebar() {
           </div>
         ))}
       </div>
-      <button
-        className={`nav-item nav-settings ${view.kind === 'settings' ? 'active' : ''}`}
-        onClick={() => setView({ kind: 'settings' })}
-        title="Settings (Ctrl+,)"
-      >
-        <SettingsIcon className="ico" aria-hidden />
-        <span className="nav-label">Settings</span>
-        {unsavedSettings && <span className="badge dirty unsaved">Unsaved</span>}
-      </button>
+      <div className="rail-foot">
+        <button
+          className={`nav-item nav-settings ${view.kind === 'settings' ? 'active' : ''}`}
+          onClick={() => setView({ kind: 'settings' })}
+          title="Settings (Ctrl+,)"
+        >
+          <SettingsIcon className="ico" aria-hidden />
+          <span className="nav-label">Settings</span>
+          {unsavedSettings && <span className="badge dirty unsaved">Unsaved</span>}
+        </button>
+        <ThemeToggle />
+      </div>
     </nav>
+  )
+}
+
+/** Flips between light and dark in one click; Settings → Appearance can follow Windows instead. */
+function ThemeToggle() {
+  const next = useTheme().resolved === 'dark' ? 'light' : 'dark'
+  const label = `Switch to ${next} theme`
+  return (
+    <button className="icon theme-toggle" title={label} aria-label={label} onClick={() => saveThemePref(next)}>
+      {next === 'light' ? <Sun className="ico" aria-hidden /> : <Moon className="ico" aria-hidden />}
+    </button>
   )
 }

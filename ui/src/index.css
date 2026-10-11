@@ -772,8 +772,18 @@ ul:focus-visible,
   background: var(--red);
   color: var(--red-on);
 }
-.nav-item.nav-settings {
+/* Settings and the light/dark toggle share the bottom row. */
+.rail-foot {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--s1);
   margin: var(--s4);
+}
+.rail-foot .nav-item.nav-settings {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
 }
 .nav-item .unsaved {
   margin-left: auto;
@@ -3147,8 +3157,13 @@ dialog::backdrop {
     margin: 0 var(--s3);
     padding: 0;
   }
-  .nav-item.nav-settings {
+  .rail-foot {
+    flex-direction: column;
+    align-items: stretch;
     margin: var(--s4) var(--s3);
+  }
+  .rail-foot .theme-toggle {
+    width: auto;
   }
   /* Unsaved settings, repos needing attention: the word moves to screen readers, a dot stays. */
   .nav-item:has(.unsaved)::after,

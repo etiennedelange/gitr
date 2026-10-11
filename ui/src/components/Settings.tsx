@@ -7,7 +7,7 @@ import { notifyError, useConfig, useRescan } from '../hooks'
 import { useApp } from '../store'
 import type { Config, Group } from '../types'
 import { plainInput } from '../lib/inputProps'
-import { loadThemePref, saveThemePref, type ThemePref } from '../theme'
+import { saveThemePref, useTheme, type ThemePref } from '../theme'
 import { folderName, pickFolder } from '../lib/addFolder'
 
 const SECTIONS = [
@@ -118,8 +118,9 @@ function SettingsForm({ saved }: { saved: Config }) {
   const models = useQuery({ queryKey: ['models'], queryFn: api.listModels, staleTime: Infinity })
   const gitInfo = useQuery({ queryKey: ['gitInfo'], queryFn: api.gitInfo })
   const zoom = useApp((s) => s.zoom)
-  // The theme applies immediately and is kept per machine, like zoom; not part of Save.
-  const [theme, setTheme] = useState<ThemePref>(loadThemePref)
+  // The theme applies immediately and is kept per machine, like zoom; not part of Save. The
+  // sidebar's toggle changes it too.
+  const theme = useTheme().pref
 
   const update = (patch: Partial<Config>) => setDraft({ ...draft, ...patch })
 
@@ -413,14 +414,7 @@ function SettingsForm({ saved }: { saved: Config }) {
             <h2>Appearance</h2>
             <label className="field">
               <span>Theme</span>
-              <select
-                value={theme}
-                onChange={(e) => {
-                  const t = e.target.value as ThemePref
-                  setTheme(t)
-                  saveThemePref(t)
-                }}
-              >
+              <select value={theme} onChange={(e) => saveThemePref(e.target.value as ThemePref)}>
                 <option value="system">Follow Windows</option>
                 <option value="light">Light</option>
                 <option value="dark">Dark</option>
