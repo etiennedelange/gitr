@@ -1,7 +1,7 @@
 // pnpm test:tools (node --test)
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { changelogSection, updaterManifest } from './release.mjs';
+import { changelogSection, updaterManifest, versionOnlyChange } from './release.mjs';
 
 test('latest.json points at the release asset and carries the signature', () => {
   const manifest = updaterManifest({
@@ -34,4 +34,32 @@ test('changelogSection stops at the next version', () => {
   const text = '# Changelog\n\n## [Unreleased]\n\n## [0.3.0] - 2026-10-11\n\n### Added\n- Updates\n\n## [0.2.0] - 2026-09-01\n- Old';
   assert.equal(changelogSection(text, '0.3.0'), '### Added\n- Updates');
   assert.equal(changelogSection(text, '9.9.9'), null);
+});
+
+const toml = (v, extra = '') => `[workspace]\nmembers = ["src-tauri"]\n\n[workspace.package]\nversion = "${v}"\nedition = "2024"\n${extra}`;
+const lock = (app, serde = '1.0.0') =>
+  `version = 4\n\n[[package]]\nname = "gitr"\nversion = "${app}"\ndependencies = [\n "serde",\n]\n\n[[package]]\nname = "serde"\nversion = "${serde}"\nsource = "registry+https://github.com/rust-lang/crates.io-index"\nchecksum = "abc"\n`;
+const sides = (before, after) => [(f) => before[f] ?? null, (f) => after[f] ?? null];
+
+test('versionOnlyChange accepts what release.mjs version changes', () => {
+  const [b, a] = sides(
+    { 'Cargo.toml': toml('0.1.1'), 'Cargo.lock': lock('0.1.1'), 'CHANGELOG.md': '## [Unreleased]\n- x' },
+    { 'Cargo.toml': toml('0.1.2'), 'Cargo.lock': lock('0.1.2'), 'CHANGELOG.md': '## [Unreleased]\n\n## [0.1.2]\n- x' },
+  );
+  assert.equal(versionOnlyChange(['CHANGELOG.md', 'Cargo.lock', 'Cargo.toml'], b, a), true);
+  assert.equal(versionOnlyChange(['CHANGELOG.md'], b, a), true);
+});
+
+test('versionOnlyChange refuses anything else', () => {
+  const before = { 'Cargo.toml': toml('0.1.1'), 'Cargo.lock': lock('0.1.1') };
+  const check = (files, after) => versionOnlyChange(files, ...sides(before, after));
+  // Another file.
+  assert.equal(check(['Cargo.toml', 'src-tauri/src/lib.rs'], { 'Cargo.toml': toml('0.1.2') }), false);
+  // Another line in Cargo.toml (a new dependency, a profile change).
+  assert.equal(check(['Cargo.toml'], { 'Cargo.toml': toml('0.1.2', '\n[profile.release]\nlto = "thin"\n') }), false);
+  // A dependency's version in Cargo.lock.
+  assert.equal(check(['Cargo.lock'], { 'Cargo.lock': lock('0.1.1', '1.0.1') }), false);
+  // A file deleted, and an empty change.
+  assert.equal(check(['Cargo.lock'], {}), false);
+  assert.equal(check([], {}), false);
 });

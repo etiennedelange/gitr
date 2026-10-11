@@ -33,6 +33,8 @@ jobs:
       - run: pnpm --filter ui test
       # Release and packaging scripts (tools/**/*.test.mjs).
       - run: pnpm test:tools
+      # THIRD_PARTY_NOTICES.txt ships in the installer; the release no longer checks it, CI does.
+      - run: pnpm notices:check
 
   rust:
     # Windows is the target platform; Linux matches the dev container; macOS keeps the non-Windows paths honest.
@@ -46,24 +48,45 @@ jobs:
       CARGO_PROFILE_DEV_DEBUG: 0
     steps:
       - uses: actions/checkout@v7
+        with:
+          # A PR checks out its merge commit; with its parents, HEAD^1 is main and HEAD^1..HEAD
+          # is exactly the PR's change.
+          fetch-depth: 2
+
+      # A release PR (`pnpm release`) only sets the version and dates the CHANGELOG; the code
+      # passed this job when it merged. The job still runs and passes, so the required checks
+      # report, but its steps are skipped. Anything else in the PR runs everything.
+      - name: Is this a version-only change?
+        id: scope
+        if: github.event_name == 'pull_request'
+        shell: bash
+        run: |
+          skip=$(node tools/release/release.mjs version-only HEAD^1 HEAD)
+          echo "skip=$skip" >> "$GITHUB_OUTPUT"
+          [ "$skip" = true ] && echo "::notice::Only the version and the CHANGELOG changed; skipping the Rust build and tests."
+          true
 
       # Tauri's build-time deps (linked by tao/wry/webkit2gtk); same list as .devcontainer/post-create.sh.
       - name: Install system packages
-        if: runner.os == 'Linux'
+        if: runner.os == 'Linux' && steps.scope.outputs.skip != 'true'
         run: |
           sudo apt-get update
           sudo apt-get install -y libwebkit2gtk-4.1-dev libgtk-3-dev librsvg2-dev \
             libayatana-appindicator3-dev libssl-dev libxdo-dev patchelf pkg-config
 
       - uses: dtolnay/rust-toolchain@stable
+        if: steps.scope.outputs.skip != 'true'
       # PRs restore main's cache but don't save their own, so they can't push main's out of
       # the 10 GB cache limit.
       - uses: Swatinem/rust-cache@v2
+        if: steps.scope.outputs.skip != 'true'
         with:
           save-if: ${{ github.ref == 'refs/heads/main' }}
 
       # tauri::generate_context! needs the frontendDist folder to exist; the tests don't need the UI in it.
       - run: mkdir -p ui/dist
+        if: steps.scope.outputs.skip != 'true'
         shell: bash
       # Keep going after a failing test binary, so one run shows every platform failure.
       - run: cargo test --workspace --locked --no-fail-fast
+        if: steps.scope.outputs.skip != 'true'

@@ -36,15 +36,16 @@ jobs:
       - uses: actions/checkout@v7
         with:
           ref: refs/tags/${{ env.TAG }}
-          # Full history, to check that the tag is on main.
-          fetch-depth: 0
 
-      # Only squash-merged, CI-checked commits get released.
+      # Only squash-merged, CI-checked commits get released. GitHub compares the commits, so the
+      # checkout needs no history: "behind" or "identical" means the tag is on main.
       - name: Check the tag is on main
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          git fetch --no-tags origin main
-          if ! git merge-base --is-ancestor HEAD origin/main; then
-            echo "::error::$TAG is not on main. Tag a commit on main."
+          status=$(gh api "repos/$GITHUB_REPOSITORY/compare/main...$(git rev-parse HEAD)" --jq .status)
+          if [ "$status" != behind ] && [ "$status" != identical ]; then
+            echo "::error::$TAG is not on main (compared with main: $status). Tag a commit on main."
             exit 1
           fi
 
@@ -87,8 +88,8 @@ jobs:
           key: tauri-tools-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: tauri-tools-
 
-      # The installer ships THIRD_PARTY_NOTICES.txt; refuse to ship a stale one.
-      - run: pnpm notices:check
+      # THIRD_PARTY_NOTICES.txt ships in the installer. CI's ui job checks it on every PR and on
+      # main, and the tag is on main, so it isn't checked again here.
 
       # beforeBuildCommand builds the UI first. The rm keeps a cached old installer out.
       # The key signs the updater's copy of the installer (-setup.exe.sig); see docs/releasing.md.
