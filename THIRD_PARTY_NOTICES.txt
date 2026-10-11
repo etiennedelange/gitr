@@ -950,70 +950,75 @@ mime 0.3.17 (Rust crate)
   Source:  https://github.com/hyperium/mime
   Texts:   [15] [115]
 
+minisign-verify 0.3.0 (Rust crate)
+  Licence: MIT
+  Source:  https://github.com/jedisct1/rust-minisign-verify
+  Texts:   [116]
+
 miniz_oxide 0.8.9 (Rust crate)
   Licence: MIT OR Zlib OR Apache-2.0
   Source:  https://github.com/Frommi/miniz_oxide/tree/master/miniz_oxide
-  Texts:   [116] [3] [117] [118]
+  Texts:   [117] [3] [118] [119]
 
 miniz_oxide 0.9.1 (Rust crate)
   Licence: MIT OR Zlib OR Apache-2.0
   Source:  https://github.com/Frommi/miniz_oxide/tree/master/miniz_oxide
-  Texts:   [116] [3] [117] [118]
+  Texts:   [117] [3] [118] [119]
 
 mio 1.2.3 (Rust crate)
   Licence: MIT
   Source:  https://github.com/tokio-rs/mio
-  Texts:   [119]
+  Texts:   [120]
 
 muda 0.20.0 (Rust crate)
   Licence: Apache-2.0 OR MIT
   Source:  https://github.com/tauri-apps/muda
-  Texts:   [15] [120] [121]
+  Texts:   [15] [121] [122]
 
 multiversion_no_op 1.0.0 (Rust crate)
   Licence: Apache-2.0 OR MIT
   Source:  https://github.com/hsivonen/multiversion_no_op
-  Texts:   [122] [59] [60]
+  Texts:   [123] [59] [60]
 
 native-tls 0.2.18 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/rust-native-tls/rust-native-tls
-  Texts:   [38] [123]
+  Texts:   [38] [124]
 
 new_debug_unreachable 1.0.6 (Rust crate)
   Licence: MIT
   Source:  https://github.com/mbrubeck/rust-debug-unreachable
-  Texts:   [124]
+  Texts:   [125]
 
 nonempty 0.12.0 (Rust crate)
   Licence: MIT
   Source:  https://github.com/cloudhead/nonempty
-  Texts:   [125]
+  Texts:   [126]
 
 notify 8.2.0 (Rust crate)
   Licence: CC0-1.0
   Source:  https://github.com/notify-rs/notify.git
-  Texts:   [126]
+  Texts:   [127]
 
 notify-debouncer-mini 0.7.0 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/notify-rs/notify.git
-  Texts:   [127] [128]
+  Texts:   [128] [129]
 
 notify-types 2.1.0 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/notify-rs/notify.git
-  Texts:   [127] [128]
+  Texts:   [128] [129]
 
 nu-ansi-term 0.50.3 (Rust crate)
   Licence: MIT
   Source:  https://github.com/nushell/nu-ansi-term
-  Texts:   [129]
+  Texts:   [130]
 
 num-conv 0.2.2 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/jhpratt/num-conv
-  Texts:   [3] [130]
+  Texts:   [3] [131]
 
 num-traits 0.2.19 (Rust crate)
   Licence: MIT OR Apache-2.0
@@ -1028,12 +1033,12 @@ once_cell 1.21.4 (Rust crate)
 open 5.4.4 (Rust crate)
   Licence: MIT
   Source:  https://github.com/Byron/open-rs
-  Texts:   [131]
+  Texts:   [132]
 
 option-ext 0.2.0 (Rust crate)
   Licence: MPL-2.0
   Source:  https://github.com/soc/option-ext.git
-  Texts:   [132]
+  Texts:   [133]
 
 parking_lot 0.12.5 (Rust crate)
   Licence: MIT OR Apache-2.0
@@ -1053,22 +1058,22 @@ percent-encoding 2.3.2 (Rust crate)
 phf 0.13.1 (Rust crate)
   Licence: MIT
   Source:  https://github.com/rust-phf/rust-phf
-  Texts:   [133]
+  Texts:   [134]
 
 phf_generator 0.13.1 (Rust crate)
   Licence: MIT
   Source:  https://github.com/rust-phf/rust-phf
-  Texts:   [133]
+  Texts:   [134]
 
 phf_macros 0.13.1 (Rust crate)
   Licence: MIT
   Source:  https://github.com/rust-phf/rust-phf
-  Texts:   [133]
+  Texts:   [134]
 
 phf_shared 0.13.1 (Rust crate)
   Licence: MIT
   Source:  https://github.com/rust-phf/rust-phf
-  Texts:   [133]
+  Texts:   [134]
 
 pin-project-lite 0.2.17 (Rust crate)
   Licence: Apache-2.0 OR MIT
@@ -1078,17 +1083,17 @@ pin-project-lite 0.2.17 (Rust crate)
 plist 1.10.1 (Rust crate)
   Licence: MIT
   Source:  https://github.com/ebarnard/rust-plist/
-  Texts:   [134]
+  Texts:   [135]
 
 png 0.17.16 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/image-rs/image-png
-  Texts:   [15] [135]
+  Texts:   [15] [136]
 
 png 0.18.1 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/image-rs/image-png
-  Texts:   [15] [135]
+  Texts:   [15] [136]
 
 potential_utf 0.1.6 (Rust crate)
   Licence: Unicode-3.0
@@ -1098,17 +1103,17 @@ potential_utf 0.1.6 (Rust crate)
 powerfmt 0.2.0 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/jhpratt/powerfmt
-  Texts:   [136] [137]
+  Texts:   [137] [138]
 
 ppv-lite86 0.2.21 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/cryptocorrosion/cryptocorrosion
-  Texts:   [138] [139]
+  Texts:   [139] [140]
 
 precomputed-hash 0.1.1 (Rust crate)
   Licence: MIT
   Source:  https://github.com/emilio/precomputed-hash
-  Texts:   [140]
+  Texts:   [141]
 
 proc-macro2 1.0.107 (Rust crate)
   Licence: MIT OR Apache-2.0
@@ -1118,12 +1123,12 @@ proc-macro2 1.0.107 (Rust crate)
 prodash 31.0.1 (Rust crate)
   Licence: MIT
   Source:  https://github.com/GitoxideLabs/prodash
-  Texts:   [141]
+  Texts:   [142]
 
 quick-xml 0.42.0 (Rust crate)
   Licence: MIT
   Source:  https://github.com/tafia/quick-xml
-  Texts:   [142]
+  Texts:   [143]
 
 quote 1.0.47 (Rust crate)
   Licence: MIT OR Apache-2.0
@@ -1133,32 +1138,32 @@ quote 1.0.47 (Rust crate)
 rand 0.9.5 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/rust-random/rand
-  Texts:   [143] [144] [145]
+  Texts:   [144] [145] [146]
 
 rand_chacha 0.9.0 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/rust-random/rand
-  Texts:   [143] [144] [145]
+  Texts:   [144] [145] [146]
 
 rand_core 0.9.5 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/rust-random/rand
-  Texts:   [143] [146] [145]
+  Texts:   [144] [147] [146]
 
 raw-window-handle 0.6.2 (Rust crate)
   Licence: MIT OR Apache-2.0 OR Zlib
   Source:  https://github.com/rust-windowing/raw-window-handle
-  Texts:   [3] [147] [148]
+  Texts:   [3] [148] [149]
 
 react 19.3.0 (npm package)
   Licence: MIT
   Source:  https://react.dev/
-  Texts:   [149]
+  Texts:   [150]
 
 react-dom 19.3.0 (npm package)
   Licence: MIT
   Source:  https://react.dev/
-  Texts:   [149]
+  Texts:   [150]
 
 ref-cast 1.0.27 (Rust crate)
   Licence: MIT OR Apache-2.0
@@ -1188,17 +1193,17 @@ regex-syntax 0.8.11 (Rust crate)
 reqwest 0.13.5 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/seanmonstar/reqwest
-  Texts:   [150] [151]
+  Texts:   [151] [152]
 
 rfd 0.16.0 (Rust crate)
   Licence: MIT
   Source:  https://github.com/PolyMeilex/rfd
-  Texts:   [152]
+  Texts:   [153]
 
 ring 0.17.14 (Rust crate)
   Licence: Apache-2.0 AND ISC
   Source:  https://github.com/briansmith/ring
-  Texts:   [153] [154] [155]
+  Texts:   [154] [155] [156]
 
 rustc-hash 2.1.3 (Rust crate)
   Licence: Apache-2.0 OR MIT
@@ -1213,12 +1218,17 @@ rustls 0.23.45 (Rust crate)
 rustls-pki-types 1.15.1 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/rustls/pki-types
-  Texts:   [156] [157]
+  Texts:   [157] [158]
+
+rustls-platform-verifier 0.7.1 (Rust crate)
+  Licence: MIT OR Apache-2.0
+  Source:  https://github.com/rustls/rustls-platform-verifier
+  Texts:   [59] [159]
 
 rustls-webpki 0.103.15 (Rust crate)
   Licence: ISC
   Source:  https://github.com/rustls/webpki
-  Texts:   [158]
+  Texts:   [160]
 
 rustversion 1.0.23 (Rust crate)
   Licence: MIT OR Apache-2.0
@@ -1228,42 +1238,42 @@ rustversion 1.0.23 (Rust crate)
 same-file 1.0.6 (Rust crate)
   Licence: Unlicense/MIT
   Source:  https://github.com/BurntSushi/same-file
-  Texts:   [10] [159] [12]
+  Texts:   [10] [161] [12]
 
 schannel 0.1.29 (Rust crate)
   Licence: MIT
   Source:  https://github.com/steffengy/schannel-rs
-  Texts:   [160]
+  Texts:   [162]
 
 scheduler 0.28.0 (npm package)
   Licence: MIT
   Source:  https://react.dev/
-  Texts:   [149]
+  Texts:   [150]
 
 schemars 0.8.22 (Rust crate)
   Licence: MIT
   Source:  https://github.com/GREsau/schemars
-  Texts:   [161]
+  Texts:   [163]
 
 schemars 0.9.0 (Rust crate)
   Licence: MIT
   Source:  https://github.com/GREsau/schemars
-  Texts:   [161]
+  Texts:   [163]
 
 schemars 1.2.2 (Rust crate)
   Licence: MIT
   Source:  https://github.com/GREsau/schemars
-  Texts:   [161]
+  Texts:   [163]
 
 schemars_derive 0.8.22 (Rust crate)
   Licence: MIT
   Source:  https://github.com/GREsau/schemars
-  Texts:   [161]
+  Texts:   [163]
 
 scopeguard 1.2.0 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/bluss/scopeguard
-  Texts:   [15] [162]
+  Texts:   [15] [164]
 
 selectors 0.38.0 (Rust crate)
   Licence: MPL-2.0
@@ -1313,27 +1323,27 @@ serde_repr 0.1.21 (Rust crate)
 serde_spanned 1.1.1 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/toml-rs/toml
-  Texts:   [38] [163]
+  Texts:   [38] [165]
 
 serde_with 3.24.0 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/jonasbb/serde_with/
-  Texts:   [15] [164]
+  Texts:   [15] [166]
 
 serde_with_macros 3.24.0 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/jonasbb/serde_with/
-  Texts:   [15] [164]
+  Texts:   [15] [166]
 
 serialize-to-javascript 0.1.2 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/chippers/serialize-to-javascript
-  Texts:   [59] [165]
+  Texts:   [59] [167]
 
 serialize-to-javascript-impl 0.1.2 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/chippers/serialize-to-javascript
-  Texts:   [59] [165]
+  Texts:   [59] [167]
 
 servo_arc 0.4.3 (Rust crate)
   Licence: MIT OR Apache-2.0
@@ -1343,27 +1353,27 @@ servo_arc 0.4.3 (Rust crate)
 sha1 0.10.7 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/RustCrypto/hashes
-  Texts:   [23] [166]
+  Texts:   [23] [168]
 
 sha1dc 0.1.5 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/srijs/sha1dc
-  Texts:   [23] [167]
+  Texts:   [23] [169]
 
 sha2 0.10.9 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/RustCrypto/hashes
-  Texts:   [23] [166]
+  Texts:   [23] [168]
 
 sharded-slab 0.1.7 (Rust crate)
   Licence: MIT
   Source:  https://github.com/hawkw/sharded-slab
-  Texts:   [168]
+  Texts:   [170]
 
 simd-adler32 0.3.10 (Rust crate)
   Licence: MIT
   Source:  https://github.com/mcountryman/simd-adler32
-  Texts:   [169]
+  Texts:   [171]
 
 simdutf8 0.1.5 (Rust crate)
   Licence: MIT OR Apache-2.0
@@ -1373,17 +1383,17 @@ simdutf8 0.1.5 (Rust crate)
 siphasher 1.0.4 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/jedisct1/rust-siphash
-  Texts:   [170] [59] [79]
+  Texts:   [172] [59] [79]
 
 slab 0.4.12 (Rust crate)
   Licence: MIT
   Source:  https://github.com/tokio-rs/slab
-  Texts:   [171]
+  Texts:   [173]
 
 smallvec 1.16.2 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/servo/rust-smallvec
-  Texts:   [15] [172]
+  Texts:   [15] [174]
 
 socket2 0.6.5 (Rust crate)
   Licence: MIT OR Apache-2.0
@@ -1393,32 +1403,32 @@ socket2 0.6.5 (Rust crate)
 softbuffer 0.4.8 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/rust-windowing/softbuffer
-  Texts:   [173] [174]
+  Texts:   [175] [176]
 
 stable_deref_trait 1.2.1 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/storyyeller/stable_deref_trait
-  Texts:   [15] [175]
+  Texts:   [15] [177]
 
 string_cache 0.9.0 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/servo/string-cache
-  Texts:   [15] [176]
+  Texts:   [15] [178]
 
 strsim 0.11.1 (Rust crate)
   Licence: MIT
   Source:  https://github.com/rapidfuzz/strsim-rs
-  Texts:   [177]
+  Texts:   [179]
 
 subtle 2.6.1 (Rust crate)
   Licence: BSD-3-Clause
   Source:  https://github.com/dalek-cryptography/subtle
-  Texts:   [178]
+  Texts:   [180]
 
 symlink 0.1.0 (Rust crate)
   Licence: MIT/Apache-2.0
   Source:  https://gitlab.com/chris-morgan/symlink
-  Texts:   [179] [15] [180]
+  Texts:   [181] [15] [182]
 
 syn 2.0.119 (Rust crate)
   Licence: MIT OR Apache-2.0
@@ -1438,12 +1448,12 @@ sync_wrapper 1.0.2 (Rust crate)
 synstructure 0.14.0 (Rust crate)
   Licence: MIT
   Source:  https://github.com/mystor/synstructure
-  Texts:   [181]
+  Texts:   [183]
 
 tao 0.37.1 (Rust crate)
   Licence: Apache-2.0
   Source:  https://github.com/tauri-apps/tao
-  Texts:   [38] [182]
+  Texts:   [38] [184]
 
 tauri 2.12.1 (Rust crate)
   Licence: Apache-2.0 OR MIT
@@ -1475,6 +1485,11 @@ tauri-plugin-opener 2.7.0 (Rust crate)
   Source:  https://github.com/tauri-apps/plugins-workspace
   Texts:   [6] [3] [4]
 
+tauri-plugin-updater 2.13.3 (Rust crate)
+  Licence: Apache-2.0 OR MIT
+  Source:  https://github.com/tauri-apps/plugins-workspace
+  Texts:   [6] [3] [4]
+
 tauri-runtime 2.12.1 (Rust crate)
   Licence: Apache-2.0 OR MIT
   Source:  https://github.com/tauri-apps/tauri
@@ -1493,12 +1508,12 @@ tauri-utils 2.10.1 (Rust crate)
 tempfile 3.27.0 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/Stebalien/tempfile
-  Texts:   [15] [183]
+  Texts:   [15] [185]
 
 tendril 0.5.1 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/servo/html5ever
-  Texts:   [15] [184]
+  Texts:   [15] [186]
 
 thiserror 2.0.21 (Rust crate)
   Licence: MIT OR Apache-2.0
@@ -1518,17 +1533,17 @@ thread_local 1.1.10 (Rust crate)
 time 0.3.55 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/time-rs/time
-  Texts:   [3] [185]
+  Texts:   [3] [187]
 
 time-core 0.1.9 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/time-rs/time
-  Texts:   [3] [185]
+  Texts:   [3] [187]
 
 time-macros 0.2.32 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/time-rs/time
-  Texts:   [3] [185]
+  Texts:   [3] [187]
 
 tinystr 0.8.4 (Rust crate)
   Licence: Unicode-3.0
@@ -1538,132 +1553,132 @@ tinystr 0.8.4 (Rust crate)
 tinyvec 1.13.3 (Rust crate)
   Licence: Zlib OR Apache-2.0 OR MIT
   Source:  https://github.com/Lokathor/tinyvec
-  Texts:   [59] [44] [186]
+  Texts:   [59] [44] [188]
 
 tokio 1.53.1 (Rust crate)
   Licence: MIT
   Source:  https://github.com/tokio-rs/tokio
-  Texts:   [187]
+  Texts:   [189]
 
 tokio-macros 2.7.2 (Rust crate)
   Licence: MIT
   Source:  https://github.com/tokio-rs/tokio
-  Texts:   [188]
+  Texts:   [190]
 
 tokio-native-tls 0.3.1 (Rust crate)
   Licence: MIT
   Source:  https://github.com/tokio-rs/tls
-  Texts:   [189]
+  Texts:   [191]
 
 tokio-rustls 0.26.6 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/rustls/tokio-rustls
-  Texts:   [190] [191]
+  Texts:   [192] [193]
 
 tokio-stream 0.1.19 (Rust crate)
   Licence: MIT
   Source:  https://github.com/tokio-rs/tokio
-  Texts:   [187]
+  Texts:   [189]
 
 tokio-tungstenite 0.28.0 (Rust crate)
   Licence: MIT
   Source:  https://github.com/snapview/tokio-tungstenite
-  Texts:   [192]
+  Texts:   [194]
 
 tokio-util 0.7.19 (Rust crate)
   Licence: MIT
   Source:  https://github.com/tokio-rs/tokio
-  Texts:   [187]
+  Texts:   [189]
 
 toml 1.1.6+spec-1.1.0 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/toml-rs/toml
-  Texts:   [38] [163]
+  Texts:   [38] [165]
 
 toml_datetime 1.1.1+spec-1.1.0 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/toml-rs/toml
-  Texts:   [38] [163]
+  Texts:   [38] [165]
 
 toml_parser 1.1.3+spec-1.1.0 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/toml-rs/toml
-  Texts:   [38] [163]
+  Texts:   [38] [165]
 
 toml_writer 1.1.2+spec-1.1.0 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/toml-rs/toml
-  Texts:   [38] [163]
+  Texts:   [38] [165]
 
 tower 0.5.3 (Rust crate)
   Licence: MIT
   Source:  https://github.com/tower-rs/tower
-  Texts:   [193]
+  Texts:   [195]
 
 tower-http 0.6.11 (Rust crate)
   Licence: MIT
   Source:  https://github.com/tower-rs/tower-http
-  Texts:   [194]
+  Texts:   [196]
 
 tower-layer 0.3.3 (Rust crate)
   Licence: MIT
   Source:  https://github.com/tower-rs/tower
-  Texts:   [193]
+  Texts:   [195]
 
 tower-service 0.3.3 (Rust crate)
   Licence: MIT
   Source:  https://github.com/tower-rs/tower
-  Texts:   [193]
+  Texts:   [195]
 
 tracing 0.1.44 (Rust crate)
   Licence: MIT
   Source:  https://github.com/tokio-rs/tracing
-  Texts:   [189]
+  Texts:   [191]
 
 tracing-appender 0.2.5 (Rust crate)
   Licence: MIT
   Source:  https://github.com/tokio-rs/tracing
-  Texts:   [189]
+  Texts:   [191]
 
 tracing-attributes 0.1.31 (Rust crate)
   Licence: MIT
   Source:  https://github.com/tokio-rs/tracing
-  Texts:   [189]
+  Texts:   [191]
 
 tracing-core 0.1.36 (Rust crate)
   Licence: MIT
   Source:  https://github.com/tokio-rs/tracing
-  Texts:   [189]
+  Texts:   [191]
 
 tracing-log 0.2.0 (Rust crate)
   Licence: MIT
   Source:  https://github.com/tokio-rs/tracing
-  Texts:   [189]
+  Texts:   [191]
 
 tracing-subscriber 0.3.23 (Rust crate)
   Licence: MIT
   Source:  https://github.com/tokio-rs/tracing
-  Texts:   [189]
+  Texts:   [191]
 
 trash 5.2.9 (Rust crate)
   Licence: MIT
   Source:  https://github.com/ArturKovacs/trash
-  Texts:   [195]
+  Texts:   [197]
 
 tray-icon 0.25.1 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/tauri-apps/tray-icon
-  Texts:   [15] [120] [196]
+  Texts:   [15] [121] [198]
 
 try-lock 0.2.5 (Rust crate)
   Licence: MIT
   Source:  https://github.com/seanmonstar/try-lock
-  Texts:   [197]
+  Texts:   [199]
 
 tungstenite 0.28.0 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/snapview/tungstenite-rs
-  Texts:   [15] [198]
+  Texts:   [15] [200]
 
 typeid 1.0.3 (Rust crate)
   Licence: MIT OR Apache-2.0
@@ -1673,32 +1688,32 @@ typeid 1.0.3 (Rust crate)
 typenum 1.20.1 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/paholg/typenum
-  Texts:   [199] [200] [201]
+  Texts:   [201] [202] [203]
 
 unicode-bom 2.0.3 (Rust crate)
   Licence: Apache-2.0
   Source:  https://gitlab.com/philbooth/unicode-bom
-  Texts:   [202]
+  Texts:   [204]
 
 unicode-ident 1.0.26 (Rust crate)
   Licence: (MIT OR Apache-2.0) AND Unicode-3.0
   Source:  https://github.com/dtolnay/unicode-ident
-  Texts:   [14] [9] [203]
+  Texts:   [14] [9] [205]
 
 unicode-normalization 0.1.25 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/unicode-rs/unicode-normalization
-  Texts:   [204] [15] [84]
+  Texts:   [206] [15] [84]
 
 unicode-segmentation 1.13.3 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/unicode-rs/unicode-segmentation
-  Texts:   [204] [15] [84]
+  Texts:   [206] [15] [84]
 
 untrusted 0.9.0 (Rust crate)
   Licence: ISC
   Source:  https://github.com/briansmith/untrusted
-  Texts:   [205]
+  Texts:   [207]
 
 url 2.5.8 (Rust crate)
   Licence: MIT OR Apache-2.0
@@ -1708,7 +1723,7 @@ url 2.5.8 (Rust crate)
 urlpattern 0.6.0 (Rust crate)
   Licence: MIT
   Source:  https://github.com/denoland/rust-urlpattern
-  Texts:   [206]
+  Texts:   [208]
 
 utf-8 0.7.6 (Rust crate)
   Licence: MIT OR Apache-2.0
@@ -1718,12 +1733,12 @@ utf-8 0.7.6 (Rust crate)
 utf8_iter 1.0.4 (Rust crate)
   Licence: Apache-2.0 OR MIT
   Source:  https://github.com/hsivonen/utf8_iter
-  Texts:   [207] [59] [60]
+  Texts:   [209] [59] [60]
 
 uuid 1.26.1 (Rust crate)
   Licence: Apache-2.0 OR MIT
   Source:  https://github.com/uuid-rs/uuid
-  Texts:   [15] [208]
+  Texts:   [15] [210]
 
 walkdir 2.5.0 (Rust crate)
   Licence: Unlicense/MIT
@@ -1733,12 +1748,12 @@ walkdir 2.5.0 (Rust crate)
 want 0.3.1 (Rust crate)
   Licence: MIT
   Source:  https://github.com/seanmonstar/want
-  Texts:   [209]
+  Texts:   [211]
 
 web-time 1.1.0 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/daxpedda/web-time
-  Texts:   [210] [211]
+  Texts:   [212] [213]
 
 web_atoms 0.2.6 (Rust crate)
   Licence: MIT OR Apache-2.0
@@ -1763,112 +1778,117 @@ webview2-com-sys 0.39.1 (Rust crate)
 winapi-util 0.1.11 (Rust crate)
   Licence: Unlicense OR MIT
   Source:  https://github.com/BurntSushi/winapi-util
-  Texts:   [10] [159] [12]
+  Texts:   [10] [161] [12]
 
 window-vibrancy 0.8.1 (Rust crate)
   Licence: Apache-2.0 OR MIT
   Source:  https://github.com/tauri-apps/tauri-plugin-vibrancy
-  Texts:   [15] [212] [213]
+  Texts:   [15] [214] [215]
 
 windows 0.62.2 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/microsoft/windows-rs
-  Texts:   [214] [215]
+  Texts:   [216] [217]
 
 windows-collections 0.3.2 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/microsoft/windows-rs
-  Texts:   [214] [215]
+  Texts:   [216] [217]
 
 windows-core 0.62.2 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/microsoft/windows-rs
-  Texts:   [214] [215]
+  Texts:   [216] [217]
 
 windows-future 0.3.2 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/microsoft/windows-rs
-  Texts:   [214] [215]
+  Texts:   [216] [217]
 
 windows-implement 0.60.2 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/microsoft/windows-rs
-  Texts:   [214] [215]
+  Texts:   [216] [217]
 
 windows-interface 0.59.3 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/microsoft/windows-rs
-  Texts:   [214] [215]
+  Texts:   [216] [217]
 
 windows-link 0.2.1 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/microsoft/windows-rs
-  Texts:   [214] [215]
+  Texts:   [216] [217]
 
 windows-numerics 0.3.1 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/microsoft/windows-rs
-  Texts:   [214] [215]
+  Texts:   [216] [217]
+
+windows-registry 0.6.1 (Rust crate)
+  Licence: MIT OR Apache-2.0
+  Source:  https://github.com/microsoft/windows-rs
+  Texts:   [216] [217]
 
 windows-result 0.4.1 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/microsoft/windows-rs
-  Texts:   [214] [215]
+  Texts:   [216] [217]
 
 windows-strings 0.5.1 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/microsoft/windows-rs
-  Texts:   [214] [215]
+  Texts:   [216] [217]
 
 windows-sys 0.48.0 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/microsoft/windows-rs
-  Texts:   [214] [215]
+  Texts:   [216] [217]
 
 windows-sys 0.60.2 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/microsoft/windows-rs
-  Texts:   [214] [215]
+  Texts:   [216] [217]
 
 windows-sys 0.61.2 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/microsoft/windows-rs
-  Texts:   [214] [215]
+  Texts:   [216] [217]
 
 windows-targets 0.48.5 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/microsoft/windows-rs
-  Texts:   [214] [215]
+  Texts:   [216] [217]
 
 windows-targets 0.53.5 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/microsoft/windows-rs
-  Texts:   [214] [215]
+  Texts:   [216] [217]
 
 windows-threading 0.2.1 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/microsoft/windows-rs
-  Texts:   [214] [215]
+  Texts:   [216] [217]
 
 windows-version 0.1.7 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/microsoft/windows-rs
-  Texts:   [214] [215]
+  Texts:   [216] [217]
 
 windows_x86_64_msvc 0.48.5 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/microsoft/windows-rs
-  Texts:   [214] [215]
+  Texts:   [216] [217]
 
 windows_x86_64_msvc 0.53.1 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/microsoft/windows-rs
-  Texts:   [214] [215]
+  Texts:   [216] [217]
 
 winnow 1.0.4 (Rust crate)
   Licence: MIT
   Source:  https://github.com/winnow-rs/winnow
-  Texts:   [216]
+  Texts:   [218]
 
 writeable 0.6.4 (Rust crate)
   Licence: Unicode-3.0
@@ -1878,7 +1898,7 @@ writeable 0.6.4 (Rust crate)
 wry 0.57.0 (Rust crate)
   Licence: Apache-2.0 OR MIT
   Source:  https://github.com/tauri-apps/wry
-  Texts:   [15] [217] [218]
+  Texts:   [15] [219] [220]
 
 yoke 0.8.3 (Rust crate)
   Licence: Unicode-3.0
@@ -1893,7 +1913,7 @@ yoke-derive 0.8.4 (Rust crate)
 zerocopy 0.8.59 (Rust crate)
   Licence: BSD-2-Clause OR Apache-2.0 OR MIT
   Source:  https://github.com/google/zerocopy
-  Texts:   [219] [220] [221]
+  Texts:   [221] [222] [223]
 
 zerofrom 0.1.8 (Rust crate)
   Licence: Unicode-3.0
@@ -1908,7 +1928,7 @@ zerofrom-derive 0.1.8 (Rust crate)
 zeroize 1.9.0 (Rust crate)
   Licence: Apache-2.0 OR MIT
   Source:  https://github.com/RustCrypto/utils
-  Texts:   [59] [222]
+  Texts:   [59] [224]
 
 zerotrie 0.2.5 (Rust crate)
   Licence: Unicode-3.0
@@ -1925,10 +1945,15 @@ zerovec-derive 0.11.6 (Rust crate)
   Source:  https://github.com/unicode-org/icu4x
   Texts:   [97]
 
+zip 4.6.1 (Rust crate)
+  Licence: MIT
+  Source:  https://github.com/zip-rs/zip2.git
+  Texts:   [225]
+
 zlib-rs 0.6.8 (Rust crate)
   Licence: Zlib
   Source:  https://github.com/trifectatechfoundation/zlib-rs
-  Texts:   [223]
+  Texts:   [226]
 
 zmij 1.0.23 (Rust crate)
   Licence: MIT
@@ -1938,7 +1963,7 @@ zmij 1.0.23 (Rust crate)
 zustand 5.0.15 (npm package)
   Licence: MIT
   Source:  https://github.com/pmndrs/zustand
-  Texts:   [224]
+  Texts:   [227]
 
 
 LICENCE TEXTS
@@ -2066,7 +2091,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 
------ [3] used by: @tauri-apps/api 2.12.1, fdeflate 0.3.7, gix 0.88.0, gix-actor 0.43.0, gix-attributes 0.36.0, gix-chunk 0.9.0, gix-command 0.11.0, gix-commitgraph 0.40.0, gix-config 0.61.0, gix-config-value 0.20.0, gix-date 0.17.0, gix-diff 0.68.0, gix-discover 0.56.0, gix-error 0.4.0, gix-features 0.50.0, gix-filter 0.35.0, gix-fs 0.23.0, gix-glob 0.28.0, gix-hash 0.27.0, gix-hashtable 0.17.0, gix-lock 25.0.0, gix-macros 0.2.0, gix-note 0.2.0, gix-object 0.65.0, gix-odb 0.85.0, gix-pack 0.75.0, gix-packetline 0.23.0, gix-path 0.13.0, gix-protocol 0.66.0, gix-quote 0.9.0, gix-ref 0.68.0, gix-refspec 0.46.0, gix-revision 0.50.0, gix-revwalk 0.36.0, gix-sec 0.15.0, gix-shallow 0.14.0, gix-tempfile 25.0.0, gix-trace 0.2.0, gix-transport 0.60.0, gix-traverse 0.62.0, gix-url 0.39.0, gix-utils 0.4.0, gix-validate 0.12.0, gix-worktree-stream 0.37.0, gix-zlib 0.2.0, miniz_oxide 0.8.9, miniz_oxide 0.9.1, num-conv 0.2.2, pin-project-lite 0.2.17, raw-window-handle 0.6.2, simdutf8 0.1.5, sync_wrapper 1.0.2, tauri 2.12.1, tauri-codegen 2.7.1, tauri-macros 2.7.1, tauri-plugin-dialog 2.8.1, tauri-plugin-fs 2.6.0, tauri-plugin-opener 2.7.0, tauri-runtime 2.12.1, tauri-runtime-wry 2.12.1, tauri-utils 2.10.1, time 0.3.55, time-core 0.1.9, time-macros 0.2.32
+----- [3] used by: @tauri-apps/api 2.12.1, fdeflate 0.3.7, gix 0.88.0, gix-actor 0.43.0, gix-attributes 0.36.0, gix-chunk 0.9.0, gix-command 0.11.0, gix-commitgraph 0.40.0, gix-config 0.61.0, gix-config-value 0.20.0, gix-date 0.17.0, gix-diff 0.68.0, gix-discover 0.56.0, gix-error 0.4.0, gix-features 0.50.0, gix-filter 0.35.0, gix-fs 0.23.0, gix-glob 0.28.0, gix-hash 0.27.0, gix-hashtable 0.17.0, gix-lock 25.0.0, gix-macros 0.2.0, gix-note 0.2.0, gix-object 0.65.0, gix-odb 0.85.0, gix-pack 0.75.0, gix-packetline 0.23.0, gix-path 0.13.0, gix-protocol 0.66.0, gix-quote 0.9.0, gix-ref 0.68.0, gix-refspec 0.46.0, gix-revision 0.50.0, gix-revwalk 0.36.0, gix-sec 0.15.0, gix-shallow 0.14.0, gix-tempfile 25.0.0, gix-trace 0.2.0, gix-transport 0.60.0, gix-traverse 0.62.0, gix-url 0.39.0, gix-utils 0.4.0, gix-validate 0.12.0, gix-worktree-stream 0.37.0, gix-zlib 0.2.0, miniz_oxide 0.8.9, miniz_oxide 0.9.1, num-conv 0.2.2, pin-project-lite 0.2.17, raw-window-handle 0.6.2, simdutf8 0.1.5, sync_wrapper 1.0.2, tauri 2.12.1, tauri-codegen 2.7.1, tauri-macros 2.7.1, tauri-plugin-dialog 2.8.1, tauri-plugin-fs 2.6.0, tauri-plugin-opener 2.7.0, tauri-plugin-updater 2.13.3, tauri-runtime 2.12.1, tauri-runtime-wry 2.12.1, tauri-utils 2.10.1, time 0.3.55, time-core 0.1.9, time-macros 0.2.32
 
 Apache License
                            Version 2.0, January 2004
@@ -2246,7 +2271,7 @@ Apache License
    END OF TERMS AND CONDITIONS
 
 
------ [4] used by: @tauri-apps/api 2.12.1, tauri 2.12.1, tauri-codegen 2.7.1, tauri-macros 2.7.1, tauri-plugin-dialog 2.8.1, tauri-plugin-fs 2.6.0, tauri-plugin-opener 2.7.0, tauri-runtime 2.12.1, tauri-runtime-wry 2.12.1, tauri-utils 2.10.1
+----- [4] used by: @tauri-apps/api 2.12.1, tauri 2.12.1, tauri-codegen 2.7.1, tauri-macros 2.7.1, tauri-plugin-dialog 2.8.1, tauri-plugin-fs 2.6.0, tauri-plugin-opener 2.7.0, tauri-plugin-updater 2.13.3, tauri-runtime 2.12.1, tauri-runtime-wry 2.12.1, tauri-utils 2.10.1
 
 MIT License
 
@@ -2295,7 +2320,7 @@ PackageDownloadLocation: git+ssh://github.com/tauri-apps/tauri.git
 Creator: Person: Daniel Thompson-Yvetot
 
 
------ [6] used by: @tauri-apps/plugin-dialog 2.8.1, @tauri-apps/plugin-opener 2.7.0, tauri-plugin-dialog 2.8.1, tauri-plugin-fs 2.6.0, tauri-plugin-opener 2.7.0
+----- [6] used by: @tauri-apps/plugin-dialog 2.8.1, @tauri-apps/plugin-opener 2.7.0, tauri-plugin-dialog 2.8.1, tauri-plugin-fs 2.6.0, tauri-plugin-opener 2.7.0, tauri-plugin-updater 2.13.3
 
 SPDXVersion: SPDX-2.1
 DataLicense: CC0-1.0
@@ -6825,7 +6850,7 @@ Test code within encoding_rs is dedicated to the Public Domain when so
 designated (see the individual files for PD/CC0-dedicated sections).
 
 
------ [59] used by: encoding_rs 0.8.42, multiversion_no_op 1.0.0, serialize-to-javascript 0.1.2, serialize-to-javascript-impl 0.1.2, siphasher 1.0.4, tinyvec 1.13.3, utf8_iter 1.0.4, zeroize 1.9.0
+----- [59] used by: encoding_rs 0.8.42, multiversion_no_op 1.0.0, rustls-platform-verifier 0.7.1, serialize-to-javascript 0.1.2, serialize-to-javascript-impl 0.1.2, siphasher 1.0.4, tinyvec 1.13.3, utf8_iter 1.0.4, zeroize 1.9.0
 
 Apache License
                            Version 2.0, January 2004
@@ -9629,33 +9654,67 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 
------ [116] used by: miniz_oxide 0.8.9, miniz_oxide 0.9.1
+----- [116] used by: minisign-verify 0.3.0
 
-MIT License
+Copyright (c) 2019-2025 Frank Denis
 
-Copyright 2013-2014 RAD Game Tools and Valve Software
-Copyright 2010-2014 Rich Geldreich and Tenacious Software LLC
-Copyright (c) 2017 Frommi
-Copyright (c) 2017-2024 oyvindln
+Permission is hereby granted, free of charge, to any
+person obtaining a copy of this software and associated
+documentation files (the "Software"), to deal in the
+Software without restriction, including without
+limitation the rights to use, copy, modify, merge,
+publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software
+is furnished to do so, subject to the following
+conditions:
 
+The above copyright notice and this permission notice
+shall be included in all copies or substantial portions
+of the Software.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF
+ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
+TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
+SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
+IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+DEALINGS IN THE SOFTWARE.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+--
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+Code in the src/crypto folder is derived from the rust-crypto project:
+https://github.com/DaGenix/rust-crypto
+
+Original ISC license follows:
+
+Copyright (c) 2006-2009 Graydon Hoare
+Copyright (c) 2009-2013 Mozilla Foundation
+
+Permission is hereby granted, free of charge, to any
+person obtaining a copy of this software and associated
+documentation files (the "Software"), to deal in the
+Software without restriction, including without
+limitation the rights to use, copy, modify, merge,
+publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software
+is furnished to do so, subject to the following
+conditions:
+
+The above copyright notice and this permission notice
+shall be included in all copies or substantial portions
+of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF
+ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
+TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
+SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
+IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+DEALINGS IN THE SOFTWARE.
 
 
 ----- [117] used by: miniz_oxide 0.8.9, miniz_oxide 0.9.1
@@ -9666,6 +9725,7 @@ Copyright 2013-2014 RAD Game Tools and Valve Software
 Copyright 2010-2014 Rich Geldreich and Tenacious Software LLC
 Copyright (c) 2017 Frommi
 Copyright (c) 2017-2024 oyvindln
+
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -9688,6 +9748,34 @@ SOFTWARE.
 
 ----- [118] used by: miniz_oxide 0.8.9, miniz_oxide 0.9.1
 
+MIT License
+
+Copyright 2013-2014 RAD Game Tools and Valve Software
+Copyright 2010-2014 Rich Geldreich and Tenacious Software LLC
+Copyright (c) 2017 Frommi
+Copyright (c) 2017-2024 oyvindln
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+
+----- [119] used by: miniz_oxide 0.8.9, miniz_oxide 0.9.1
+
 Copyright 2013-2014 RAD Game Tools and Valve Software
 Copyright 2010-2014 Rich Geldreich and Tenacious Software LLC
 Copyright (c) 2020 Frommi
@@ -9704,7 +9792,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 3. This notice may not be removed or altered from any source distribution.
 
 
------ [119] used by: mio 1.2.3
+----- [120] used by: mio 1.2.3
 
 Copyright (c) 2014 Carl Lerche and other MIO contributors
 
@@ -9727,7 +9815,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 
------ [120] used by: muda 0.20.0, tray-icon 0.25.1
+----- [121] used by: muda 0.20.0, tray-icon 0.25.1
 
 MIT License
 
@@ -9752,7 +9840,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 
------ [121] used by: muda 0.20.0
+----- [122] used by: muda 0.20.0
 
 SPDXVersion: SPDX-2.1
 DataLicense: CC0-1.0
@@ -9775,7 +9863,7 @@ PackageDownloadLocation: git+ssh://github.com/tauri-apps/muda.git
 Creator: Person: Daniel Thompson-Yvetot
 
 
------ [122] used by: multiversion_no_op 1.0.0
+----- [123] used by: multiversion_no_op 1.0.0
 
 Copyright Mozilla Foundation
 
@@ -9794,7 +9882,7 @@ See the Licenses for the specific language governing permissions and
 limitations under the Licenses.
 
 
------ [123] used by: native-tls 0.2.18
+----- [124] used by: native-tls 0.2.18
 
 Copyright (c) 2016 The rust-native-tls Developers
 
@@ -9817,7 +9905,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 
------ [124] used by: new_debug_unreachable 1.0.6
+----- [125] used by: new_debug_unreachable 1.0.6
 
 Copyright (c) 2015 Jonathan Reem
 
@@ -9846,7 +9934,7 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 
 
------ [125] used by: nonempty 0.12.0
+----- [126] used by: nonempty 0.12.0
 
 Copyright (c) 2019 Alexis Sellier
 
@@ -9869,7 +9957,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 
------ [126] used by: notify 8.2.0
+----- [127] used by: notify 8.2.0
 
 Creative Commons CC0 1.0 Universal
 
@@ -9914,7 +10002,7 @@ For these and/or other purposes and motivations, and without any expectation of 
      d. Affirmer understands and acknowledges that Creative Commons is not a party to this document and has no duty or obligation with respect to this CC0 or use of the Work.
 
 
------ [127] used by: notify-debouncer-mini 0.7.0, notify-types 2.1.0
+----- [128] used by: notify-debouncer-mini 0.7.0, notify-types 2.1.0
 
 Apache License
                         Version 2.0, January 2004
@@ -10119,7 +10207,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 
------ [128] used by: notify-debouncer-mini 0.7.0, notify-types 2.1.0
+----- [129] used by: notify-debouncer-mini 0.7.0, notify-types 2.1.0
 
 Copyright (c) 2023 Notify Contributors
 
@@ -10148,7 +10236,7 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 
 
------ [129] used by: nu-ansi-term 0.50.3
+----- [130] used by: nu-ansi-term 0.50.3
 
 The MIT License (MIT)
 
@@ -10174,7 +10262,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 
------ [130] used by: num-conv 0.2.2
+----- [131] used by: num-conv 0.2.2
 
 Copyright (c) Jacob Pratt
 
@@ -10197,7 +10285,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 
------ [131] used by: open 5.4.4
+----- [132] used by: open 5.4.4
 
 The MIT License (MIT)
 =====================
@@ -10226,7 +10314,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 
 
------ [132] used by: option-ext 0.2.0
+----- [133] used by: option-ext 0.2.0
 
 Mozilla Public License Version 2.0
 ==================================
@@ -10603,7 +10691,7 @@ Exhibit B - "Incompatible With Secondary Licenses" Notice
   defined by the Mozilla Public License, v. 2.0.
 
 
------ [133] used by: phf 0.13.1, phf_generator 0.13.1, phf_macros 0.13.1, phf_shared 0.13.1
+----- [134] used by: phf 0.13.1, phf_generator 0.13.1, phf_macros 0.13.1, phf_shared 0.13.1
 
 The MIT License (MIT)
 
@@ -10627,7 +10715,7 @@ IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
------ [134] used by: plist 1.10.1
+----- [135] used by: plist 1.10.1
 
 Copyright (c) 2015 Edward Barnard
 
@@ -10650,7 +10738,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 
------ [135] used by: png 0.17.16, png 0.18.1
+----- [136] used by: png 0.17.16, png 0.18.1
 
 Copyright (c) 2015 nwin
 
@@ -10679,7 +10767,7 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 
 
------ [136] used by: powerfmt 0.2.0
+----- [137] used by: powerfmt 0.2.0
 
 Apache License
                            Version 2.0, January 2004
@@ -10884,7 +10972,7 @@ Apache License
    limitations under the License.
 
 
------ [137] used by: powerfmt 0.2.0
+----- [138] used by: powerfmt 0.2.0
 
 Copyright (c) 2023 Jacob Pratt et al.
 
@@ -10907,7 +10995,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 
------ [138] used by: ppv-lite86 0.2.21
+----- [139] used by: ppv-lite86 0.2.21
 
 Apache License
                         Version 2.0, January 2004
@@ -11112,7 +11200,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 
------ [139] used by: ppv-lite86 0.2.21
+----- [140] used by: ppv-lite86 0.2.21
 
 Copyright (c) 2019 The CryptoCorrosion Contributors
 
@@ -11141,7 +11229,7 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 
 
------ [140] used by: precomputed-hash 0.1.1
+----- [141] used by: precomputed-hash 0.1.1
 
 MIT License
 
@@ -11166,7 +11254,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 
------ [141] used by: prodash 31.0.1
+----- [142] used by: prodash 31.0.1
 
 The MIT License (MIT)
 =====================
@@ -11195,7 +11283,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 
 
------ [142] used by: quick-xml 0.42.0
+----- [143] used by: quick-xml 0.42.0
 
 The MIT License (MIT)
 
@@ -11222,7 +11310,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 
------ [143] used by: rand 0.9.5, rand_chacha 0.9.0, rand_core 0.9.5
+----- [144] used by: rand 0.9.5, rand_chacha 0.9.0, rand_core 0.9.5
 
 Copyrights in the Rand project are retained by their contributors. No
 copyright assignment is required to contribute to the Rand project.
@@ -11238,7 +11326,7 @@ The Rand project includes code from the Rust project
 published under these same licenses.
 
 
------ [144] used by: rand 0.9.5, rand_chacha 0.9.0
+----- [145] used by: rand 0.9.5, rand_chacha 0.9.0
 
 Apache License
                         Version 2.0, January 2004
@@ -11418,7 +11506,7 @@ TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
 END OF TERMS AND CONDITIONS
 
 
------ [145] used by: rand 0.9.5, rand_chacha 0.9.0, rand_core 0.9.5
+----- [146] used by: rand 0.9.5, rand_chacha 0.9.0, rand_core 0.9.5
 
 Copyright 2018 Developers of the Rand project
 Copyright (c) 2014 The Rust Project Developers
@@ -11448,7 +11536,7 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 
 
------ [146] used by: rand_core 0.9.5
+----- [147] used by: rand_core 0.9.5
 
 Apache License
                         Version 2.0, January 2004
@@ -11639,7 +11727,7 @@ APPENDIX: How to apply the Apache License to your work.
    identification within third-party archives.
 
 
------ [147] used by: raw-window-handle 0.6.2
+----- [148] used by: raw-window-handle 0.6.2
 
 MIT License
 
@@ -11664,7 +11752,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 
------ [148] used by: raw-window-handle 0.6.2
+----- [149] used by: raw-window-handle 0.6.2
 
 Copyright (c) 2020 Osspial
 
@@ -11679,7 +11767,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 3. This notice may not be removed or altered from any source distribution.
 
 
------ [149] used by: react 19.3.0, react-dom 19.3.0, scheduler 0.28.0
+----- [150] used by: react 19.3.0, react-dom 19.3.0, scheduler 0.28.0
 
 MIT License
 
@@ -11704,7 +11792,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 
------ [150] used by: reqwest 0.13.5
+----- [151] used by: reqwest 0.13.5
 
 Apache License
                         Version 2.0, January 2004
@@ -11909,7 +11997,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 
------ [151] used by: reqwest 0.13.5
+----- [152] used by: reqwest 0.13.5
 
 Copyright (c) 2016-2026 Sean McArthur
 
@@ -11932,7 +12020,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 
------ [152] used by: rfd 0.16.0
+----- [153] used by: rfd 0.16.0
 
 MIT License
 
@@ -11957,7 +12045,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 
------ [153] used by: ring 0.17.14
+----- [154] used by: ring 0.17.14
 
 *ring* uses an "ISC" license, like BoringSSL used to use, for new code
 files. See LICENSE-other-bits for the text of that license.
@@ -11970,7 +12058,7 @@ See src/polyfill/once_cell/LICENSE-APACHE and src/polyfill/once_cell/LICENSE-MIT
 for the license to code that was sourced from the once_cell project.
 
 
------ [154] used by: ring 0.17.14
+----- [155] used by: ring 0.17.14
 
 Apache License
                            Version 2.0, January 2004
@@ -12245,7 +12333,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
------ [155] used by: ring 0.17.14
+----- [156] used by: ring 0.17.14
 
 Copyright 2015-2025 Brian Smith.
 
@@ -12262,7 +12350,7 @@ OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
 CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 
------ [156] used by: rustls-pki-types 1.15.1
+----- [157] used by: rustls-pki-types 1.15.1
 
 Apache License
                         Version 2.0, January 2004
@@ -12467,7 +12555,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 
------ [157] used by: rustls-pki-types 1.15.1
+----- [158] used by: rustls-pki-types 1.15.1
 
 Copyright (c) 2023 Dirkjan Ochtman <dirkjan@ochtman.nl>
 
@@ -12496,7 +12584,32 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 
 
------ [158] used by: rustls-webpki 0.103.15
+----- [159] used by: rustls-platform-verifier 0.7.1
+
+MIT License
+
+Copyright (c) 2022 1Password
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+
+----- [160] used by: rustls-webpki 0.103.15
 
 Except as otherwise noted, this project is licensed under the following
 (ISC-style) terms:
@@ -12519,7 +12632,7 @@ The files under third-party/chromium are licensed as described in
 third-party/chromium/LICENSE.
 
 
------ [159] used by: same-file 1.0.6, winapi-util 0.1.11
+----- [161] used by: same-file 1.0.6, winapi-util 0.1.11
 
 The MIT License (MIT)
 
@@ -12544,7 +12657,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 
------ [160] used by: schannel 0.1.29
+----- [162] used by: schannel 0.1.29
 
 Copyright (c) 2015 steffengy
 
@@ -12555,7 +12668,7 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
------ [161] used by: schemars 0.8.22, schemars 0.9.0, schemars 1.2.2, schemars_derive 0.8.22
+----- [163] used by: schemars 0.8.22, schemars 0.9.0, schemars 1.2.2, schemars_derive 0.8.22
 
 MIT License
 
@@ -12580,7 +12693,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 
------ [162] used by: scopeguard 1.2.0
+----- [164] used by: scopeguard 1.2.0
 
 Copyright (c) 2016-2019 Ulrik Sverdrup "bluss" and scopeguard developers
 
@@ -12609,7 +12722,7 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 
 
------ [163] used by: serde_spanned 1.1.1, toml 1.1.6+spec-1.1.0, toml_datetime 1.1.1+spec-1.1.0, toml_parser 1.1.3+spec-1.1.0, toml_writer 1.1.2+spec-1.1.0
+----- [165] used by: serde_spanned 1.1.1, toml 1.1.6+spec-1.1.0, toml_datetime 1.1.1+spec-1.1.0, toml_parser 1.1.3+spec-1.1.0, toml_writer 1.1.2+spec-1.1.0
 
 Copyright (c) Individual contributors
 
@@ -12632,7 +12745,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 
------ [164] used by: serde_with 3.24.0, serde_with_macros 3.24.0
+----- [166] used by: serde_with 3.24.0, serde_with_macros 3.24.0
 
 Copyright (c) 2015
 
@@ -12661,7 +12774,7 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 
 
------ [165] used by: serialize-to-javascript 0.1.2, serialize-to-javascript-impl 0.1.2
+----- [167] used by: serialize-to-javascript 0.1.2, serialize-to-javascript-impl 0.1.2
 
 MIT License
 
@@ -12686,7 +12799,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 
------ [166] used by: sha1 0.10.7, sha2 0.10.9
+----- [168] used by: sha1 0.10.7, sha2 0.10.9
 
 Copyright (c) 2006-2009 Graydon Hoare
 Copyright (c) 2009-2013 Mozilla Foundation
@@ -12717,7 +12830,7 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 
 
------ [167] used by: sha1dc 0.1.5
+----- [169] used by: sha1dc 0.1.5
 
 Copyright (c) 2017 Marc Stevens (Cryptology Group, Centrum Wiskunde & Informatica)
 Copyright (c) 2017 Dan Shumow (Microsoft Research)
@@ -12749,7 +12862,7 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 
 
------ [168] used by: sharded-slab 0.1.7
+----- [170] used by: sharded-slab 0.1.7
 
 Copyright (c) 2019 Eliza Weisman
 
@@ -12772,7 +12885,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 
------ [169] used by: simd-adler32 0.3.10
+----- [171] used by: simd-adler32 0.3.10
 
 MIT License
 
@@ -12797,7 +12910,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 
------ [170] used by: siphasher 1.0.4
+----- [172] used by: siphasher 1.0.4
 
 Copyright 2012-2016 The Rust Project Developers.
 Copyright 2016-2026 Frank Denis.
@@ -12808,7 +12921,7 @@ http://www.apache.org/licenses/LICENSE-2.0> or the MIT license
 option.
 
 
------ [171] used by: slab 0.4.12
+----- [173] used by: slab 0.4.12
 
 Copyright (c) 2019 Carl Lerche
 
@@ -12837,7 +12950,7 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 
 
------ [172] used by: smallvec 1.16.2
+----- [174] used by: smallvec 1.16.2
 
 Copyright (c) 2018 The Servo Project Developers
 
@@ -12866,7 +12979,7 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 
 
------ [173] used by: softbuffer 0.4.8
+----- [175] used by: softbuffer 0.4.8
 
 Apache License
                            Version 2.0, January 2004
@@ -13071,7 +13184,7 @@ Apache License
    limitations under the License.
 
 
------ [174] used by: softbuffer 0.4.8
+----- [176] used by: softbuffer 0.4.8
 
 Copyright 2022 Kirill Chibisov
 
@@ -13094,7 +13207,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 
------ [175] used by: stable_deref_trait 1.2.1
+----- [177] used by: stable_deref_trait 1.2.1
 
 Copyright (c) 2017 Robert Grosse
 
@@ -13123,7 +13236,7 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 
 
------ [176] used by: string_cache 0.9.0
+----- [178] used by: string_cache 0.9.0
 
 Copyright (c) 2012-2013 Mozilla Foundation
 
@@ -13152,7 +13265,7 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 
 
------ [177] used by: strsim 0.11.1
+----- [179] used by: strsim 0.11.1
 
 The MIT License (MIT)
 
@@ -13179,7 +13292,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 
------ [178] used by: subtle 2.6.1
+----- [180] used by: subtle 2.6.1
 
 Copyright (c) 2016-2017 Isis Agora Lovecruft, Henry de Valence. All rights reserved.
 Copyright (c) 2016-2024 Isis Agora Lovecruft. All rights reserved.
@@ -13212,14 +13325,14 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
------ [179] used by: symlink 0.1.0
+----- [181] used by: symlink 0.1.0
 
 This project is dual-licensed under the terms of the MIT and Apache (version 2.0) licenses.
 
 Copyright (c) 2014 Chris Morgan and the Teepee project developers
 
 
------ [180] used by: symlink 0.1.0
+----- [182] used by: symlink 0.1.0
 
 Copyright (c) 2014 Chris Morgan and the Teepee project developers
 
@@ -13248,7 +13361,7 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 
 
------ [181] used by: synstructure 0.14.0
+----- [183] used by: synstructure 0.14.0
 
 Copyright 2016 Nika Layzell
 
@@ -13259,7 +13372,7 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
------ [182] used by: tao 0.37.1
+----- [184] used by: tao 0.37.1
 
 SPDXVersion: SPDX-2.1
 DataLicense: CC0-1.0
@@ -13281,7 +13394,7 @@ PackageDownloadLocation: git+ssh://github.com/tauri-apps/tao.git
 Creator: Person: Daniel Thompson-Yvetot
 
 
------ [183] used by: tempfile 3.27.0
+----- [185] used by: tempfile 3.27.0
 
 Copyright (c) 2015 Steven Allen
 
@@ -13310,7 +13423,7 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 
 
------ [184] used by: tendril 0.5.1
+----- [186] used by: tendril 0.5.1
 
 Copyright (c) 2015 Keegan McAllister
 
@@ -13339,7 +13452,7 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 
 
------ [185] used by: time 0.3.55, time-core 0.1.9, time-macros 0.2.32
+----- [187] used by: time 0.3.55, time-core 0.1.9, time-macros 0.2.32
 
 Copyright (c) Jacob Pratt et al.
 
@@ -13362,7 +13475,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 
------ [186] used by: tinyvec 1.13.3
+----- [188] used by: tinyvec 1.13.3
 
 Copyright (c) 2019 Daniel "Lokathor" Gee.
 
@@ -13377,7 +13490,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 3. This notice may not be removed or altered from any source distribution.
 
 
------ [187] used by: tokio 1.53.1, tokio-stream 0.1.19, tokio-util 0.7.19
+----- [189] used by: tokio 1.53.1, tokio-stream 0.1.19, tokio-util 0.7.19
 
 MIT License
 
@@ -13402,7 +13515,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 
------ [188] used by: tokio-macros 2.7.2
+----- [190] used by: tokio-macros 2.7.2
 
 MIT License
 
@@ -13428,7 +13541,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 
------ [189] used by: tokio-native-tls 0.3.1, tracing 0.1.44, tracing-appender 0.2.5, tracing-attributes 0.1.31, tracing-core 0.1.36, tracing-log 0.2.0, tracing-subscriber 0.3.23
+----- [191] used by: tokio-native-tls 0.3.1, tracing 0.1.44, tracing-appender 0.2.5, tracing-attributes 0.1.31, tracing-core 0.1.36, tracing-log 0.2.0, tracing-subscriber 0.3.23
 
 Copyright (c) 2019 Tokio Contributors
 
@@ -13457,7 +13570,7 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 
 
------ [190] used by: tokio-rustls 0.26.6
+----- [192] used by: tokio-rustls 0.26.6
 
 Apache License
                         Version 2.0, January 2004
@@ -13662,7 +13775,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 
------ [191] used by: tokio-rustls 0.26.6
+----- [193] used by: tokio-rustls 0.26.6
 
 Copyright (c) 2017 quininer kel
 
@@ -13691,7 +13804,7 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 
 
------ [192] used by: tokio-tungstenite 0.28.0
+----- [194] used by: tokio-tungstenite 0.28.0
 
 Copyright (c) 2017 Daniel Abramov
 Copyright (c) 2017 Alexey Galakhov
@@ -13715,7 +13828,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 
------ [193] used by: tower 0.5.3, tower-layer 0.3.3, tower-service 0.3.3
+----- [195] used by: tower 0.5.3, tower-layer 0.3.3, tower-service 0.3.3
 
 Copyright (c) 2019 Tower Contributors
 
@@ -13744,7 +13857,7 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 
 
------ [194] used by: tower-http 0.6.11
+----- [196] used by: tower-http 0.6.11
 
 Copyright (c) 2019-2021 Tower Contributors
 
@@ -13773,7 +13886,7 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 
 
------ [195] used by: trash 5.2.9
+----- [197] used by: trash 5.2.9
 
 Copyright 2019 Artúr Barnabás Kovács
 
@@ -13793,7 +13906,7 @@ DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
 OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
------ [196] used by: tray-icon 0.25.1
+----- [198] used by: tray-icon 0.25.1
 
 SPDXVersion: SPDX-2.1
 DataLicense: CC0-1.0
@@ -13816,7 +13929,7 @@ PackageDownloadLocation: git+ssh://github.com/tauri-apps/tray-icon.git
 Creator: Person: Daniel Thompson-Yvetot
 
 
------ [197] used by: try-lock 0.2.5
+----- [199] used by: try-lock 0.2.5
 
 Copyright (c) 2018-2023 Sean McArthur
 Copyright (c) 2016 Alex Crichton
@@ -13840,7 +13953,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 
------ [198] used by: tungstenite 0.28.0
+----- [200] used by: tungstenite 0.28.0
 
 Copyright (c) 2017 Alexey Galakhov
 Copyright (c) 2016 Jason Housley
@@ -13864,12 +13977,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 
------ [199] used by: typenum 1.20.1
+----- [201] used by: typenum 1.20.1
 
 MIT OR Apache-2.0
 
 
------ [200] used by: typenum 1.20.1
+----- [202] used by: typenum 1.20.1
 
 Apache License
                         Version 2.0, January 2004
@@ -14074,7 +14187,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 
------ [201] used by: typenum 1.20.1
+----- [203] used by: typenum 1.20.1
 
 The MIT License (MIT)
 
@@ -14099,7 +14212,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 
------ [202] used by: unicode-bom 2.0.3
+----- [204] used by: unicode-bom 2.0.3
 
 Apache License
                            Version 2.0, January 2004
@@ -14304,7 +14417,7 @@ Apache License
    limitations under the License.
 
 
------ [203] used by: unicode-ident 1.0.26
+----- [205] used by: unicode-ident 1.0.26
 
 UNICODE LICENSE V3
 
@@ -14347,7 +14460,7 @@ dealings in these Data Files or Software without prior written
 authorization of the copyright holder.
 
 
------ [204] used by: unicode-normalization 0.1.25, unicode-segmentation 1.13.3
+----- [206] used by: unicode-normalization 0.1.25, unicode-segmentation 1.13.3
 
 Licensed under the Apache License, Version 2.0
 <LICENSE-APACHE or
@@ -14358,7 +14471,7 @@ notice may not be copied, modified, or distributed except
 according to those terms.
 
 
------ [205] used by: untrusted 0.9.0
+----- [207] used by: untrusted 0.9.0
 
 // Copyright 2015-2016 Brian Smith.
 //
@@ -14375,7 +14488,7 @@ according to those terms.
 // OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 
------ [206] used by: urlpattern 0.6.0
+----- [208] used by: urlpattern 0.6.0
 
 MIT License
 
@@ -14400,7 +14513,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 
------ [207] used by: utf8_iter 1.0.4
+----- [209] used by: utf8_iter 1.0.4
 
 Copyright Mozilla Foundation
 
@@ -14446,7 +14559,7 @@ licensed under the Apache License, Version 2.0 <LICENSE-APACHE> or
 <LICENSE-MIT> or <http://opensource.org/licenses/MIT>, at your option.
 
 
------ [208] used by: uuid 1.26.1
+----- [210] used by: uuid 1.26.1
 
 Copyright (c) 2014 The Rust Project Developers
 Copyright (c) 2018 Ashley Mannix, Christopher Armstrong, Dylan DPC, Hunar Roop Kahlon
@@ -14476,7 +14589,7 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 
 
------ [209] used by: want 0.3.1
+----- [211] used by: want 0.3.1
 
 Copyright (c) 2018-2019 Sean McArthur
 
@@ -14499,7 +14612,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 
------ [210] used by: web-time 1.1.0
+----- [212] used by: web-time 1.1.0
 
 Apache License
                            Version 2.0, January 2004
@@ -14704,7 +14817,7 @@ Apache License
    limitations under the License.
 
 
------ [211] used by: web-time 1.1.0
+----- [213] used by: web-time 1.1.0
 
 MIT License
 
@@ -14729,7 +14842,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 
------ [212] used by: window-vibrancy 0.8.1
+----- [214] used by: window-vibrancy 0.8.1
 
 MIT License
 
@@ -14754,7 +14867,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 
------ [213] used by: window-vibrancy 0.8.1
+----- [215] used by: window-vibrancy 0.8.1
 
 SPDXVersion: SPDX-2.1
 DataLicense: CC0-1.0
@@ -14777,7 +14890,7 @@ PackageDownloadLocation: git+ssh://github.com/tauri-apps/window-vibrancy.git
 Creator: Person: Daniel Thompson-Yvetot
 
 
------ [214] used by: windows 0.62.2, windows-collections 0.3.2, windows-core 0.62.2, windows-future 0.3.2, windows-implement 0.60.2, windows-interface 0.59.3, windows-link 0.2.1, windows-numerics 0.3.1, windows-result 0.4.1, windows-strings 0.5.1, windows-sys 0.48.0, windows-sys 0.60.2, windows-sys 0.61.2, windows-targets 0.48.5, windows-targets 0.53.5, windows-threading 0.2.1, windows-version 0.1.7, windows_x86_64_msvc 0.48.5, windows_x86_64_msvc 0.53.1
+----- [216] used by: windows 0.62.2, windows-collections 0.3.2, windows-core 0.62.2, windows-future 0.3.2, windows-implement 0.60.2, windows-interface 0.59.3, windows-link 0.2.1, windows-numerics 0.3.1, windows-registry 0.6.1, windows-result 0.4.1, windows-strings 0.5.1, windows-sys 0.48.0, windows-sys 0.60.2, windows-sys 0.61.2, windows-targets 0.48.5, windows-targets 0.53.5, windows-threading 0.2.1, windows-version 0.1.7, windows_x86_64_msvc 0.48.5, windows_x86_64_msvc 0.53.1
 
 Apache License
                            Version 2.0, January 2004
@@ -14982,7 +15095,7 @@ Apache License
    limitations under the License.
 
 
------ [215] used by: windows 0.62.2, windows-collections 0.3.2, windows-core 0.62.2, windows-future 0.3.2, windows-implement 0.60.2, windows-interface 0.59.3, windows-link 0.2.1, windows-numerics 0.3.1, windows-result 0.4.1, windows-strings 0.5.1, windows-sys 0.48.0, windows-sys 0.60.2, windows-sys 0.61.2, windows-targets 0.48.5, windows-targets 0.53.5, windows-threading 0.2.1, windows-version 0.1.7, windows_x86_64_msvc 0.48.5, windows_x86_64_msvc 0.53.1
+----- [217] used by: windows 0.62.2, windows-collections 0.3.2, windows-core 0.62.2, windows-future 0.3.2, windows-implement 0.60.2, windows-interface 0.59.3, windows-link 0.2.1, windows-numerics 0.3.1, windows-registry 0.6.1, windows-result 0.4.1, windows-strings 0.5.1, windows-sys 0.48.0, windows-sys 0.60.2, windows-sys 0.61.2, windows-targets 0.48.5, windows-targets 0.53.5, windows-threading 0.2.1, windows-version 0.1.7, windows_x86_64_msvc 0.48.5, windows_x86_64_msvc 0.53.1
 
 MIT License
 
@@ -15007,7 +15120,7 @@ MIT License
     SOFTWARE
 
 
------ [216] used by: winnow 1.0.4
+----- [218] used by: winnow 1.0.4
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -15029,7 +15142,7 @@ OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
------ [217] used by: wry 0.57.0
+----- [219] used by: wry 0.57.0
 
 MIT License
 
@@ -15054,7 +15167,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 
------ [218] used by: wry 0.57.0
+----- [220] used by: wry 0.57.0
 
 SPDXVersion: SPDX-2.1
 DataLicense: CC0-1.0
@@ -15078,7 +15191,7 @@ PackageDownloadLocation: git+ssh://github.com/tauri-apps/wry.git
 Creator: Person: Daniel Thompson-Yvetot
 
 
------ [219] used by: zerocopy 0.8.59
+----- [221] used by: zerocopy 0.8.59
 
 Apache License
                            Version 2.0, January 2004
@@ -15283,7 +15396,7 @@ Apache License
    limitations under the License.
 
 
------ [220] used by: zerocopy 0.8.59
+----- [222] used by: zerocopy 0.8.59
 
 Copyright 2019 The Fuchsia Authors.
 
@@ -15311,7 +15424,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
------ [221] used by: zerocopy 0.8.59
+----- [223] used by: zerocopy 0.8.59
 
 Copyright 2023 The Fuchsia Authors
 
@@ -15340,7 +15453,7 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 
 
------ [222] used by: zeroize 1.9.0
+----- [224] used by: zeroize 1.9.0
 
 Copyright (c) 2018-2026 The RustCrypto Project Developers
 
@@ -15369,7 +15482,35 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 
 
------ [223] used by: zlib-rs 0.6.8
+----- [225] used by: zip 4.6.1
+
+The MIT License (MIT)
+
+Copyright (c) 2014 Mathijs van de Nes
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+Some files in the "tests/data" subdirectory of this repository are under other
+licences; see files named LICENSE.*.txt for details.
+
+
+----- [226] used by: zlib-rs 0.6.8
 
 (C) 2024 Trifecta Tech Foundation 
 
@@ -15392,7 +15533,7 @@ freely, subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 
 
------ [224] used by: zustand 5.0.15
+----- [227] used by: zustand 5.0.15
 
 MIT License
 

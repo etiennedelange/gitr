@@ -21,6 +21,9 @@ use std::sync::{Arc, Mutex, MutexGuard};
 
 use tokio::sync::{Mutex as AsyncMutex, OwnedMutexGuard, watch};
 
+/// How long closing the app or installing an update waits for running writes.
+pub const WRITES_LIMIT: std::time::Duration = std::time::Duration::from_secs(120);
+
 pub type BoxFuture = Pin<Box<dyn Future<Output = ()> + Send + 'static>>;
 /// Called with the repo and its displayed operation (`None` = idle) whenever that changes.
 pub type BusyFn = Arc<dyn Fn(&Path, Option<&'static str>) + Send + Sync>;
@@ -177,6 +180,24 @@ impl RepoOps {
         let held = lock.lock_owned().await;
         self.mark_running(&activity.key, activity.id);
         WriteGuard { _lock: held, _activity: activity }
+    }
+
+    /// Whether any repository has a write (commit, checkout, pull, …) running or queued.
+    pub fn writes_running(&self) -> bool {
+        self.repos().values().any(|r| r.writes_pending())
+    }
+
+    /// Waits until no repository has a write running or queued, but at most `limit`: a stuck git
+    /// (a hook waiting for input) must not hold things up forever. Returns whether they finished.
+    pub async fn writes_finished(&self, limit: std::time::Duration) -> bool {
+        let deadline = tokio::time::Instant::now() + limit;
+        while self.writes_running() {
+            if tokio::time::Instant::now() >= deadline {
+                return false;
+            }
+            tokio::time::sleep(std::time::Duration::from_millis(200)).await;
+        }
+        true
     }
 
     /// The operation of the write running (or first queued) on `path`, if any.
@@ -461,6 +482,25 @@ mod tests {
             t.await.unwrap();
         }
         assert_eq!(*order.lock().unwrap(), vec![0, 1, 2, 3, 4]);
+    }
+
+    #[tokio::test]
+    async fn writes_finished_waits_for_queued_and_running_writes() {
+        let h = harness(Duration::ZERO);
+        assert!(!h.ops.writes_running());
+        let _fetch = h.ops.activity(&repo("a"), "fetching");
+        assert!(!h.ops.writes_running(), "a fetch is not a write");
+        let first = h.ops.write(&repo("b"), "committing").await;
+        let ops = h.ops.clone();
+        let queued = tokio::spawn(async move {
+            let _g = ops.write(&repo("b"), "staging").await;
+            tokio::time::sleep(Duration::from_millis(100)).await;
+        });
+        tokio::time::sleep(Duration::from_millis(10)).await;
+        assert!(!h.ops.writes_finished(Duration::from_millis(50)).await, "gives up at the limit");
+        drop(first);
+        assert!(h.ops.writes_finished(Duration::from_secs(5)).await);
+        assert!(queued.is_finished(), "waited for the queued write too");
     }
 
     #[tokio::test]

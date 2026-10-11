@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test'
-import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
+import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useApp } from '../store'
 import type { Config } from '../types'
@@ -29,8 +29,11 @@ vi.mock('../api', () => ({
     refreshAll: vi.fn(() => Promise.resolve()),
     devtoolsAvailable: vi.fn(() => Promise.resolve(true)),
     openLogsFolder: vi.fn(() => Promise.resolve('C:\\logs')),
+    appVersion: vi.fn(() => Promise.resolve({ version: '0.2.0', channel: 'direct' })),
+    checkUpdate: vi.fn(() => Promise.resolve({ channel: 'direct', available: null })),
+    installUpdate: vi.fn(() => new Promise(() => {})),
   },
-  errorMessage: (e: unknown) => String(e),
+  errorMessage: (e: unknown) => (e instanceof Error ? e.message : String(e)),
   errorDetail: () => null,
   asCmdError: () => null,
 }))
@@ -65,7 +68,7 @@ describe('Settings zoom display', () => {
   it('lists every section in the nav', async () => {
     renderSettings()
     const nav = await screen.findByRole('navigation', { name: 'Settings sections' })
-    expect(nav.querySelectorAll('button')).toHaveLength(7)
+    expect(nav.querySelectorAll('button')).toHaveLength(8)
   })
 
   it('shows the current zoom and updates live without touching unsaved edits', async () => {
@@ -115,5 +118,50 @@ describe('Settings zoom display', () => {
     expect(api.openLogsFolder).toHaveBeenCalledTimes(1)
     // It is an action, not a setting: the form stays clean.
     expect(screen.getByRole('button', { name: 'Save' })).toBeDisabled()
+  })
+})
+
+describe('Settings updates', () => {
+  beforeEach(() => vi.clearAllMocks())
+  afterEach(cleanup)
+
+  const section = async () => {
+    renderSettings()
+    await screen.findByText('Gitr 0.2.0')
+    return document.getElementById('settings-updates')!
+  }
+
+  it('shows the version and says when Gitr is up to date', async () => {
+    const updates = await section()
+    await act(async () => fireEvent.click(within(updates).getByRole('button', { name: 'Check for updates' })))
+    expect(api.checkUpdate).toHaveBeenCalledTimes(1)
+    expect(await within(updates).findByText('Gitr is up to date.')).toHaveAttribute('role', 'status')
+    expect(within(updates).queryByRole('button', { name: 'Restart and update' })).toBeNull()
+    // An action, not a setting.
+    expect(screen.getByRole('button', { name: 'Save' })).toBeDisabled()
+  })
+
+  it('offers a newer version and installs it', async () => {
+    vi.mocked(api.checkUpdate).mockResolvedValueOnce({ channel: 'direct', available: { version: '0.3.0', notes: null, date: null } })
+    const updates = await section()
+    await act(async () => fireEvent.click(within(updates).getByRole('button', { name: 'Check for updates' })))
+    expect(await within(updates).findByText('Gitr 0.3.0 is available.')).toHaveAttribute('role', 'status')
+    await act(async () => fireEvent.click(within(updates).getByRole('button', { name: 'Restart and update' })))
+    expect(api.installUpdate).toHaveBeenCalledTimes(1)
+    expect(await within(updates).findByRole('button', { name: 'Updating…' })).toBeDisabled()
+  })
+
+  it('shows a failed check in place', async () => {
+    vi.mocked(api.checkUpdate).mockRejectedValueOnce(new Error("Couldn't check for updates: offline"))
+    const updates = await section()
+    await act(async () => fireEvent.click(within(updates).getByRole('button', { name: 'Check for updates' })))
+    expect(await within(updates).findByText("Couldn't check for updates: offline")).toHaveAttribute('role', 'status')
+  })
+
+  it('the Store build points to the Store and has no check button', async () => {
+    vi.mocked(api.appVersion).mockResolvedValueOnce({ version: '0.2.0', channel: 'store' })
+    const updates = await section()
+    expect(updates).toHaveTextContent('Updates come from the Microsoft Store.')
+    expect(within(updates).queryByRole('button', { name: 'Check for updates' })).toBeNull()
   })
 })

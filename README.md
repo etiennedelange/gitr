@@ -22,6 +22,12 @@ Built with Tauri 2 (Rust) and a React + TypeScript UI.
 
 ![History tab](docs/screenshots/history-light.png)
 
+## Install
+
+Download `Gitr_<version>_x64-setup.exe` from the latest [GitHub Release](https://github.com/etiennedelange/gitr/releases/latest) and run it. It installs for your user only, with no admin rights.
+
+The installer isn't code-signed yet, so the first time Windows SmartScreen says it "prevented an unrecognized app from starting". Choose **More info → Run anyway**. You only see this once: after that Gitr updates itself. When a new version is out, a bar at the top offers **Restart and update**, and **Settings → Updates** can check by hand.
+
 ## Features
 
 - Workspace groups: point at root folders, repositories are discovered automatically
@@ -34,6 +40,7 @@ Built with Tauri 2 (Rust) and a React + TypeScript UI.
 - Branches: checkout, create, delete
 - History of the current branch: what changed in each commit, what isn't pushed yet; revert a commit, or reset the branch back to one (changes kept, with Undo)
 - Auto-refresh on file changes
+- Updates itself: a new version is offered in the app and installed with one click
 
 ## Requirements
 
