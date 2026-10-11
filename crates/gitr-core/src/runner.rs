@@ -252,7 +252,7 @@ impl GitRunner {
             Ok::<_, std::io::Error>((status?, out?, err?))
         };
         // Declared after `child`, so it drops first: the tree is killed while git still runs.
-        let mut tree = ProcessTree { pid };
+        let mut tree = ProcessTree::new(pid);
         let (status, stdout, stderr) = match kind.timeout(self) {
             Some(limit) => tokio::time::timeout(limit, wait).await.map_err(|_| GitError::Timeout {
                 op: args.first().copied().unwrap_or("git").to_string(),
@@ -280,14 +280,34 @@ impl GitRunner {
 /// git itself, and a hung hook would keep running.
 struct ProcessTree {
     pid: Option<u32>,
+    /// On Windows, a job holding git: everything git starts joins it, which `taskkill /T` can't
+    /// match (see `job.rs`). None if Windows refused; `taskkill /T` is the fallback then.
+    #[cfg(windows)]
+    job: Option<crate::job::Job>,
+}
+
+impl ProcessTree {
+    fn new(pid: Option<u32>) -> Self {
+        Self {
+            pid,
+            // Right after spawning: git starts hooks and helpers only later, once it has read its
+            // config and the repository.
+            #[cfg(windows)]
+            job: pid.and_then(crate::job::Job::holding),
+        }
+    }
 }
 
 impl Drop for ProcessTree {
     fn drop(&mut self) {
-        if let Some(pid) = self.pid {
-            tracing::info!(target: "gitr::git", pid, "killing git process tree");
-            kill_tree(pid);
+        let Some(pid) = self.pid else { return };
+        tracing::info!(target: "gitr::git", pid, "killing git process tree");
+        #[cfg(windows)]
+        if let Some(job) = &self.job {
+            job.terminate();
+            return;
         }
+        kill_tree(pid);
     }
 }
 
