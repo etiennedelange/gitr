@@ -18,23 +18,39 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          # The PR's merge commit and its parents, for the check below (see the rust job).
+          fetch-depth: 2
+      # Markdown-only and release PRs: nothing to check here either (the UI formatter ignores *.md).
+      - name: Anything to test?
+        id: scope
+        if: github.event_name == 'pull_request'
+        run: echo "skip=$(node tools/release/release.mjs skip-ci HEAD^1 HEAD)" >> "$GITHUB_OUTPUT"
       # Same version as devEngines.packageManager in package.json.
       - uses: pnpm/action-setup@v6
+        if: steps.scope.outputs.skip != 'true'
         with:
           version: 12.8.1
       - uses: actions/setup-node@v7
+        if: steps.scope.outputs.skip != 'true'
         with:
           node-version: lts/*
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+        if: steps.scope.outputs.skip != 'true'
       # Format, lint and typecheck.
       - run: pnpm --filter ui exec vp check
+        if: steps.scope.outputs.skip != 'true'
       - run: pnpm --filter ui build
+        if: steps.scope.outputs.skip != 'true'
       - run: pnpm --filter ui test
+        if: steps.scope.outputs.skip != 'true'
       # Release and packaging scripts (tools/**/*.test.mjs).
       - run: pnpm test:tools
+        if: steps.scope.outputs.skip != 'true'
       # THIRD_PARTY_NOTICES.txt ships in the installer; the release no longer checks it, CI does.
       - run: pnpm notices:check
+        if: steps.scope.outputs.skip != 'true'
 
   rust:
     # Windows is the target platform; Linux matches the dev container; macOS keeps the non-Windows paths honest.
@@ -53,17 +69,17 @@ jobs:
           # is exactly the PR's change.
           fetch-depth: 2
 
-      # A release PR (`pnpm release`) only sets the version and dates the CHANGELOG; the code
-      # passed this job when it merged. The job still runs and passes, so the required checks
-      # report, but its steps are skipped. Anything else in the PR runs everything.
-      - name: Is this a version-only change?
+      # Nothing to test in a PR that only changes Markdown (docs, CHANGELOG) or is a release PR
+      # (`pnpm release`: the version bump; the code passed CI when it merged). The job still runs
+      # and passes, so the required checks report, but its steps are skipped.
+      - name: Anything to test?
         id: scope
         if: github.event_name == 'pull_request'
         shell: bash
         run: |
-          skip=$(node tools/release/release.mjs version-only HEAD^1 HEAD)
+          skip=$(node tools/release/release.mjs skip-ci HEAD^1 HEAD)
           echo "skip=$skip" >> "$GITHUB_OUTPUT"
-          [ "$skip" = true ] && echo "::notice::Only the version and the CHANGELOG changed; skipping the Rust build and tests."
+          [ "$skip" = true ] && echo "::notice::Only Markdown files or the release version changed; skipping the Rust build and tests."
           true
 
       # Tauri's build-time deps (linked by tao/wry/webkit2gtk); same list as .devcontainer/post-create.sh.

@@ -1,7 +1,7 @@
 // pnpm test:tools (node --test)
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { changelogSection, updaterManifest, versionOnlyChange } from './release.mjs';
+import { changelogSection, nothingToTest, updaterManifest, versionOnlyChange } from './release.mjs';
 
 test('latest.json points at the release asset and carries the signature', () => {
   const manifest = updaterManifest({
@@ -62,4 +62,17 @@ test('versionOnlyChange refuses anything else', () => {
   // A file deleted, and an empty change.
   assert.equal(check(['Cargo.lock'], {}), false);
   assert.equal(check([], {}), false);
+});
+
+test('nothingToTest skips Markdown-only changes and release bumps, nothing else', () => {
+  const [b, a] = sides({ 'Cargo.toml': toml('0.1.1'), 'Cargo.lock': lock('0.1.1') }, { 'Cargo.toml': toml('0.1.2'), 'Cargo.lock': lock('0.1.2') });
+  assert.equal(nothingToTest(['README.md', 'docs/releasing.md', 'ui/src/preview/README.md'], b, a), true);
+  assert.equal(nothingToTest(['CHANGELOG.md', 'Cargo.toml', 'Cargo.lock'], b, a), true);
+  assert.equal(nothingToTest(['docs/releasing.md', 'Cargo.toml'], b, a), true);
+  // Anything else runs CI: code, workflows, screenshots, a .md-looking name that isn't one.
+  assert.equal(nothingToTest(['README.md', 'src-tauri/src/lib.rs'], b, a), false);
+  assert.equal(nothingToTest(['.github/workflows/ci.yml'], b, a), false);
+  assert.equal(nothingToTest(['docs/screenshots/dashboard-light.png'], b, a), false);
+  assert.equal(nothingToTest(['notes.md.txt'], b, a), false);
+  assert.equal(nothingToTest([], b, a), false);
 });
