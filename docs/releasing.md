@@ -15,15 +15,18 @@ The head branch is deleted after merging. Run `git fetch --prune` and delete you
 
 The version lives in one place: `version` under `[workspace.package]` in `Cargo.toml`. `tauri.conf.json` has no version, so Tauri reads it from there.
 
-1. On a branch, `pnpm release:version 1.2.0`. It sets the version, updates `Cargo.lock`, and turns the CHANGELOG's `[Unreleased]` entries into a dated `## [1.2.0]` section.
-2. PR it ("Release 1.2.0") and squash-merge it.
-3. Tag the merged commit and push the tag:
+```sh
+pnpm release 1.2.0
+```
 
-   ```sh
-   git switch main && git pull
-   git tag v1.2.0
-   git push origin v1.2.0
-   ```
+It checks first: no uncommitted changes to tracked files, `gh` signed in, `v1.2.0` not tagged yet and not older than the newest tag, and entries under the CHANGELOG's `[Unreleased]`. After you confirm, it does what you'd otherwise do by hand:
+
+1. On a `release/1.2.0` branch from `origin/main`, `pnpm release:version 1.2.0` sets the version, updates `Cargo.lock`, and turns the `[Unreleased]` entries into a dated `## [1.2.0]` section. It commits that as "Release 1.2.0" (signed, if your git signs commits) and pushes it.
+2. It opens the PR "Release 1.2.0" with the `skip-changelog` label and turns on squash auto-merge, so the PR merges itself once CI is green.
+3. It waits for the merge, tags the merge commit `v1.2.0`, pushes the tag, and switches you back to an up-to-date `main`.
+4. It follows the Release workflow below and prints the release page.
+
+Ctrl+C is safe at any point. Run the same command again and it carries on from where it stopped (branch pushed, PR open, PR merged, tag pushed). `--yes` skips the question. If CI fails, fix it on the release branch and run it again.
 
 `.github/workflows/release.yml` then:
 
@@ -46,6 +49,8 @@ One binary, two ways to get it:
 | Package     | NSIS `-setup.exe`, not code-signed                           | MSIX, signed by Microsoft               |
 | Updates     | the in-app updater; update packages signed with our own key  | the Store; the in-app updater is off    |
 | SmartScreen | warns once, on first install ("More info → Run anyway")      | never                                   |
+
+**The Microsoft Store channel isn't built yet.** It was shelved on 2026-10-11, so GitHub Releases is the only way to get Gitr for now. The app already detects an MSIX package (below), so the Store build needs only the packaging.
 
 Gitr knows which one it is by asking Windows whether it runs inside an MSIX package (`update::packaged()` in `src-tauri/src/update.rs`). Inside one, Settings → Updates says "Updates come from the Microsoft Store", there is no update banner, and the update commands touch no network.
 

@@ -5,8 +5,6 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
-## [0.1.0] - 2026-10-11
-
 ### Changed
 - **New look: the ledger.** A cooler, denser window with one violet accent that no longer looks like the blue used for "behind". The dashboard puts repositories that need you in a **Needs attention** band above the rest, its filters (All, Attention, Changes, Behind, Ahead) say how many repositories each would show, and a Behind / Ahead column draws incoming commits to the left of a centre line and outgoing ones to the right. Rows offer Pull, Open in VS Code and the repository menu on hover; Shift+F10 or the menu key opens the menu for the selected row, and Ctrl+F jumps to the search. In a repository, Pull or Push is highlighted when it's the next thing to do, the branch name opens the Branches tab, and the commit button says what it will do ("Commit 3 files to main"). The sidebar's Dashboard item counts the repositories that need attention.
 - **The quiet workbench.** One continuous window instead of floating cards on a dotted ground: a soft warm-grey sidebar beside a flat work surface, divided by hairlines. A repository's state is a small mark and a coloured numeral (±, ↓, ↑) instead of a filled chip, the open tab has a thin indigo underline, and the typeface is Hanken Grotesk (bundled).

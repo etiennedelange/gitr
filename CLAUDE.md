@@ -2,7 +2,7 @@
 
 ## Branches and releases
 
-Work on a short branch (`feature/…`, `fix/…`) and land it on `main` through a PR with Squash and merge; never push to `main` directly. The PR title becomes the commit on `main` and the release-notes line. The app version lives only in `Cargo.toml`'s `[workspace.package]`; change it with `pnpm release:version`. See `docs/releasing.md`.
+Work on a short branch (`feature/…`, `fix/…`) and land it on `main` through a PR with Squash and merge; never push to `main` directly. The PR title becomes the commit on `main` and the release-notes line. The app version lives only in `Cargo.toml`'s `[workspace.package]`; change it with `pnpm release:version`, or release with `pnpm release <version>`, which does every step. See `docs/releasing.md`.
 
 ## Screenshots stay current (required)
 

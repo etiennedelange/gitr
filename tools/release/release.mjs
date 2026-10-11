@@ -29,13 +29,13 @@ function fail(message) {
   process.exit(1);
 }
 
-function readVersion() {
+export function readVersion() {
   const match = readFileSync(cargoToml, 'utf8').match(WORKSPACE_VERSION);
   if (!match) fail('no version in [workspace.package] in Cargo.toml');
   return match[2];
 }
 
-function parseVersion(arg) {
+export function parseVersion(arg) {
   const version = (arg ?? '').replace(/^v/, '');
   if (!SEMVER.test(version)) fail(`"${arg ?? ''}" is not a version like 1.2.0 or 1.2.0-beta.1`);
   return version;
@@ -75,7 +75,7 @@ export function updaterManifest({ version, notes, exe, signature, date = new Dat
   };
 }
 
-function setVersion(version) {
+export function setVersion(version) {
   const current = readVersion();
   writeFileSync(cargoToml, readFileSync(cargoToml, 'utf8').replace(WORKSPACE_VERSION, `$1${version}$3`));
   // Updates only the workspace crates' entries in Cargo.lock.

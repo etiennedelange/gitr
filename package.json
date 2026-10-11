@@ -12,7 +12,8 @@
     "screenshots": "node tools/screenshots/capture.mjs",
     "notices": "node tools/notices/generate.mjs",
     "notices:check": "node tools/notices/generate.mjs --check",
-    "release:version": "node tools/release/release.mjs version"
+    "release:version": "node tools/release/release.mjs version",
+    "release": "node tools/release/ship.mjs"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2.12.1",
