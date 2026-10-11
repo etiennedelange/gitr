@@ -6,7 +6,7 @@
 
 1. Branch from `main`: `feature/<topic>` or `fix/<topic>` (`design/…`, `chore/…` are fine too).
 2. Commit as often as you like; the branch's commits are squashed away.
-3. Open a PR. CI (`.github/workflows/ci.yml`) runs the UI checks and the Rust tests on Windows, Linux and macOS. Go through the template's self-review checklist and look at the diff on GitHub.
+3. Open a PR. CI (`.github/workflows/ci.yml`) runs the UI checks and the Rust tests on Windows, Linux and macOS. A PR that only changes Markdown files (or is a release PR) skips them: `release.mjs skip-ci` decides, and the jobs still report success so the PR can merge. Go through the template's self-review checklist and look at the diff on GitHub.
 4. **Squash and merge.** The PR title becomes the commit subject on `main` and the line in the release notes, so write it as one: "Add folder from the main window", not "wip". Label it `feature`, `bug` or `skip-changelog` to sort it in the notes (`.github/release.yml`).
 
 The head branch is deleted after merging. Run `git fetch --prune` and delete your local copy with `git branch -D <branch>`. Use `-D` because a squash merge doesn't look merged to git.
@@ -22,7 +22,7 @@ pnpm release 1.2.0
 It checks first: no uncommitted changes to tracked files, `gh` signed in, `v1.2.0` not tagged yet and not older than the newest tag, and entries under the CHANGELOG's `[Unreleased]`. After you confirm, it does what you'd otherwise do by hand:
 
 1. On a `release/1.2.0` branch from `origin/main`, `pnpm release:version 1.2.0` sets the version, updates `Cargo.lock`, and turns the `[Unreleased]` entries into a dated `## [1.2.0]` section. It commits that as "Release 1.2.0" (signed, if your git signs commits) and pushes it.
-2. It opens the PR "Release 1.2.0" with the `skip-changelog` label and turns on squash auto-merge, so the PR merges itself once CI is green. CI recognises a version-only change (`release.mjs version-only`: only the version in `Cargo.toml` and the workspace crates in `Cargo.lock`, plus the CHANGELOG) and skips the Rust build and tests, which already passed when the code merged; the `rust (…)` checks still report success. Any other change on the release branch gets the full run.
+2. It opens the PR "Release 1.2.0" with the `skip-changelog` label and turns on squash auto-merge, so the PR merges itself once CI is green. CI recognises a version-only change (only the version in `Cargo.toml` and the workspace crates in `Cargo.lock`, plus the CHANGELOG) and skips its build and test steps, which already passed when the code merged; the required checks still report success. Any other change on the release branch gets the full run.
 3. It waits for the merge (checking every 10 seconds), tags the merge commit `v1.2.0`, pushes the tag, and switches you back to an up-to-date `main`.
 4. It follows the Release workflow below and prints the release page.
 

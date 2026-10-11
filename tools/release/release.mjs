@@ -6,9 +6,9 @@
 //   node tools/release/release.mjs notes 0.2.0     print that version's CHANGELOG section (release notes)
 //   node tools/release/release.mjs updater-manifest 0.2.0 <setup.exe> <setup.exe.sig>
 //                                                  print latest.json for the in-app updater
-//   node tools/release/release.mjs version-only <base> <head>
-//                                                  print true if base..head only changes the version
-//                                                  and the CHANGELOG (a release PR; CI skips it)
+//   node tools/release/release.mjs skip-ci <base> <head>
+//                                                  print true if base..head changes nothing CI tests:
+//                                                  only Markdown files, or a release's version bump
 //
 // The version lives in one place, [workspace.package] in Cargo.toml. tauri.conf.json has no
 // version, so Tauri takes it from src-tauri's Cargo.toml, which inherits the workspace one.
@@ -106,6 +106,14 @@ export function versionOnlyChange(files, before, after) {
   );
 }
 
+// Whether CI has nothing to build or test in a change: it touches only Markdown files (docs,
+// the CHANGELOG; the UI formatter ignores *.md too), plus at most a release's version bump.
+export function nothingToTest(files, before, after) {
+  if (!files.length) return false;
+  const rest = files.filter((f) => !f.toLowerCase().endsWith('.md'));
+  return !rest.length || versionOnlyChange(rest, before, after);
+}
+
 export function setVersion(version) {
   const current = readVersion();
   writeFileSync(cargoToml, readFileSync(cargoToml, 'utf8').replace(WORKSPACE_VERSION, `$1${version}$3`));
@@ -152,9 +160,9 @@ function main([command, arg, ...rest]) {
       console.log(JSON.stringify(manifest, null, 2));
       break;
     }
-    case 'version-only': {
+    case 'skip-ci': {
       const [base, head] = [arg, rest[0]];
-      if (!base || !head) fail('usage: release.mjs version-only <base> <head>');
+      if (!base || !head) fail('usage: release.mjs skip-ci <base> <head>');
       const git = (...args) => execFileSync('git', args, { cwd: root, encoding: 'utf8' });
       const show = (rev) => (file) => {
         try {
@@ -164,11 +172,11 @@ function main([command, arg, ...rest]) {
         }
       };
       const files = git('diff', '--name-only', base, head).split('\n').filter(Boolean);
-      console.log(versionOnlyChange(files, show(base), show(head)));
+      console.log(nothingToTest(files, show(base), show(head)));
       break;
     }
     default:
-      fail('usage: release.mjs version <x.y.z> | check <vX.Y.Z> | notes <x.y.z> | updater-manifest <x.y.z> <exe> <sig> | version-only <base> <head>');
+      fail('usage: release.mjs version <x.y.z> | check <vX.Y.Z> | notes <x.y.z> | updater-manifest <x.y.z> <exe> <sig> | skip-ci <base> <head>');
   }
 }
 
