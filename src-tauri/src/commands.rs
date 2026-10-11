@@ -1325,4 +1325,80 @@ mod tests {
             assert!(locks(&b) == 0 && !b.contains("ops"), "read command {name} must not wait on writes");
         }
     }
+
+    /// Diagnostic, Windows CI only (`-- --ignored --nocapture`); not a regression test. On
+    /// Windows the two Stop tests above take ~60 s although Stop itself returns at once. This
+    /// replays `stop_ends_a_hung_hook_and_queued_writes` and reports whether the hook's
+    /// processes survive Stop, and whether the runtime's shutdown waits for them.
+    #[cfg(windows)]
+    #[test]
+    #[ignore = "diagnostic; run explicitly on Windows"]
+    fn diag_windows_stop_leaves_hook_processes() {
+        use std::time::Instant;
+        let t0 = Instant::now();
+        let at = || format!("+{:>5.1}s", t0.elapsed().as_secs_f64());
+        // git, its MSYS shells and sleep: pid, parent, whether the parent still exists (taskkill
+        // /T only reaches processes whose parent chain leads back to git), command line.
+        let snapshot = |label: &str| -> Vec<u32> {
+            let script = "$all = Get-CimInstance Win32_Process; $ids = $all.ProcessId; \
+                $all | Where-Object { $_.Name -in 'git.exe','sh.exe','bash.exe','sleep.exe' } | \
+                ForEach-Object { '{0,6} parent {1,6} parent-alive={2,-5} {3,-9} {4}' -f \
+                $_.ProcessId, $_.ParentProcessId, ($ids -contains $_.ParentProcessId), $_.Name, $_.CommandLine }";
+            let out = std::process::Command::new("powershell.exe")
+                .args(["-NoProfile", "-NonInteractive", "-Command", script])
+                .output()
+                .map(|o| String::from_utf8_lossy(&o.stdout).into_owned())
+                .unwrap_or_else(|e| format!("(powershell failed: {e})"));
+            println!("[diag] {} processes {label}:", at());
+            for line in out.lines().filter(|l| !l.trim().is_empty()) {
+                println!("[diag]     {line}");
+            }
+            out.lines()
+                .filter(|l| l.contains("sleep.exe"))
+                .filter_map(|l| l.split_whitespace().next()?.parse().ok())
+                .collect()
+        };
+
+        let (_t, repo, _remote) = cloned_repo();
+        let rt = tokio::runtime::Builder::new_multi_thread().enable_all().build().unwrap();
+        let sleepers = rt.block_on(async {
+            let (ops, git) = (ops(), git());
+            let hook = repo.join(".git/hooks/pre-commit");
+            std::fs::write(&hook, "#!/bin/sh\necho > .git/hook-started\nsleep 60\n").unwrap();
+            std::fs::write(repo.join("f.txt"), "2\n").unwrap();
+            git_cmd(&repo, &["add", "f.txt"]);
+
+            let (o, g, p) = (ops.clone(), git.clone(), repo.clone());
+            let commit = tokio::spawn(async move { write_op(&o, &g, &p, "committing", g.commit(&p, "hung", false)).await });
+            wait_for(&repo.join(".git/hook-started")).await;
+            println!("[diag] {} hook started", at());
+            snapshot("before Stop");
+
+            let stopped = Instant::now();
+            assert!(ops.cancel(&repo));
+            let result = commit.await.unwrap();
+            println!("[diag] {} Stop returned after {:?}: {:?}", at(), stopped.elapsed(), result.map_err(|e| e.message));
+            let right_after = snapshot("right after Stop");
+            tokio::time::sleep(Duration::from_secs(2)).await;
+            let later = snapshot("2 s after Stop");
+            println!("[diag] sleep.exe right after Stop: {right_after:?}; 2 s later: {later:?}");
+            later
+        });
+
+        // If a surviving sleep.exe holds git's output pipe, a blocking pipe read is still running
+        // on the runtime's blocking pool, and shutdown waits for it. Kill the survivors after 5 s:
+        // shutdown then ends after ~5 s if they were what it waited for, ~0 s if nothing waited.
+        let killer = std::thread::spawn(move || {
+            std::thread::sleep(Duration::from_secs(5));
+            for pid in &sleepers {
+                let _ = std::process::Command::new("taskkill.exe").args(["/F", "/PID", &pid.to_string()]).output();
+            }
+            println!("[diag] killed leftover sleep.exe {sleepers:?} 5 s into shutdown");
+        });
+        let shutdown = Instant::now();
+        rt.shutdown_timeout(Duration::from_secs(90));
+        println!("[diag] {} runtime shutdown took {:?}", at(), shutdown.elapsed());
+        killer.join().unwrap();
+        snapshot("at the end");
+    }
 }

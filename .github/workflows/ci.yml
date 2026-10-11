@@ -67,3 +67,8 @@ jobs:
         shell: bash
       # Keep going after a failing test binary, so one run shows every platform failure.
       - run: cargo test --workspace --locked --no-fail-fast
+      # Temporary (diag/windows-stop): does Stop leave a hung hook's processes running on Windows?
+      - name: Diagnostic - Stop and hook processes on Windows
+        if: runner.os == 'Windows'
+        continue-on-error: true
+        run: cargo test -p gitr --lib --locked diag_windows_stop -- --ignored --nocapture
