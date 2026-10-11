@@ -293,3 +293,25 @@ export interface ResetPreview {
   /** Of those, already on the upstream. */
   onUpstream: number
 }
+
+/** Where updates come from: the direct download updates itself, the Microsoft Store build doesn't. */
+export type UpdateChannel = 'direct' | 'store'
+
+export interface AppVersion {
+  version: string
+  channel: UpdateChannel
+}
+
+export interface UpdateInfo {
+  version: string
+  /** The release's CHANGELOG section. */
+  notes: string | null
+  /** RFC 3339. */
+  date: string | null
+}
+
+export interface UpdateCheck {
+  channel: UpdateChannel
+  /** null when this is the latest version (always for the Store channel). */
+  available: UpdateInfo | null
+}

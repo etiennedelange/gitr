@@ -974,7 +974,8 @@ ul:focus-visible,
 }
 .banner.operation,
 .banner.signin,
-.banner.git {
+.banner.git,
+.banner.update {
   display: flex;
   align-items: center;
   gap: var(--s4);
@@ -992,7 +993,8 @@ ul:focus-visible,
 }
 .banner.operation .lucide,
 .banner.signin .lucide,
-.banner.git .lucide {
+.banner.git .lucide,
+.banner.update .lucide {
   flex: none;
   width: 15px;
   height: 15px;
@@ -1001,18 +1003,27 @@ ul:focus-visible,
 .banner.operation .lucide {
   color: var(--ink-2);
 }
+/* News, not a warning. */
+.banner.update {
+  background: var(--blue-soft);
+}
+.banner.update .lucide {
+  color: var(--blue-ink);
+}
 .banner.operation.conflicted .lucide,
 .banner.operation.conflicted .operation-text .muted {
   color: var(--red-ink);
 }
 .banner.operation .operation-text,
-.banner.signin .signin-text {
+.banner.signin .signin-text,
+.banner.update .update-text {
   flex: 1;
   min-width: 0;
   font-weight: 600;
 }
 .banner.operation .operation-text .muted,
-.banner.signin .signin-text .muted {
+.banner.signin .signin-text .muted,
+.banner.update .update-text .muted {
   margin-left: var(--s4);
   font-weight: 400;
 }

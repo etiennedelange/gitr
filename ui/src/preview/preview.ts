@@ -348,6 +348,16 @@ function handle(cmd: string, args: unknown): unknown {
       announce(path)
       return null
     }
+    case 'app_version':
+      return { version: '0.2.0', channel: params.get('update') === 'store' ? 'store' : 'direct' }
+    case 'check_update':
+      return updateCheck()
+    case 'install_update':
+      // The app exits here and the installer restarts it; the preview shows Updating… for a while.
+      return new Promise((_, reject) => setTimeout(() => reject(new Error('The preview does not install updates')), 3000))
+    case 'open_release_page':
+      if (!inApp) window.open(`https://github.com/etiennedelange/gitr/releases/tag/v${a.version as string}`, '_blank')
+      return null
     case 'plugin:dialog|message': {
       // Browser preview: a native dialog isn't available, so confirm() answers it (the app
       // window keeps the real dialogs). Returns the label of the chosen button, as Tauri does.
@@ -385,12 +395,28 @@ function gitLocation() {
   return { path: 'C:/Program Files/Git/cmd/git.exe', version: '2.55.0.windows.1', problem: null, settingIgnored: false }
 }
 
+/** ?update=available|error|store: the startup check (5 s after load) and Settings → Updates. */
+function updateCheck() {
+  const update = params.get('update')
+  if (update === 'error')
+    throw new Error(
+      "Couldn't check for updates: error sending request for url (https://github.com/etiennedelange/gitr/releases/latest/download/latest.json)",
+    )
+  if (update === 'store') return { channel: 'store', available: null }
+  if (update !== 'available') return { channel: 'direct', available: null }
+  return {
+    channel: 'direct',
+    available: { version: '0.3.0', notes: '### Added\n\n- Update Gitr from inside the app.', date: '2026-10-11T09:00:00Z' },
+  }
+}
+
 // URL parameters (all optional), handy for bookmarks and screenshots:
 //   scenario=default|many|errors|clean|empty   theme=light|dark   chrome=0 (hide the toolbar)
 //   view=repo|settings   repo=<name>   tab=history|branches   file=<path suffix>   message=<commit message>
 //   revert=conflict (History: Revert stops on a conflict)   history=slow|error (History loading / error)
 //   git=missing|old (git banner)   toast=non-fast-forward|lock|dubious-ownership|auth (error toast)
 //   hooks=pass|fail (simulated commit and push hooks)   signin=expired (batches need a sign-in)
+//   update=available|error|store (update banner and Settings → Updates)
 const theme = params.get('theme')
 if (theme === 'light' || theme === 'dark') localStorage.setItem('theme', theme)
 

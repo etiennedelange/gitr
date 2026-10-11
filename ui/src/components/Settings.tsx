@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { FolderPlus, Plus, X } from 'lucide-react'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { open } from '@tauri-apps/plugin-dialog'
 import { api, errorMessage } from '../api'
 import { notifyError, useConfig, useRescan } from '../hooks'
@@ -16,6 +16,7 @@ const SECTIONS = [
   { id: 'git', label: 'Git' },
   { id: 'copilot', label: 'Copilot' },
   { id: 'appearance', label: 'Appearance' },
+  { id: 'updates', label: 'Updates' },
   { id: 'developer', label: 'Developer' },
   { id: 'shortcuts', label: 'Shortcuts' },
 ]
@@ -46,6 +47,45 @@ function IntInput({ value, min, max, onChange }: { value: number; min: number; m
         setRaw(null)
       }}
     />
+  )
+}
+
+/** The running version, and a manual update check (its result also feeds the update banner). */
+function UpdatesSection() {
+  const qc = useQueryClient()
+  const version = useQuery({ queryKey: ['appVersion'], queryFn: api.appVersion, staleTime: Infinity })
+  const check = useMutation({ mutationFn: api.checkUpdate, onSuccess: (r) => qc.setQueryData(['updateCheck'], r) })
+  const install = useMutation({ mutationFn: api.installUpdate, onError: notifyError })
+  const store = version.data?.channel === 'store'
+  const available = check.data?.available
+  return (
+    <section id="settings-updates">
+      <h2>Updates</h2>
+      <p>{version.data ? `Gitr ${version.data.version}` : ''}</p>
+      {store ? (
+        <p className="muted">Updates come from the Microsoft Store.</p>
+      ) : (
+        <div className="field">
+          <button disabled={check.isPending || install.isPending || !version.data} onClick={() => check.mutate()}>
+            {check.isPending ? 'Checking…' : 'Check for updates'}
+          </button>
+          <span role="status" className={check.isError ? 'error-text' : 'muted'}>
+            {check.isError
+              ? errorMessage(check.error)
+              : available
+                ? `Gitr ${available.version} is available.`
+                : check.isSuccess
+                  ? 'Gitr is up to date.'
+                  : ''}
+          </span>
+          {available && (
+            <button className="primary" disabled={install.isPending} onClick={() => install.mutate()}>
+              {install.isPending ? 'Updating…' : 'Restart and update'}
+            </button>
+          )}
+        </div>
+      )}
+    </section>
   )
 }
 
@@ -390,6 +430,8 @@ function SettingsForm({ saved }: { saved: Config }) {
               Zoom: {zoom}% <span className="muted">— Ctrl + scroll to change</span>
             </p>
           </section>
+
+          <UpdatesSection />
 
           <section id="settings-developer">
             <h2>Developer</h2>

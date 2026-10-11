@@ -45,6 +45,8 @@ const SCENES = {
   split: { scenario: 'default', view: 'repo', repo: 'billing-service', file: 'InvoiceExporter.cs', diff: 'split' },
   conflict: { scenario: 'default', view: 'repo', repo: 'identity-server' },
   'first-run': { scenario: 'empty' },
+  // `wait` is not a preview parameter: the update check runs 5 s after startup.
+  update: { scenario: 'default', update: 'available', wait: 5800 },
 }
 
 // Cascadia Mono isn't on macOS or Linux; Google Fonts has it, so diffs look as they do on Windows.
@@ -57,7 +59,7 @@ const LOOK = {
   dark: { bar: '#202020', ink: '#ffffff', glows: ['#3d4a3c', '#3a4380'], base: '#101210' },
 }
 
-async function captureRaw(browser, url, theme, { diff, ...params }, out) {
+async function captureRaw(browser, url, theme, { diff, wait, ...params }, out) {
   const ctx = await browser.newContext({ viewport: { width: W, height: CLIENT_H }, deviceScaleFactor: 2 })
   if (diff) await ctx.addInitScript((mode) => localStorage.setItem('diffMode', mode), diff)
   const page = await ctx.newPage()
@@ -67,7 +69,7 @@ async function captureRaw(browser, url, theme, { diff, ...params }, out) {
   await page.evaluate(() => document.fonts.ready)
   await page.waitForSelector('#root > *')
   // The preview selects the file and fills the commit box after 400 ms; let that and the diff land.
-  await page.waitForTimeout(params.view === 'repo' ? 1200 : 600)
+  await page.waitForTimeout(wait ?? (params.view === 'repo' ? 1200 : 600))
   await page.mouse.move(W - 5, CLIENT_H - 5)
   await page.screenshot({ path: out })
   await ctx.close()

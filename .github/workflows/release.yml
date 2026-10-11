@@ -1,7 +1,8 @@
 name: Release
 
 # Pushing a version tag (v1.2.0, or v1.2.0-beta.1 for a pre-release) on main builds the
-# Windows NSIS installer and publishes a GitHub Release with it. See docs/releasing.md.
+# Windows NSIS installer and publishes a GitHub Release with it, plus latest.json for the
+# in-app updater. See docs/releasing.md.
 on:
   push:
     tags: ['v[0-9]+.[0-9]+.[0-9]+*']
@@ -54,6 +55,14 @@ jobs:
           echo "version=$version" >> "$GITHUB_OUTPUT"
           node tools/release/release.mjs notes "$version" > "$RUNNER_TEMP/notes.md"
 
+      # Installed copies check updates against this key; a placeholder would make every update fail.
+      - name: Check the updater public key is set
+        run: |
+          if grep -q REPLACE_WITH_THE_PUBLIC_KEY src-tauri/tauri.conf.json; then
+            echo "::error::plugins.updater.pubkey in tauri.conf.json is still a placeholder. See docs/releasing.md."
+            exit 1
+          fi
+
       # Same version as devEngines.packageManager in package.json.
       - uses: pnpm/action-setup@v6
         with:
@@ -82,11 +91,19 @@ jobs:
       - run: pnpm notices:check
 
       # beforeBuildCommand builds the UI first. The rm keeps a cached old installer out.
-      - run: |
+      # The key signs the updater's copy of the installer (-setup.exe.sig); see docs/releasing.md.
+      - env:
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+        run: |
+          if [ -z "$TAURI_SIGNING_PRIVATE_KEY" ]; then
+            echo "::error::The TAURI_SIGNING_PRIVATE_KEY secret is not set. See docs/releasing.md."
+            exit 1
+          fi
           rm -rf target/release/bundle
           pnpm tauri build --bundles nsis
 
-      - name: Collect the installer
+      - name: Collect the installer, its signature and latest.json
         env:
           VERSION: ${{ steps.version.outputs.version }}
         run: |
@@ -101,8 +118,16 @@ jobs:
             echo "::error::${files[0]} is not version $VERSION"
             exit 1
           fi
+          if [ ! -f "${files[0]}.sig" ]; then
+            echo "::error::No updater signature ${files[0]}.sig"
+            exit 1
+          fi
           mkdir -p dist
-          cp "${files[0]}" dist/
+          cp "${files[0]}" "${files[0]}.sig" dist/
+          # The in-app updater reads releases/latest/download/latest.json. GitHub's "latest"
+          # skips pre-releases, so a pre-release never reaches installed copies.
+          node tools/release/release.mjs updater-manifest "$VERSION" "${files[0]}" "${files[0]}.sig" > dist/latest.json
+          cat dist/latest.json
           cd dist
           sha256sum -- *.exe > SHA256SUMS.txt
           cat SHA256SUMS.txt

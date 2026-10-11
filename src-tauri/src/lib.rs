@@ -9,6 +9,7 @@ mod native;
 mod ops;
 mod recycle;
 mod state;
+mod update;
 mod watcher;
 
 use tauri::{Emitter, Manager};
@@ -24,6 +25,7 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_updater::Builder::new().build())
         .manage(state::AppState::load())
         .manage(watcher::FocusGate::default())
         .setup(|app| {
@@ -65,17 +67,13 @@ pub fn run() {
             // half-updated worktree, so a close request waits for running writes to finish.
             if let tauri::WindowEvent::CloseRequested { api, .. } = event {
                 let ops = window.app_handle().state::<ops::RepoOps>().inner().clone();
-                if writes_running(&ops) {
+                if ops.writes_running() {
                     api.prevent_close();
                     let window = window.clone();
                     let title = window.title().unwrap_or_else(|_| "Gitr".into());
                     let _ = window.set_title("Gitr - finishing before closing…");
                     tauri::async_runtime::spawn(async move {
-                        // Not forever: a stuck git (a hook waiting for input) must not trap the user.
-                        let deadline = std::time::Instant::now() + std::time::Duration::from_secs(120);
-                        while writes_running(&ops) && std::time::Instant::now() < deadline {
-                            tokio::time::sleep(std::time::Duration::from_millis(200)).await;
-                        }
+                        ops.writes_finished(ops::WRITES_LIMIT).await;
                         let _ = window.set_title(&title);
                         let _ = window.destroy();
                     });
@@ -136,6 +134,10 @@ pub fn run() {
             commands::cancel_operation,
             commands::refresh_repo,
             commands::list_models,
+            update::app_version,
+            update::check_update,
+            update::install_update,
+            update::open_release_page,
         ])
         .build(context())
         .expect("error while building Gitr")
@@ -173,9 +175,4 @@ fn context() -> tauri::Context<tauri::Wry> {
         context.config_mut().build.dev_url = Some(url);
     }
     context
-}
-
-/// Whether any repository has a write (commit, checkout, pull, …) running or queued.
-fn writes_running(ops: &ops::RepoOps) -> bool {
-    ops.busy_repos().iter().any(|(path, _)| ops.busy_write(path).is_some())
 }
