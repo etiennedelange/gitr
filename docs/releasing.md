@@ -89,7 +89,7 @@ Put the public key (`~/.tauri/gitr-updater.key.pub`, one line) into `plugins.upd
 
 **Back up the private key and its password** somewhere outside this machine, such as a password manager. Without them no installed copy can ever be updated again: their users would have to download a new installer by hand. Changing the key works the same way: the copies that trust the old key don't accept updates signed with the new one.
 
-The release job fails early when the secret is missing. `release-cache.yml` has no secrets, so it builds with `createUpdaterArtifacts` turned off. A local `pnpm tauri build` needs the key in `TAURI_SIGNING_PRIVATE_KEY`, or the same `--config '{"bundle":{"createUpdaterArtifacts":false}}'`.
+The release job fails early when the secret is missing. `release-cache.yml` has no secrets, so it builds with `createUpdaterArtifacts` turned off. A local `pnpm tauri build` needs the key in `TAURI_SIGNING_PRIVATE_KEY`, or the same `--config src-tauri/tauri.no-updater.conf.json`.
 
 ## Build speed and caching
 
