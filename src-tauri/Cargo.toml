@@ -1,0 +1,37 @@
+[package]
+name = "gitr"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lib]
+name = "gitr_app"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+gitr-core.workspace = true
+gitr-remote.workspace = true
+gitr-ai.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+tokio.workspace = true
+tauri = { version = "2", features = ["devtools"] }
+tauri-plugin-opener = "2"
+tauri-plugin-dialog = "2"
+toml = "1.1"
+notify-debouncer-mini = "0.7"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt"] }
+tracing-appender = "0.2"
+trash = "5"
+
+[target.'cfg(windows)'.dependencies]
+# Pinned to the versions Tauri uses; needed to turn off WebView2 browser behaviours.
+webview2-com = "0.39"
+windows-core = "0.62"
+
+[dev-dependencies]
+tempfile.workspace = true

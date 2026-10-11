@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ui:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      # Same version as devEngines.packageManager in package.json.
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 12.8.1
+      - uses: actions/setup-node@v7
+        with:
+          node-version: lts/*
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      # Format, lint and typecheck.
+      - run: pnpm --filter ui exec vp check
+      - run: pnpm --filter ui build
+      - run: pnpm --filter ui test
+
+  rust:
+    # Windows is the target platform; Linux matches the dev container; macOS keeps the non-Windows paths honest.
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    env:
+      # No debug info: faster compiling and linking, and a smaller cache.
+      CARGO_PROFILE_DEV_DEBUG: 0
+    steps:
+      - uses: actions/checkout@v7
+
+      # Tauri's build-time deps (linked by tao/wry/webkit2gtk); same list as .devcontainer/post-create.sh.
+      - name: Install system packages
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libgtk-3-dev librsvg2-dev \
+            libayatana-appindicator3-dev libssl-dev libxdo-dev patchelf pkg-config
+
+      - uses: dtolnay/rust-toolchain@stable
+      # PRs restore main's cache but don't save their own, so they can't push main's out of
+      # the 10 GB cache limit.
+      - uses: Swatinem/rust-cache@v2
+        with:
+          save-if: ${{ github.ref == 'refs/heads/main' }}
+
+      # tauri::generate_context! needs the frontendDist folder to exist; the tests don't need the UI in it.
+      - run: mkdir -p ui/dist
+        shell: bash
+      # Keep going after a failing test binary, so one run shows every platform failure.
+      - run: cargo test --workspace --locked --no-fail-fast

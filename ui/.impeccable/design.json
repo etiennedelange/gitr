@@ -1,0 +1,803 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-11T09:27:36+00:00",
+  "title": "Design System: Gitr",
+  "extensions": {
+    "colorMeta": {
+      "accent": {
+        "role": "primary",
+        "displayName": "Ledger Violet",
+        "canonical": "#6145d4",
+        "tonalRamp": [
+          "oklch(15% 0.200 285)",
+          "oklch(25% 0.200 285)",
+          "oklch(35% 0.200 285)",
+          "oklch(47% 0.200 285)",
+          "oklch(59% 0.200 285)",
+          "oklch(71% 0.200 285)",
+          "oklch(83% 0.200 285)",
+          "oklch(95% 0.200 285)"
+        ]
+      },
+      "accent-hover": {
+        "role": "primary",
+        "displayName": "Ledger Violet, Pressed",
+        "canonical": "#5236c4",
+        "tonalRamp": [
+          "oklch(15% 0.200 284)",
+          "oklch(25% 0.200 284)",
+          "oklch(35% 0.200 284)",
+          "oklch(47% 0.200 284)",
+          "oklch(59% 0.200 284)",
+          "oklch(71% 0.200 284)",
+          "oklch(83% 0.200 284)",
+          "oklch(95% 0.200 284)"
+        ]
+      },
+      "accent-text": {
+        "role": "primary",
+        "displayName": "Violet Text",
+        "canonical": "#5236c4",
+        "tonalRamp": [
+          "oklch(15% 0.200 284)",
+          "oklch(25% 0.200 284)",
+          "oklch(35% 0.200 284)",
+          "oklch(47% 0.200 284)",
+          "oklch(59% 0.200 284)",
+          "oklch(71% 0.200 284)",
+          "oklch(83% 0.200 284)",
+          "oklch(95% 0.200 284)"
+        ]
+      },
+      "accent-ink": {
+        "role": "primary",
+        "displayName": "Ink On Violet",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "oklch(15% 0.000 90)",
+          "oklch(25% 0.000 90)",
+          "oklch(35% 0.000 90)",
+          "oklch(47% 0.000 90)",
+          "oklch(59% 0.000 90)",
+          "oklch(71% 0.000 90)",
+          "oklch(83% 0.000 90)",
+          "oklch(95% 0.000 90)"
+        ]
+      },
+      "selection": {
+        "role": "primary",
+        "displayName": "Violet Wash",
+        "canonical": "#ebe7fc",
+        "tonalRamp": [
+          "oklch(15% 0.028 295)",
+          "oklch(25% 0.028 295)",
+          "oklch(35% 0.028 295)",
+          "oklch(47% 0.028 295)",
+          "oklch(59% 0.028 295)",
+          "oklch(71% 0.028 295)",
+          "oklch(83% 0.028 295)",
+          "oklch(95% 0.028 295)"
+        ]
+      },
+      "selection-ink": {
+        "role": "primary",
+        "displayName": "Selection Ink",
+        "canonical": "#2b1d74",
+        "tonalRamp": [
+          "oklch(15% 0.140 282)",
+          "oklch(25% 0.140 282)",
+          "oklch(35% 0.140 282)",
+          "oklch(47% 0.140 282)",
+          "oklch(59% 0.140 282)",
+          "oklch(71% 0.140 282)",
+          "oklch(83% 0.140 282)",
+          "oklch(95% 0.140 282)"
+        ]
+      },
+      "window": {
+        "role": "neutral",
+        "displayName": "Window",
+        "canonical": "#fcfcfd",
+        "tonalRamp": [
+          "oklch(15% 0.001 286)",
+          "oklch(25% 0.001 286)",
+          "oklch(35% 0.001 286)",
+          "oklch(47% 0.001 286)",
+          "oklch(59% 0.001 286)",
+          "oklch(71% 0.001 286)",
+          "oklch(83% 0.001 286)",
+          "oklch(95% 0.001 286)"
+        ]
+      },
+      "rail": {
+        "role": "neutral",
+        "displayName": "Rail",
+        "canonical": "#f3f3f6",
+        "tonalRamp": [
+          "oklch(15% 0.004 286)",
+          "oklch(25% 0.004 286)",
+          "oklch(35% 0.004 286)",
+          "oklch(47% 0.004 286)",
+          "oklch(59% 0.004 286)",
+          "oklch(71% 0.004 286)",
+          "oklch(83% 0.004 286)",
+          "oklch(95% 0.004 286)"
+        ]
+      },
+      "panel": {
+        "role": "neutral",
+        "displayName": "Panel",
+        "canonical": "#f6f6f8",
+        "tonalRamp": [
+          "oklch(15% 0.003 286)",
+          "oklch(25% 0.003 286)",
+          "oklch(35% 0.003 286)",
+          "oklch(47% 0.003 286)",
+          "oklch(59% 0.003 286)",
+          "oklch(71% 0.003 286)",
+          "oklch(83% 0.003 286)",
+          "oklch(95% 0.003 286)"
+        ]
+      },
+      "raised": {
+        "role": "neutral",
+        "displayName": "Raised Face",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "oklch(15% 0.000 90)",
+          "oklch(25% 0.000 90)",
+          "oklch(35% 0.000 90)",
+          "oklch(47% 0.000 90)",
+          "oklch(59% 0.000 90)",
+          "oklch(71% 0.000 90)",
+          "oklch(83% 0.000 90)",
+          "oklch(95% 0.000 90)"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "#e3e3e8",
+        "tonalRamp": [
+          "oklch(15% 0.007 286)",
+          "oklch(25% 0.007 286)",
+          "oklch(35% 0.007 286)",
+          "oklch(47% 0.007 286)",
+          "oklch(59% 0.007 286)",
+          "oklch(71% 0.007 286)",
+          "oklch(83% 0.007 286)",
+          "oklch(95% 0.007 286)"
+        ]
+      },
+      "line-soft": {
+        "role": "neutral",
+        "displayName": "Row Hairline",
+        "canonical": "#ececf0",
+        "tonalRamp": [
+          "oklch(15% 0.005 286)",
+          "oklch(25% 0.005 286)",
+          "oklch(35% 0.005 286)",
+          "oklch(47% 0.005 286)",
+          "oklch(59% 0.005 286)",
+          "oklch(71% 0.005 286)",
+          "oklch(83% 0.005 286)",
+          "oklch(95% 0.005 286)"
+        ]
+      },
+      "line-strong": {
+        "role": "neutral",
+        "displayName": "Control Hairline",
+        "canonical": "#cfcfd7",
+        "tonalRamp": [
+          "oklch(15% 0.011 286)",
+          "oklch(25% 0.011 286)",
+          "oklch(35% 0.011 286)",
+          "oklch(47% 0.011 286)",
+          "oklch(59% 0.011 286)",
+          "oklch(71% 0.011 286)",
+          "oklch(83% 0.011 286)",
+          "oklch(95% 0.011 286)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Graphite Ink",
+        "canonical": "#1b1b20",
+        "tonalRamp": [
+          "oklch(15% 0.010 286)",
+          "oklch(25% 0.010 286)",
+          "oklch(35% 0.010 286)",
+          "oklch(47% 0.010 286)",
+          "oklch(59% 0.010 286)",
+          "oklch(71% 0.010 286)",
+          "oklch(83% 0.010 286)",
+          "oklch(95% 0.010 286)"
+        ]
+      },
+      "ink-2": {
+        "role": "neutral",
+        "displayName": "Secondary Ink",
+        "canonical": "#5a5a66",
+        "tonalRamp": [
+          "oklch(15% 0.019 286)",
+          "oklch(25% 0.019 286)",
+          "oklch(35% 0.019 286)",
+          "oklch(47% 0.019 286)",
+          "oklch(59% 0.019 286)",
+          "oklch(71% 0.019 286)",
+          "oklch(83% 0.019 286)",
+          "oklch(95% 0.019 286)"
+        ]
+      },
+      "ink-3": {
+        "role": "neutral",
+        "displayName": "Tertiary Ink",
+        "canonical": "#6b6b77",
+        "tonalRamp": [
+          "oklch(15% 0.019 286)",
+          "oklch(25% 0.019 286)",
+          "oklch(35% 0.019 286)",
+          "oklch(47% 0.019 286)",
+          "oklch(59% 0.019 286)",
+          "oklch(71% 0.019 286)",
+          "oklch(83% 0.019 286)",
+          "oklch(95% 0.019 286)"
+        ]
+      },
+      "amber": {
+        "role": "secondary",
+        "displayName": "Changes Amber",
+        "canonical": "#d48a1c",
+        "tonalRamp": [
+          "oklch(15% 0.143 70)",
+          "oklch(25% 0.143 70)",
+          "oklch(35% 0.143 70)",
+          "oklch(47% 0.143 70)",
+          "oklch(59% 0.143 70)",
+          "oklch(71% 0.143 70)",
+          "oklch(83% 0.143 70)",
+          "oklch(95% 0.143 70)"
+        ]
+      },
+      "amber-ink": {
+        "role": "secondary",
+        "displayName": "Changes Amber Ink",
+        "canonical": "#8b4f00",
+        "tonalRamp": [
+          "oklch(15% 0.111 63)",
+          "oklch(25% 0.111 63)",
+          "oklch(35% 0.111 63)",
+          "oklch(47% 0.111 63)",
+          "oklch(59% 0.111 63)",
+          "oklch(71% 0.111 63)",
+          "oklch(83% 0.111 63)",
+          "oklch(95% 0.111 63)"
+        ]
+      },
+      "amber-soft": {
+        "role": "secondary",
+        "displayName": "Changes Amber Wash",
+        "canonical": "#fbf0dc",
+        "tonalRamp": [
+          "oklch(15% 0.029 83)",
+          "oklch(25% 0.029 83)",
+          "oklch(35% 0.029 83)",
+          "oklch(47% 0.029 83)",
+          "oklch(59% 0.029 83)",
+          "oklch(71% 0.029 83)",
+          "oklch(83% 0.029 83)",
+          "oklch(95% 0.029 83)"
+        ]
+      },
+      "sky": {
+        "role": "secondary",
+        "displayName": "Behind Sky",
+        "canonical": "#2f84d6",
+        "tonalRamp": [
+          "oklch(15% 0.148 251)",
+          "oklch(25% 0.148 251)",
+          "oklch(35% 0.148 251)",
+          "oklch(47% 0.148 251)",
+          "oklch(59% 0.148 251)",
+          "oklch(71% 0.148 251)",
+          "oklch(83% 0.148 251)",
+          "oklch(95% 0.148 251)"
+        ]
+      },
+      "sky-ink": {
+        "role": "secondary",
+        "displayName": "Behind Sky Ink",
+        "canonical": "#1b60a6",
+        "tonalRamp": [
+          "oklch(15% 0.131 253)",
+          "oklch(25% 0.131 253)",
+          "oklch(35% 0.131 253)",
+          "oklch(47% 0.131 253)",
+          "oklch(59% 0.131 253)",
+          "oklch(71% 0.131 253)",
+          "oklch(83% 0.131 253)",
+          "oklch(95% 0.131 253)"
+        ]
+      },
+      "green": {
+        "role": "secondary",
+        "displayName": "Ahead Green",
+        "canonical": "#2c9a5e",
+        "tonalRamp": [
+          "oklch(15% 0.134 155)",
+          "oklch(25% 0.134 155)",
+          "oklch(35% 0.134 155)",
+          "oklch(47% 0.134 155)",
+          "oklch(59% 0.134 155)",
+          "oklch(71% 0.134 155)",
+          "oklch(83% 0.134 155)",
+          "oklch(95% 0.134 155)"
+        ]
+      },
+      "green-ink": {
+        "role": "secondary",
+        "displayName": "Ahead Green Ink",
+        "canonical": "#1c7244",
+        "tonalRamp": [
+          "oklch(15% 0.109 155)",
+          "oklch(25% 0.109 155)",
+          "oklch(35% 0.109 155)",
+          "oklch(47% 0.109 155)",
+          "oklch(59% 0.109 155)",
+          "oklch(71% 0.109 155)",
+          "oklch(83% 0.109 155)",
+          "oklch(95% 0.109 155)"
+        ]
+      },
+      "red": {
+        "role": "secondary",
+        "displayName": "Trouble Red",
+        "canonical": "#d2402f",
+        "tonalRamp": [
+          "oklch(15% 0.186 30)",
+          "oklch(25% 0.186 30)",
+          "oklch(35% 0.186 30)",
+          "oklch(47% 0.186 30)",
+          "oklch(59% 0.186 30)",
+          "oklch(71% 0.186 30)",
+          "oklch(83% 0.186 30)",
+          "oklch(95% 0.186 30)"
+        ]
+      },
+      "red-ink": {
+        "role": "secondary",
+        "displayName": "Trouble Red Ink",
+        "canonical": "#ab2a1c",
+        "tonalRamp": [
+          "oklch(15% 0.168 30)",
+          "oklch(25% 0.168 30)",
+          "oklch(35% 0.168 30)",
+          "oklch(47% 0.168 30)",
+          "oklch(59% 0.168 30)",
+          "oklch(71% 0.168 30)",
+          "oklch(83% 0.168 30)",
+          "oklch(95% 0.168 30)"
+        ]
+      },
+      "red-soft": {
+        "role": "secondary",
+        "displayName": "Trouble Red Wash",
+        "canonical": "#fdece9",
+        "tonalRamp": [
+          "oklch(15% 0.019 30)",
+          "oklch(25% 0.019 30)",
+          "oklch(35% 0.019 30)",
+          "oklch(47% 0.019 30)",
+          "oklch(59% 0.019 30)",
+          "oklch(71% 0.019 30)",
+          "oklch(83% 0.019 30)",
+          "oklch(95% 0.019 30)"
+        ]
+      },
+      "add-bg": {
+        "role": "secondary",
+        "displayName": "Diff Added Wash",
+        "canonical": "#ebf7ef",
+        "tonalRamp": [
+          "oklch(15% 0.016 157)",
+          "oklch(25% 0.016 157)",
+          "oklch(35% 0.016 157)",
+          "oklch(47% 0.016 157)",
+          "oklch(59% 0.016 157)",
+          "oklch(71% 0.016 157)",
+          "oklch(83% 0.016 157)",
+          "oklch(95% 0.016 157)"
+        ]
+      },
+      "del-bg": {
+        "role": "secondary",
+        "displayName": "Diff Removed Wash",
+        "canonical": "#fdeeeb",
+        "tonalRamp": [
+          "oklch(15% 0.017 31)",
+          "oklch(25% 0.017 31)",
+          "oklch(35% 0.017 31)",
+          "oklch(47% 0.017 31)",
+          "oklch(59% 0.017 31)",
+          "oklch(71% 0.017 31)",
+          "oklch(83% 0.017 31)",
+          "oklch(95% 0.017 31)"
+        ]
+      },
+      "accent-dark": {
+        "role": "primary",
+        "displayName": "Ledger Violet (dark theme)",
+        "canonical": "#9a88ff",
+        "tonalRamp": [
+          "oklch(15% 0.170 288)",
+          "oklch(25% 0.170 288)",
+          "oklch(35% 0.170 288)",
+          "oklch(47% 0.170 288)",
+          "oklch(59% 0.170 288)",
+          "oklch(71% 0.170 288)",
+          "oklch(83% 0.170 288)",
+          "oklch(95% 0.170 288)"
+        ]
+      },
+      "accent-text-dark": {
+        "role": "primary",
+        "displayName": "Violet Text (dark theme)",
+        "canonical": "#b4a7ff",
+        "tonalRamp": [
+          "oklch(15% 0.124 290)",
+          "oklch(25% 0.124 290)",
+          "oklch(35% 0.124 290)",
+          "oklch(47% 0.124 290)",
+          "oklch(59% 0.124 290)",
+          "oklch(71% 0.124 290)",
+          "oklch(83% 0.124 290)",
+          "oklch(95% 0.124 290)"
+        ]
+      },
+      "selection-dark": {
+        "role": "primary",
+        "displayName": "Violet Wash (dark theme)",
+        "canonical": "#2c2747",
+        "tonalRamp": [
+          "oklch(15% 0.057 290)",
+          "oklch(25% 0.057 290)",
+          "oklch(35% 0.057 290)",
+          "oklch(47% 0.057 290)",
+          "oklch(59% 0.057 290)",
+          "oklch(71% 0.057 290)",
+          "oklch(83% 0.057 290)",
+          "oklch(95% 0.057 290)"
+        ]
+      },
+      "window-dark": {
+        "role": "neutral",
+        "displayName": "Window (dark theme)",
+        "canonical": "#19191c",
+        "tonalRamp": [
+          "oklch(15% 0.006 286)",
+          "oklch(25% 0.006 286)",
+          "oklch(35% 0.006 286)",
+          "oklch(47% 0.006 286)",
+          "oklch(59% 0.006 286)",
+          "oklch(71% 0.006 286)",
+          "oklch(83% 0.006 286)",
+          "oklch(95% 0.006 286)"
+        ]
+      },
+      "rail-dark": {
+        "role": "neutral",
+        "displayName": "Rail (dark theme)",
+        "canonical": "#141417",
+        "tonalRamp": [
+          "oklch(15% 0.006 286)",
+          "oklch(25% 0.006 286)",
+          "oklch(35% 0.006 286)",
+          "oklch(47% 0.006 286)",
+          "oklch(59% 0.006 286)",
+          "oklch(71% 0.006 286)",
+          "oklch(83% 0.006 286)",
+          "oklch(95% 0.006 286)"
+        ]
+      },
+      "panel-dark": {
+        "role": "neutral",
+        "displayName": "Panel (dark theme)",
+        "canonical": "#1e1e22",
+        "tonalRamp": [
+          "oklch(15% 0.008 286)",
+          "oklch(25% 0.008 286)",
+          "oklch(35% 0.008 286)",
+          "oklch(47% 0.008 286)",
+          "oklch(59% 0.008 286)",
+          "oklch(71% 0.008 286)",
+          "oklch(83% 0.008 286)",
+          "oklch(95% 0.008 286)"
+        ]
+      },
+      "raised-dark": {
+        "role": "neutral",
+        "displayName": "Raised Face (dark theme)",
+        "canonical": "#25252a",
+        "tonalRamp": [
+          "oklch(15% 0.009 286)",
+          "oklch(25% 0.009 286)",
+          "oklch(35% 0.009 286)",
+          "oklch(47% 0.009 286)",
+          "oklch(59% 0.009 286)",
+          "oklch(71% 0.009 286)",
+          "oklch(83% 0.009 286)",
+          "oklch(95% 0.009 286)"
+        ]
+      },
+      "line-dark": {
+        "role": "neutral",
+        "displayName": "Hairline (dark theme)",
+        "canonical": "#2b2b31",
+        "tonalRamp": [
+          "oklch(15% 0.011 286)",
+          "oklch(25% 0.011 286)",
+          "oklch(35% 0.011 286)",
+          "oklch(47% 0.011 286)",
+          "oklch(59% 0.011 286)",
+          "oklch(71% 0.011 286)",
+          "oklch(83% 0.011 286)",
+          "oklch(95% 0.011 286)"
+        ]
+      },
+      "ink-dark": {
+        "role": "neutral",
+        "displayName": "Graphite Ink (dark theme)",
+        "canonical": "#ebebef",
+        "tonalRamp": [
+          "oklch(15% 0.005 286)",
+          "oklch(25% 0.005 286)",
+          "oklch(35% 0.005 286)",
+          "oklch(47% 0.005 286)",
+          "oklch(59% 0.005 286)",
+          "oklch(71% 0.005 286)",
+          "oklch(83% 0.005 286)",
+          "oklch(95% 0.005 286)"
+        ]
+      },
+      "ink-2-dark": {
+        "role": "neutral",
+        "displayName": "Secondary Ink (dark theme)",
+        "canonical": "#a4a4ae",
+        "tonalRamp": [
+          "oklch(15% 0.014 286)",
+          "oklch(25% 0.014 286)",
+          "oklch(35% 0.014 286)",
+          "oklch(47% 0.014 286)",
+          "oklch(59% 0.014 286)",
+          "oklch(71% 0.014 286)",
+          "oklch(83% 0.014 286)",
+          "oklch(95% 0.014 286)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "View titles in the 44px title bar, dialog titles."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Settings section headings."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Default text for everything; tabular numerals on."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Counts, divergence numbers, status words, filter tabs, small buttons."
+      },
+      "band": {
+        "displayName": "Band",
+        "purpose": "Ledger band headings, sidebar group names, column heads, status bar; sentence case."
+      },
+      "mono": {
+        "displayName": "Mono",
+        "purpose": "Branches, diff paths, SHAs, code, diff body and the commit message."
+      }
+    },
+    "shadows": [
+      {
+        "name": "float",
+        "value": "0 1px 2px rgb(0 0 0 / 0.06), 0 10px 28px -6px rgb(0 0 0 / 0.22)",
+        "purpose": "Menus, dialogs, the Ctrl+P switcher and toasts only."
+      },
+      {
+        "name": "focus-field",
+        "value": "0 0 0 1px var(--focus)",
+        "purpose": "Focused input, select or textarea, with a violet border."
+      },
+      {
+        "name": "cursor-row",
+        "value": "inset 0 0 0 1px color-mix(in oklab, var(--accent) 55%, transparent)",
+        "purpose": "Cursor row of a focused list or table."
+      }
+    ],
+    "motion": [
+      {
+        "name": "t-fast",
+        "value": "90ms",
+        "purpose": "Hover, press and color changes on controls; row tools fade."
+      },
+      {
+        "name": "t",
+        "value": "140ms",
+        "purpose": "Menu open, tab underline."
+      },
+      {
+        "name": "toast-in",
+        "value": "180ms",
+        "purpose": "Toast rises 6px and fades in."
+      },
+      {
+        "name": "ease",
+        "value": "cubic-bezier(0.2, 0.7, 0.2, 1)",
+        "purpose": "The one easing: quick ease-out."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "1ms",
+        "purpose": "All animation and transition durations collapse under prefers-reduced-motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "dashboard-narrow",
+        "value": "980px (container)"
+      },
+      {
+        "name": "sidebar-strip",
+        "value": "1099px"
+      },
+      {
+        "name": "short-window",
+        "value": "720px (height)"
+      },
+      {
+        "name": "smallest",
+        "value": "760px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Standard Button",
+      "kind": "button",
+      "refersTo": "button",
+      "description": "Windows command button: raised face, hairline, 28px.",
+      "html": "<button class=\"ds-btn\">Open in VS Code</button>",
+      "css": ".ds-btn{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 12px;border:1px solid var(--line-strong,#cfcfd7);border-radius:5px;background:var(--raised,#fff);color:var(--ink,#1b1b20);font:500 13px/1 'Hanken Grotesk Variable','Segoe UI',sans-serif;transition:background-color 90ms cubic-bezier(.2,.7,.2,1)}.ds-btn:hover{background:color-mix(in oklab,var(--raised,#fff),var(--ink,#1b1b20) 4%)}.ds-btn:active{background:color-mix(in oklab,var(--raised,#fff),var(--ink,#1b1b20) 8%)}.ds-btn:focus-visible{outline:2px solid var(--focus,#6145d4);outline-offset:1px}"
+    },
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one action a view is for (Commit). One per view.",
+      "html": "<button class=\"ds-btn-primary\">Commit to main</button>",
+      "css": ".ds-btn-primary{display:inline-flex;align-items:center;height:28px;padding:0 12px;border:1px solid var(--accent,#6145d4);border-radius:5px;background:var(--accent,#6145d4);color:var(--accent-ink,#fff);font:600 13px/1 'Hanken Grotesk Variable','Segoe UI',sans-serif;transition:background-color 90ms cubic-bezier(.2,.7,.2,1)}.ds-btn-primary:hover{background:var(--accent-hover,#5236c4);border-color:var(--accent-hover,#5236c4)}.ds-btn-primary:focus-visible{outline:2px solid var(--focus,#6145d4);outline-offset:1px}"
+    },
+    {
+      "name": "Quiet Button",
+      "kind": "button",
+      "refersTo": "button-quiet",
+      "description": "Title-bar and inline actions; no face until hovered.",
+      "html": "<button class=\"ds-btn-quiet\"><svg width=\"15\" height=\"15\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 15V3\"/><path d=\"m7 10 5 5 5-5\"/><path d=\"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\"/></svg>Pull all</button>",
+      "css": ".ds-btn-quiet{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 12px;border:1px solid transparent;border-radius:5px;background:transparent;color:var(--ink,#1b1b20);font:500 13px/1 'Hanken Grotesk Variable','Segoe UI',sans-serif}.ds-btn-quiet svg{color:var(--ink-2,#5a5a66)}.ds-btn-quiet:hover{background:var(--hover,rgb(27 27 40/.045))}.ds-btn-quiet:active{background:var(--press,rgb(27 27 40/.08))}.ds-btn-quiet:focus-visible{outline:2px solid var(--focus,#6145d4);outline-offset:1px}"
+    },
+    {
+      "name": "Search Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Raised field with an inset icon; violet border and ring on focus.",
+      "html": "<label class=\"ds-search\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.3-4.3\"/></svg><input placeholder=\"Search name or branch (Ctrl+F)\"></label>",
+      "css": ".ds-search{position:relative;display:inline-flex;align-items:center}.ds-search svg{position:absolute;left:8px;color:var(--ink-3,#6b6b77);pointer-events:none}.ds-search input{width:260px;height:26px;padding:0 8px 0 28px;border:1px solid var(--line-strong,#cfcfd7);border-radius:5px;background:var(--field,#fff);color:var(--ink,#1b1b20);font:400 12px 'Hanken Grotesk Variable','Segoe UI',sans-serif;outline:none}.ds-search input:hover:not(:focus){border-color:color-mix(in oklab,var(--line-strong,#cfcfd7),var(--ink,#1b1b20) 18%)}.ds-search input:focus{border-color:var(--focus,#6145d4);box-shadow:0 0 0 1px var(--focus,#6145d4)}"
+    },
+    {
+      "name": "Filter Tabs",
+      "kind": "chip",
+      "refersTo": "filter-tab-on",
+      "description": "Count-labelled filters; the selected one takes the violet wash.",
+      "html": "<div class=\"ds-ftabs\"><button class=\"on\">All <span>12</span></button><button class=\"alert\">Attention <span>2</span></button><button>Changes <span>4</span></button></div>",
+      "css": ".ds-ftabs{display:inline-flex;gap:2px}.ds-ftabs button{display:inline-flex;align-items:center;gap:5px;height:26px;padding:0 6px 0 8px;border:0;border-radius:5px;background:transparent;color:var(--ink-2,#5a5a66);font:400 12px 'Hanken Grotesk Variable','Segoe UI',sans-serif;font-variant-numeric:tabular-nums}.ds-ftabs button span{color:var(--ink-3,#6b6b77);font-weight:500}.ds-ftabs button:hover{background:var(--hover,rgb(27 27 40/.045));color:var(--ink,#1b1b20)}.ds-ftabs button.on{background:var(--sel,#ebe7fc);color:var(--sel-ink,#2b1d74);font-weight:600}.ds-ftabs button.on span{color:var(--accent-text,#5236c4)}.ds-ftabs button.alert span{color:var(--red-ink,#ab2a1c);font-weight:650}.ds-ftabs button:focus-visible{outline:2px solid var(--focus,#6145d4);outline-offset:1px}"
+    },
+    {
+      "name": "View Tabs",
+      "kind": "nav",
+      "refersTo": "tabs",
+      "description": "Repo view tabs: text with a 2px violet underline on the hairline.",
+      "html": "<div class=\"ds-tabs\"><button class=\"on\">Changes</button><button>History</button><button>Branches</button></div>",
+      "css": ".ds-tabs{display:flex;gap:2px;padding:0 8px;border-bottom:1px solid var(--line,#e3e3e8)}.ds-tabs button{position:relative;height:34px;padding:0 8px;border:0;background:transparent;color:var(--ink-2,#5a5a66);font:500 13px 'Hanken Grotesk Variable','Segoe UI',sans-serif}.ds-tabs button::after{content:'';position:absolute;left:8px;right:8px;bottom:-1px;height:2px;border-radius:2px 2px 0 0;background:transparent;transition:background-color 140ms cubic-bezier(.2,.7,.2,1)}.ds-tabs button:hover{color:var(--ink,#1b1b20)}.ds-tabs button.on{color:var(--ink,#1b1b20);font-weight:600}.ds-tabs button.on::after{background:var(--accent,#6145d4)}.ds-tabs button:focus-visible{outline:2px solid var(--focus,#6145d4);outline-offset:-4px}"
+    },
+    {
+      "name": "Sidebar Repo List",
+      "kind": "nav",
+      "refersTo": "nav-item-active",
+      "description": "Tinted rail; rows with status mark, name and count notation; active row in violet wash.",
+      "html": "<nav class=\"ds-rail\"><div class=\"ds-grp\">Work <span>3</span></div><button class=\"ds-repo on\"><i class=\"ds-dot\" style=\"--c:var(--amber,#d48a1c)\"></i>billing-service<b class=\"am\">±9</b><b class=\"gr\">↑2</b></button><button class=\"ds-repo\"><i class=\"ds-dot\" style=\"--c:var(--blue,#2f84d6)\"></i>fleet-api<b></b><b class=\"sk\">↓3</b></button><button class=\"ds-repo\"><i class=\"ds-dot clean\"></i>design-tokens<b></b><b></b></button></nav>",
+      "css": ".ds-rail{width:240px;padding:4px 8px;background:var(--rail,#f3f3f6);font:400 13px 'Hanken Grotesk Variable','Segoe UI',sans-serif;font-variant-numeric:tabular-nums}.ds-grp{display:flex;justify-content:space-between;height:28px;align-items:center;padding:0 8px 0 4px;color:var(--ink-2,#5a5a66);font-size:11px;font-weight:650;letter-spacing:.02em}.ds-grp span{color:var(--ink-3,#6b6b77);font-weight:500}.ds-repo{display:grid;grid-template-columns:16px 1fr 28px 28px;align-items:center;gap:6px;width:100%;height:26px;padding:0 8px 0 4px;border:0;border-radius:5px;background:transparent;color:var(--ink,#1b1b20);font:450 13px inherit;text-align:left}.ds-repo:hover{background:var(--rail-hover,rgb(27 27 40/.055))}.ds-repo.on{background:var(--sel,#ebe7fc);color:var(--sel-ink,#2b1d74);font-weight:600}.ds-repo b{font-size:11px;font-weight:600;text-align:right}.ds-repo .am{color:var(--amber-ink,#8b4f00)}.ds-repo .sk{color:var(--blue-ink,#1b60a6)}.ds-repo .gr{color:var(--green-ink,#1c7244)}.ds-dot{display:inline-grid;place-items:center;width:16px;height:16px}.ds-dot::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--c,var(--ink-3,#6b6b77))}.ds-dot.clean::before{width:7px;height:7px;background:transparent;box-shadow:inset 0 0 0 1.5px var(--ink-3,#6b6b77)}.ds-repo:focus-visible{outline:2px solid var(--focus,#6145d4);outline-offset:1px}"
+    },
+    {
+      "name": "Divergence Column",
+      "kind": "custom",
+      "refersTo": "ledger-row",
+      "description": "Signature: behind bars grow left, ahead bars grow right from a shared axis.",
+      "html": "<div class=\"ds-dv\"><span class=\"b\">3<i style=\"width:22px\"></i></span><span class=\"x\"></span><span class=\"a\"></span></div><div class=\"ds-dv\"><span class=\"b\"></span><span class=\"x\"></span><span class=\"a\"><i style=\"width:16px\"></i>2</span></div><div class=\"ds-dv\"><span class=\"b\">1<i style=\"width:10px\"></i></span><span class=\"x\"></span><span class=\"a\"><i style=\"width:28px\"></i>4</span></div>",
+      "css": ".ds-dv{display:grid;grid-template-columns:1fr 1px 1fr;align-items:center;gap:2px;width:112px;height:30px;font:600 12px 'Hanken Grotesk Variable','Segoe UI',sans-serif;font-variant-numeric:tabular-nums;border-bottom:1px solid var(--line-soft,#ececf0)}.ds-dv .x{width:1px;height:31px;background:var(--line-strong,#cfcfd7)}.ds-dv span{display:flex;align-items:center;gap:4px}.ds-dv .b{justify-content:flex-end;color:var(--blue-ink,#1b60a6)}.ds-dv .a{color:var(--green-ink,#1c7244)}.ds-dv i{height:8px;opacity:.75}.ds-dv .b i{border-radius:3px 0 0 3px;background:var(--blue,#2f84d6)}.ds-dv .a i{border-radius:0 3px 3px 0;background:var(--green,#2c9a5e)}"
+    },
+    {
+      "name": "Menu",
+      "kind": "card",
+      "refersTo": "menu",
+      "description": "Floating overlay: hairline, 8px radius, float shadow; items take the violet wash.",
+      "html": "<div class=\"ds-menu\"><button>Open in VS Code</button><button>Open terminal here</button><button>Show in Explorer</button></div>",
+      "css": ".ds-menu{display:flex;flex-direction:column;min-width:200px;padding:4px;border:1px solid var(--line,#e3e3e8);border-radius:8px;background:var(--overlay,#fff);box-shadow:0 1px 2px rgb(0 0 0/.06),0 10px 28px -6px rgb(0 0 0/.22)}.ds-menu button{height:28px;padding:0 12px;border:0;border-radius:4px;background:transparent;color:var(--ink,#1b1b20);font:400 13px 'Hanken Grotesk Variable','Segoe UI',sans-serif;text-align:left}.ds-menu button:hover,.ds-menu button:focus-visible{outline:none;background:var(--sel,#ebe7fc);color:var(--sel-ink,#2b1d74)}"
+    },
+    {
+      "name": "Ref Labels",
+      "kind": "chip",
+      "refersTo": "ref-label",
+      "description": "Quiet outlines in history: HEAD branch in violet, tags amber, remotes dashed.",
+      "html": "<span class=\"ds-ref head\">main</span> <span class=\"ds-ref remote\">origin/main</span> <span class=\"ds-ref tag\">v4.2.0</span>",
+      "css": ".ds-ref{display:inline-flex;align-items:center;height:18px;padding:0 5px;border:1px solid var(--line-strong,#cfcfd7);border-radius:4px;color:var(--ink-2,#5a5a66);font:500 11px/1 'Hanken Grotesk Variable','Segoe UI',sans-serif}.ds-ref.head{border-color:color-mix(in oklab,var(--accent,#6145d4) 55%,transparent);color:var(--accent-text,#5236c4);font-weight:600}.ds-ref.tag{border-color:color-mix(in oklab,var(--amber,#d48a1c) 45%,transparent);color:var(--amber-ink,#8b4f00)}.ds-ref.remote{border-style:dashed}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Ledger",
+    "overview": "Gitr reads like a ledger of repositories. State is read down aligned columns of tabular numerals and small marks, not from cards, chips or pills. The window is one flat surface on cool graphite neutrals (hue near 285, almost no chroma), split by 1px hairlines into a tinted sidebar, a 44px title bar, a filter strip, a dense table and a status bar.\n\nThe system is dense and quiet. Body text is 13px, rows are 26 to 30px, controls are 28px. One violet accent marks selection, focus and the single primary action of a view. Amber, sky, green and red only ever mean changes, behind, ahead and trouble. It follows Windows desktop conventions: raised command buttons with a hairline, F6-style focus rings, Explorer-like lists, light and dark themes that follow the OS.",
+    "keyCharacteristics": [
+      "Flat surfaces, hairline separators, no shadow except on things that float.",
+      "Tabular numerals everywhere; counts and status words in state ink, never in filled chips.",
+      "One violet accent, used for selection, focus and one primary button per view.",
+      "Hanken Grotesk for interface, Cascadia Mono for branches, paths, SHAs, diffs and the commit message.",
+      "The divergence column: behind bars grow left and ahead bars grow right from a shared axis."
+    ],
+    "rules": [
+      {
+        "name": "The One Voice Rule",
+        "body": "Violet marks selection, focus and at most one primary button per view. Everything else that wants emphasis uses weight or state ink.",
+        "section": "colors"
+      },
+      {
+        "name": "The Hue Has A Job Rule",
+        "body": "Amber is changes, sky is behind/incoming, green is ahead/outgoing, red is error or conflict. A state hue is never decoration, and color never stands alone: a count, letter or word always sits beside it.",
+        "section": "colors"
+      },
+      {
+        "name": "The Tabular Rule",
+        "body": "`font-variant-numeric: tabular-nums` is set on the root. Numbers line up down every column; never turn it off.",
+        "section": "typography"
+      },
+      {
+        "name": "The Sentence Case Rule",
+        "body": "Headings, bands and labels are sentence case at 11 to 16px. Hierarchy comes from weight and ink, not uppercase or tracking.",
+        "section": "typography"
+      },
+      {
+        "name": "The Only Floaters Cast Shadows Rule",
+        "body": "If it sits in the window's flow (sidebar, table, panes, cards in settings), it has no shadow. If it floats over the window, it gets the float shadow and nothing stronger.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do set state in columns of tabular numerals and 8px marks, with words for screen readers.",
+      "Do keep violet to selection, focus and one primary button per view (Commit in the repo view).",
+      "Do use the `-ink` variant of a state hue for text and the plain hue for marks and bars.",
+      "Do put branches, paths, SHAs, code and commit messages in Cascadia Mono 12px.",
+      "Do divide regions and rows with 1px hairlines (`line` between regions, `line-soft` between rows).",
+      "Do give anything that floats the 8px radius, `line` border and float shadow, and nothing else a shadow.",
+      "Do keep motion quick and ease-out (90ms state changes, 140ms menus and tabs) and collapse it under reduced motion."
+    ],
+    "donts": [
+      "Don't build card grids, bordered-button toolbars or filled status chips; the dashboard is a table.",
+      "Don't use a state hue as decoration, or show a color without a count, letter or word beside it.",
+      "Don't add shadows to surfaces that sit in the window's flow; the window is flat.",
+      "Don't set headings or labels in uppercase or with wide tracking.",
+      "Don't add a second accent color or a second primary button to a view."
+    ]
+  }
+}

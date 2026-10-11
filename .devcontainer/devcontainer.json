@@ -1,0 +1,88 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/rust
+{
+	"name": "Gitr",
+	"image": "mcr.microsoft.com/devcontainers/rust:2-1-trixie",
+	"features": {
+		"ghcr.io/devcontainers/features/github-cli:1.1.3": {},
+		"ghcr.io/anthropics/devcontainer-features/claude-code:1.0": {},
+		"ghcr.io/devcontainers/features/node:2": {
+			"version": "lts",
+			"pnpmVersion": "12.8.1"
+		}
+	},
+
+	"postCreateCommand": "bash .devcontainer/post-create.sh",
+
+	// Everything lives in Docker named volumes, never host bind mounts: they are
+	// seeded from the image (a bind mount would hide the image's cargo/rustc), keep
+	// tools and generated files off the host drive, and are fast on macOS and Windows.
+	// The cargo cache and Claude Code's login, settings, sessions and memory persist
+	// across rebuilds, isolated from the host ~/.claude. node_modules (root and ui) and
+	// target (Linux builds, many GB) are volumes too.
+	"mounts": [
+		{
+			"source": "devcontainer-cargo-cache-${devcontainerId}",
+			"target": "/usr/local/cargo",
+			"type": "volume"
+		},
+		{
+			"source": "claude-code-config-${devcontainerId}",
+			"target": "/home/vscode/.claude",
+			"type": "volume"
+		},
+		{
+			"source": "opencode-home-${devcontainerId}",
+			"target": "/home/node/.opencode",
+			"type": "volume"
+		},
+		{
+			"source": "opencode-config-${devcontainerId}",
+			"target": "/home/node/.config/opencode",
+			"type": "volume"
+		},
+		{
+			"source": "opencode-data-${devcontainerId}",
+			"target": "/home/node/.local/share/opencode",
+			"type": "volume"
+		},
+		{
+			"source": "gitr-node-modules-${devcontainerId}",
+			"target": "/workspaces/gitr/node_modules",
+			"type": "volume"
+		},
+		{
+			"source": "gitr-ui-node-modules-${devcontainerId}",
+			"target": "/workspaces/gitr/ui/node_modules",
+			"type": "volume"
+		},
+		{
+			"source": "gitr-target-${devcontainerId}",
+			"target": "/workspaces/gitr/target",
+			"type": "volume"
+		}
+	],
+
+	"remoteUser": "vscode",
+
+	// Keeps .claude.json (account and onboarding state) inside the volume as
+	// well; by default it sits at ~/.claude.json and is lost on rebuild.
+	"containerEnv": {
+		"CLAUDE_CONFIG_DIR": "/home/vscode/.claude"
+	},
+
+	// 5173: the UI's Vite dev server (`pnpm mock:web` for the design preview).
+	"forwardPorts": [5173],
+
+	// Oxc (through Vite+) lints and formats the UI; its extension is the editor's formatter.
+	"customizations": {
+		"vscode": {
+			"extensions": ["oxc.oxc-vscode"],
+			"settings": {
+				"[javascript][typescript][typescriptreact][json][jsonc]": {
+					"editor.defaultFormatter": "oxc.oxc-vscode"
+				}
+			}
+		}
+	}
+}

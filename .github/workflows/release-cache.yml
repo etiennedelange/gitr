@@ -1,0 +1,55 @@
+name: Release cache
+
+# Keeps the release build fast. GitHub caches are scoped to the ref that saved them, and a
+# tag can read caches from main but not from other tags, so release.yml only restores and
+# this workflow saves on main: the Rust release-profile build and Tauri's NSIS download.
+# Building the installer here also catches packaging breakage before a tag is pushed.
+on:
+  push:
+    branches: [main]
+    paths:
+      - Cargo.lock
+      - '**/Cargo.toml'
+      - pnpm-lock.yaml
+      - src-tauri/tauri.conf.json
+      - .github/workflows/release-cache.yml
+  # Unused caches are evicted after 7 days.
+  schedule:
+    - cron: '17 4 * * 1,4'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-cache
+  cancel-in-progress: true
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      # Same version as devEngines.packageManager in package.json.
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 12.8.1
+      - uses: actions/setup-node@v7
+        with:
+          node-version: lts/*
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      - uses: dtolnay/rust-toolchain@stable
+      # Same shared-key as release.yml.
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: release-windows
+      - uses: actions/cache@v6
+        with:
+          path: ~/AppData/Local/tauri
+          key: tauri-tools-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: tauri-tools-
+
+      - run: pnpm tauri build --bundles nsis

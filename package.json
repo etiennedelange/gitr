@@ -1,0 +1,28 @@
+{
+  "name": "gitr",
+  "private": true,
+  "scripts": {
+    "tauri": "tauri",
+    "dev": "tauri dev",
+    "mock": "tauri dev --config src-tauri/tauri.mock.conf.json",
+    "mock:web": "pnpm --filter ui mock:web",
+    "build": "tauri build",
+    "test": "cargo test --workspace && pnpm --filter ui test && pnpm notices:check",
+    "screenshots": "node tools/screenshots/capture.mjs",
+    "notices": "node tools/notices/generate.mjs",
+    "notices:check": "node tools/notices/generate.mjs --check",
+    "release:version": "node tools/release/release.mjs version"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.12.1",
+    "playwright": "^1.63.0",
+    "vite-plus": "catalog:"
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "12.8.1",
+      "onFail": "download"
+    }
+  }
+}

@@ -1,0 +1,133 @@
+name: Release
+
+# Pushing a version tag (v1.2.0, or v1.2.0-beta.1 for a pre-release) on main builds the
+# Windows NSIS installer and publishes a GitHub Release with it. See docs/releasing.md.
+on:
+  push:
+    tags: ['v[0-9]+.[0-9]+.[0-9]+*']
+  # Rebuild an existing tag, e.g. after a failed run; replaces the release's installer.
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing tag to build, e.g. v1.2.0
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ inputs.tag || github.ref_name }}
+  cancel-in-progress: false
+
+env:
+  TAG: ${{ inputs.tag || github.ref_name }}
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    permissions:
+      # Create the release and upload the installer.
+      contents: write
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: refs/tags/${{ env.TAG }}
+          # Full history, to check that the tag is on main.
+          fetch-depth: 0
+
+      # Only squash-merged, CI-checked commits get released.
+      - name: Check the tag is on main
+        run: |
+          git fetch --no-tags origin main
+          if ! git merge-base --is-ancestor HEAD origin/main; then
+            echo "::error::$TAG is not on main. Tag a commit on main."
+            exit 1
+          fi
+
+      - name: Check the tag matches the version
+        id: version
+        run: |
+          version=$(node tools/release/release.mjs check "$TAG")
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          node tools/release/release.mjs notes "$version" > "$RUNNER_TEMP/notes.md"
+
+      # Same version as devEngines.packageManager in package.json.
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 12.8.1
+      - uses: actions/setup-node@v7
+        with:
+          node-version: lts/*
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      - uses: dtolnay/rust-toolchain@stable
+      # Caches made under a tag can't be read by later tags, so only restore here:
+      # release-cache.yml saves both caches on main, where every tag can read them.
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: release-windows
+          save-if: false
+      - uses: actions/cache/restore@v6
+        with:
+          # NSIS and its plugins, which tauri build downloads.
+          path: ~/AppData/Local/tauri
+          key: tauri-tools-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: tauri-tools-
+
+      # The installer ships THIRD_PARTY_NOTICES.txt; refuse to ship a stale one.
+      - run: pnpm notices:check
+
+      # beforeBuildCommand builds the UI first. The rm keeps a cached old installer out.
+      - run: |
+          rm -rf target/release/bundle
+          pnpm tauri build --bundles nsis
+
+      - name: Collect the installer
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          shopt -s nullglob
+          files=(target/release/bundle/nsis/*-setup.exe)
+          if [ ${#files[@]} -ne 1 ]; then
+            echo "::error::Expected one installer, found ${#files[@]}: ${files[*]}"
+            exit 1
+          fi
+          # Tauri takes the version from Cargo.toml; make sure it did.
+          if [[ "${files[0]}" != *"_${VERSION}_"* ]]; then
+            echo "::error::${files[0]} is not version $VERSION"
+            exit 1
+          fi
+          mkdir -p dist
+          cp "${files[0]}" dist/
+          cd dist
+          sha256sum -- *.exe > SHA256SUMS.txt
+          cat SHA256SUMS.txt
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: gitr-${{ steps.version.outputs.version }}-windows
+          path: dist/
+          if-no-files-found: error
+
+      - name: Publish the GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          if gh release view "$TAG" > /dev/null 2>&1; then
+            gh release upload "$TAG" dist/* --clobber
+            exit 0
+          fi
+          prerelease=()
+          [[ "$VERSION" == *-* ]] && prerelease=(--prerelease)
+          # The CHANGELOG section first, then GitHub's list of merged PRs (.github/release.yml).
+          gh release create "$TAG" dist/* \
+            --verify-tag \
+            --title "Gitr $VERSION" \
+            --notes-file "$RUNNER_TEMP/notes.md" \
+            --generate-notes \
+            "${prerelease[@]}"

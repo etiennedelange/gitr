@@ -1,0 +1,21 @@
+[package]
+name = "gitr-core"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+tokio.workspace = true
+tracing = "0.1"
+gix = { version = "0.88", default-features = false, features = ["sha1"] }
+
+[target.'cfg(unix)'.dependencies]
+libc = "0.2"
+
+[dev-dependencies]
+tempfile.workspace = true
+tracing-subscriber = { version = "0.3", features = ["fmt"] }
+tokio = { workspace = true, features = ["test-util"] }

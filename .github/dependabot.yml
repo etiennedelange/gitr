@@ -1,0 +1,42 @@
+version: 2
+
+# Minor and patch updates arrive as one PR per ecosystem; majors stay separate.
+# The cooldown skips releases younger than a few days (supply-chain safety).
+updates:
+  - package-ecosystem: cargo
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    groups:
+      cargo:
+        update-types: [minor, patch]
+    # Must match the versions Tauri itself uses (see src-tauri/Cargo.toml); bump them with Tauri.
+    ignore:
+      - dependency-name: windows-core
+      - dependency-name: webview2-com
+
+  # pnpm workspace (root + ui); Dependabot handles pnpm through the npm ecosystem.
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    groups:
+      npm:
+        update-types: [minor, patch]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ['*']
+
+  - package-ecosystem: devcontainers
+    directory: /
+    schedule:
+      interval: monthly

@@ -1,0 +1,18 @@
+[package]
+name = "gitr-ai"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+gitr-core.workspace = true
+serde.workspace = true
+thiserror.workspace = true
+tokio.workspace = true
+async-trait = "0.1"
+github-copilot-sdk = { version = "1.0.16", default-features = false, features = ["runtime"] }
+
+[dev-dependencies]
+github-copilot-sdk = { version = "1.0.16", default-features = false, features = ["runtime"] }
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
