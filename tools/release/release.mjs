@@ -6,14 +6,17 @@
 //   node tools/release/release.mjs notes 0.2.0     print that version's CHANGELOG section (release notes)
 //   node tools/release/release.mjs updater-manifest 0.2.0 <setup.exe> <setup.exe.sig>
 //                                                  print latest.json for the in-app updater
+//   node tools/release/release.mjs version-only <base> <head>
+//                                                  print true if base..head only changes the version
+//                                                  and the CHANGELOG (a release PR; CI skips it)
 //
 // The version lives in one place, [workspace.package] in Cargo.toml. tauri.conf.json has no
 // version, so Tauri takes it from src-tauri's Cargo.toml, which inherits the workspace one.
 
 import { execFileSync } from 'node:child_process';
 import { readFileSync, writeFileSync } from 'node:fs';
-import { basename, dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { basename, dirname, join, resolve } from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const cargoToml = join(root, 'Cargo.toml');
@@ -75,6 +78,34 @@ export function updaterManifest({ version, notes, exe, signature, date = new Dat
   };
 }
 
+// The files a release PR touches. CHANGELOG.md may change freely; it isn't code.
+const RELEASE_FILES = new Set(['Cargo.toml', 'Cargo.lock', 'CHANGELOG.md']);
+
+// Cargo.lock with the workspace crates' versions blanked: they have no `source` line, every
+// crate from crates.io or git has one.
+function lockWithoutWorkspaceVersions(text) {
+  return text
+    .split(/\n(?=\[\[package\]\])/)
+    .map((block) => (/^source = /m.test(block) ? block : block.replace(/^version = ".*"$/m, 'version = "*"')))
+    .join('\n');
+}
+
+// Whether a change only sets the app version (Cargo.toml's [workspace.package] and the workspace
+// crates in Cargo.lock) and edits the CHANGELOG, as `release.mjs version` does. `files` are the
+// changed paths; `before` and `after` read a path's content on each side (null if missing).
+export function versionOnlyChange(files, before, after) {
+  if (!files.length || files.some((f) => !RELEASE_FILES.has(f))) return false;
+  const same = (file, normalize) => {
+    const [a, b] = [before(file), after(file)];
+    return a !== null && b !== null && normalize(a) === normalize(b);
+  };
+  const blankVersion = (text) => text.replace(WORKSPACE_VERSION, '$1*$3');
+  return (
+    (!files.includes('Cargo.toml') || same('Cargo.toml', blankVersion)) &&
+    (!files.includes('Cargo.lock') || same('Cargo.lock', lockWithoutWorkspaceVersions))
+  );
+}
+
 export function setVersion(version) {
   const current = readVersion();
   writeFileSync(cargoToml, readFileSync(cargoToml, 'utf8').replace(WORKSPACE_VERSION, `$1${version}$3`));
@@ -121,10 +152,27 @@ function main([command, arg, ...rest]) {
       console.log(JSON.stringify(manifest, null, 2));
       break;
     }
+    case 'version-only': {
+      const [base, head] = [arg, rest[0]];
+      if (!base || !head) fail('usage: release.mjs version-only <base> <head>');
+      const git = (...args) => execFileSync('git', args, { cwd: root, encoding: 'utf8' });
+      const show = (rev) => (file) => {
+        try {
+          return git('show', `${rev}:${file}`);
+        } catch {
+          return null;
+        }
+      };
+      const files = git('diff', '--name-only', base, head).split('\n').filter(Boolean);
+      console.log(versionOnlyChange(files, show(base), show(head)));
+      break;
+    }
     default:
-      fail('usage: release.mjs version <x.y.z> | check <vX.Y.Z> | notes <x.y.z> | updater-manifest <x.y.z> <exe> <sig>');
+      fail('usage: release.mjs version <x.y.z> | check <vX.Y.Z> | notes <x.y.z> | updater-manifest <x.y.z> <exe> <sig> | version-only <base> <head>');
   }
 }
 
-// Imported by release.test.mjs: no command runs then. (import.meta.main needs Node 24.2.)
-if (import.meta.main) main(process.argv.slice(2));
+// Imported by the tests: no command runs then. import.meta.main needs Node 24.2; CI runners may
+// run this with their own older Node, so compare the script path there.
+const isMain = import.meta.main ?? (!!process.argv[1] && pathToFileURL(resolve(process.argv[1])).href === import.meta.url);
+if (isMain) main(process.argv.slice(2));

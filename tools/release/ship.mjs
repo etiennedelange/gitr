@@ -17,15 +17,16 @@
 
 import { execFileSync, spawnSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { createInterface } from 'node:readline/promises';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { changelogSection, parseVersion, readVersion, setVersion } from './release.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const REPO = 'etiennedelange/gitr';
-const POLL_MS = 30_000;
-// CI takes about 6 minutes; a merge that hasn't happened in an hour needs a look.
+// How often to look at the PR; GitHub's API allows this easily.
+const POLL_MS = 10_000;
+// CI on a release PR takes about a minute (Rust is skipped); a merge that hasn't happened in an hour needs a look.
 const MERGE_TIMEOUT_MS = 60 * 60_000;
 
 /** -1, 0 or 1. Semver precedence, without build metadata (like SEMVER in release.mjs). */
@@ -194,9 +195,10 @@ async function followRelease(tag) {
     if (!id) await sleep(3000);
   }
   if (!id) fail(`no Release run for ${tag} yet. See https://github.com/${REPO}/actions/workflows/release.yml`);
-  if (!show('gh', ['run', 'watch', '-R', REPO, id, '--interval', '30', '--exit-status']))
+  if (!show('gh', ['run', 'watch', '-R', REPO, id, '--interval', '10', '--exit-status']))
     fail(`the Release run failed: https://github.com/${REPO}/actions/runs/${id}\nSee docs/releasing.md: rerun it, or fix the cause in a new patch version.`);
   console.log(`\nReleased: https://github.com/${REPO}/releases/tag/${tag}`);
 }
 
-if (import.meta.main) await main(process.argv.slice(2));
+const isMain = import.meta.main ?? (!!process.argv[1] && pathToFileURL(resolve(process.argv[1])).href === import.meta.url);
+if (isMain) await main(process.argv.slice(2));
