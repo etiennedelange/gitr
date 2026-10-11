@@ -121,3 +121,7 @@ Configuration lives in `%APPDATA%\gitr\config.toml`.
 ## Further reading
 
 - [Third-party notices](THIRD_PARTY_NOTICES.txt): the licences of everything that ships in the app. Regenerate with `pnpm notices` after changing dependencies.
+
+## License
+
+MIT. See [LICENSE](LICENSE).
