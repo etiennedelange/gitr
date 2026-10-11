@@ -207,11 +207,26 @@ impl GitRunner {
         #[cfg(windows)]
         {
             const CREATE_NO_WINDOW: u32 = 0x0800_0000;
-            cmd.creation_flags(CREATE_NO_WINDOW);
+            // Paused until it is in its job (below).
+            cmd.creation_flags(CREATE_NO_WINDOW | crate::job::CREATE_SUSPENDED);
         }
 
         let mut child = cmd.spawn().map_err(|e| GitError::Spawn { message: e.to_string() })?;
         let pid = child.id();
+        // Windows: put the paused git in its own job, then let it run, so nothing it starts can
+        // be outside the job (see job.rs). Without a job, `taskkill /T` is the fallback.
+        #[cfg(windows)]
+        let job = match pid {
+            Some(pid) => {
+                let job = crate::job::Job::holding(pid);
+                if !crate::job::resume(pid) {
+                    let _ = child.start_kill();
+                    return Err(GitError::Spawn { message: "git was started but could not be resumed".into() });
+                }
+                job
+            }
+            None => None,
+        };
 
         // Feed stdin while git's output is being read; writing everything first deadlocks once
         // both pipes are full.
@@ -252,7 +267,11 @@ impl GitRunner {
             Ok::<_, std::io::Error>((status?, out?, err?))
         };
         // Declared after `child`, so it drops first: the tree is killed while git still runs.
-        let mut tree = ProcessTree::new(pid);
+        let mut tree = ProcessTree {
+            pid,
+            #[cfg(windows)]
+            job,
+        };
         let (status, stdout, stderr) = match kind.timeout(self) {
             Some(limit) => tokio::time::timeout(limit, wait).await.map_err(|_| GitError::Timeout {
                 op: args.first().copied().unwrap_or("git").to_string(),
@@ -284,18 +303,6 @@ struct ProcessTree {
     /// match (see `job.rs`). None if Windows refused; `taskkill /T` is the fallback then.
     #[cfg(windows)]
     job: Option<crate::job::Job>,
-}
-
-impl ProcessTree {
-    fn new(pid: Option<u32>) -> Self {
-        Self {
-            pid,
-            // Right after spawning: git starts hooks and helpers only later, once it has read its
-            // config and the repository.
-            #[cfg(windows)]
-            job: pid.and_then(crate::job::Job::holding),
-        }
-    }
 }
 
 impl Drop for ProcessTree {
