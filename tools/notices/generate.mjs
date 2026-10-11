@@ -16,6 +16,14 @@ function run(cmd, args) {
   return execFileSync(cmd, args, { cwd: root, encoding: 'utf8', maxBuffer: 256 * 1024 * 1024 })
 }
 
+// On Windows `pnpm` on PATH is often pnpm.cmd, which execFileSync can't start (ENOENT). Under
+// `pnpm notices` pnpm passes its own path in npm_execpath: the pnpm binary, or a script for node.
+function pnpm(args) {
+  const self = process.env.npm_execpath
+  if (!self || !/pnpm/i.test(self)) return run('pnpm', args)
+  return /\.[cm]?js$/i.test(self) ? run(process.execPath, [self, ...args]) : run(self, args)
+}
+
 // Licence files in a package's root, plus the files in a REUSE-style `LICENSES/` folder.
 function licenceTexts(dir) {
   return readdirSync(dir, { withFileTypes: true })
@@ -61,7 +69,7 @@ function rustPackages() {
 
 // npm: production dependencies of the UI, which Vite bundles into the app.
 function npmPackages() {
-  const byLicence = JSON.parse(run('pnpm', ['--silent', '--filter', 'ui', 'licenses', 'list', '--prod', '--json']))
+  const byLicence = JSON.parse(pnpm(['--silent', '--filter', 'ui', 'licenses', 'list', '--prod', '--json']))
   return Object.values(byLicence)
     .flat()
     .flatMap((p) =>
