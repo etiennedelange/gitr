@@ -50,6 +50,8 @@ One binary, two ways to get it:
 | Updates     | the in-app updater; update packages signed with our own key  | the Store; the in-app updater is off    |
 | SmartScreen | warns once, on first install ("More info → Run anyway")      | never                                   |
 
+**The Microsoft Store channel isn't built yet.** It was shelved on 2026-10-11, so GitHub Releases is the only way to get Gitr for now. The app already detects an MSIX package (below), so the Store build needs only the packaging.
+
 Gitr knows which one it is by asking Windows whether it runs inside an MSIX package (`update::packaged()` in `src-tauri/src/update.rs`). Inside one, Settings → Updates says "Updates come from the Microsoft Store", there is no update banner, and the update commands touch no network.
 
 A code-signing certificate is parked for now: Azure Artifact Signing (about $10 a month, identity checks only in some countries), SignPath Foundation (free for open source, but needs a public repo, a release history and a signing-policy page) and an OV certificate ($100–400 a year) were looked at. A new certificate doesn't stop SmartScreen anyway until it has built up reputation.
