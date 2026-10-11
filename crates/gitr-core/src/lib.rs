@@ -4,6 +4,8 @@ pub mod discovery;
 pub mod error;
 pub mod hooks;
 pub mod info;
+#[cfg(windows)]
+mod job;
 pub mod locate;
 pub mod log;
 pub mod pathbytes;
