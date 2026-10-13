@@ -1,7 +1,7 @@
 // pnpm test:tools (node --test)
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { compareVersions, hasNotes, versionProblem } from './ship.mjs';
+import { compareVersions, hasNotes, nextVersion, versionProblem } from './ship.mjs';
 
 test('compareVersions follows semver precedence', () => {
   const ordered = ['0.1.0', '0.1.1', '0.2.0-alpha', '0.2.0-alpha.1', '0.2.0-alpha.beta', '0.2.0-beta.2', '0.2.0-beta.11', '0.2.0', '0.10.0', '1.0.0'];
@@ -29,4 +29,23 @@ test('hasNotes needs entries under [Unreleased] or the version', () => {
   assert.equal(hasNotes('## [Unreleased]\n\n## [0.1.1] - 2026-10-12\n\n- A fix\n', '0.1.1'), true);
   // Headings alone are not notes.
   assert.equal(hasNotes('## [Unreleased]\n\n### Added\n\n## [0.1.0]\n- Old\n', '0.1.1'), false);
+});
+
+test('nextVersion bumps the newest tag, not the checkout', () => {
+  // v0.1.3 was tagged but its release reverted, so Cargo.toml still says 0.1.2.
+  const tags = ['v0.1.0', 'v0.1.3', 'v0.1.2', 'not-a-version'];
+  assert.equal(nextVersion(tags, '0.1.2'), '0.1.4');
+  assert.equal(nextVersion(tags, '0.1.2', 'minor'), '0.2.0');
+  assert.equal(nextVersion(tags, '0.1.2', 'major'), '1.0.0');
+  assert.equal(nextVersion([], '0.1.0'), '0.1.1');
+  // Every result is releasable after those tags.
+  for (const bump of ['patch', 'minor', 'major']) assert.equal(versionProblem(nextVersion(tags, '0.1.2', bump), tags), null);
+});
+
+test('nextVersion finishes a pre-release', () => {
+  assert.equal(nextVersion(['v1.2.0-beta.1'], '1.2.0-beta.1'), '1.2.0');
+  assert.equal(nextVersion(['v1.2.0-beta.1'], '1.2.0-beta.1', 'minor'), '1.2.0');
+  assert.equal(nextVersion(['v1.2.0-beta.1'], '1.2.0-beta.1', 'major'), '2.0.0');
+  assert.equal(nextVersion(['v2.0.0-rc.1'], '2.0.0-rc.1', 'major'), '2.0.0');
+  assert.equal(nextVersion(['v1.2.3-rc.1'], '1.2.3-rc.1', 'minor'), '1.3.0');
 });

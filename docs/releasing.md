@@ -16,8 +16,12 @@ The head branch is deleted after merging. Run `git fetch --prune` and delete you
 The version lives in one place: `version` under `[workspace.package]` in `Cargo.toml`. `tauri.conf.json` has no version, so Tauri reads it from there.
 
 ```sh
-pnpm release 1.2.0
+pnpm release            # the next patch version after the newest v* tag: v1.1.3 → 1.1.4
+pnpm release minor      # or the next minor (1.2.0) or major (2.0.0) version
+pnpm release 1.2.0      # or exactly this version
 ```
+
+The next version counts from the newest tag on GitHub, not from `Cargo.toml`, so a version that was tagged and then reverted is never offered again. After a pre-release tag (`v1.2.0-beta.1`), `patch` or `minor` gives the final `1.2.0`. The examples below use 1.2.0.
 
 It checks first: no uncommitted changes to tracked files, `gh` signed in, `v1.2.0` not tagged yet and not older than the newest tag, and entries under the CHANGELOG's `[Unreleased]`. After you confirm, it does what you'd otherwise do by hand:
 
