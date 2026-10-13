@@ -14,6 +14,10 @@
 
 	"postCreateCommand": "bash .devcontainer/post-create.sh",
 
+	// Hard memory cap for the container. rust-analyzer was using ~3.4 GB on its own;
+	// if cargo builds get OOM-killed, raise this to 8g.
+	"runArgs": ["--memory=6g"],
+
 	// Everything lives in Docker named volumes, never host bind mounts: they are
 	// seeded from the image (a bind mount would hide the image's cargo/rustc), keep
 	// tools and generated files off the host drive, and are fast on macOS and Windows.
@@ -81,7 +85,13 @@
 			"settings": {
 				"[javascript][typescript][typescriptreact][json][jsonc]": {
 					"editor.defaultFormatter": "oxc.oxc-vscode"
-				}
+				},
+
+				// rust-analyzer memory tuning
+				"rust-analyzer.lru.capacity": 64,
+				"rust-analyzer.cachePriming.enable": false,
+				// Separate target dir so its `cargo check` doesn't contend with your builds
+				"rust-analyzer.cargo.targetDir": true
 			}
 		}
 	}
