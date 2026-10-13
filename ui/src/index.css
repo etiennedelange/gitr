@@ -1099,6 +1099,25 @@ ul:focus-visible,
   height: 13px;
   color: var(--ink-2);
 }
+.menu > summary.icon {
+  gap: 1px;
+  padding: 0 var(--s2) 0 var(--s3);
+  color: var(--ink-2);
+}
+.menu > summary.icon .ico:not(.chev) {
+  width: 16px;
+  height: 16px;
+  color: inherit;
+}
+.menu > summary.icon .chev {
+  width: 11px;
+  height: 11px;
+  opacity: 0.7;
+}
+.menu > summary.icon:hover,
+.menu[open] > summary.icon {
+  color: var(--ink);
+}
 .menu > summary::-webkit-details-marker {
   display: none;
 }
@@ -1533,6 +1552,42 @@ button.branch-name .ico {
   display: flex;
   align-items: center;
   gap: var(--s1);
+}
+/* Remote actions (Fetch, Pull, Push) as one segmented capsule. A waiting count sits next to its arrow, in the state's ink. */
+.icon-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+  padding: 2px;
+  border: 1px solid var(--line);
+  border-radius: calc(var(--r) + 3px);
+  background: color-mix(in oklab, var(--raised), transparent 40%);
+}
+.icon-group button.icon {
+  width: calc(var(--ctl) - 2px);
+  height: calc(var(--ctl) - 6px);
+  border-radius: var(--r);
+}
+.icon-group button.icon.counted {
+  width: auto;
+  gap: var(--s1);
+  padding: 0 var(--s3) 0 var(--s2);
+}
+button.icon.next.next-behind {
+  background: color-mix(in oklab, var(--blue-ink) 10%, transparent);
+}
+button.icon.next.next-ahead {
+  background: color-mix(in oklab, var(--green-ink) 10%, transparent);
+}
+button.icon.next.next-behind:hover:not(:disabled) {
+  background: color-mix(in oklab, var(--blue-ink) 16%, transparent);
+}
+button.icon.next.next-ahead:hover:not(:disabled) {
+  background: color-mix(in oklab, var(--green-ink) 16%, transparent);
+}
+button.icon .count {
+  font-size: var(--fs-sm);
+  font-variant-numeric: tabular-nums;
 }
 .repo-head .pill.busy {
   margin-right: var(--s2);

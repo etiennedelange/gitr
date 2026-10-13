@@ -127,7 +127,7 @@ describe('dashboard header', () => {
   it('does not claim Ctrl+Shift+F fetches only the shown repos', async () => {
     wrap(<Dashboard />)
     await screen.findByText('alpha')
-    expect(screen.getByRole('button', { name: /Fetch all/ })).toHaveAttribute('title', 'Ctrl+Shift+F')
+    expect(screen.getByRole('button', { name: /Fetch all/ })).toHaveAttribute('title', 'Fetch all (Ctrl+Shift+F)')
     fireEvent.change(screen.getByPlaceholderText(/Search/), { target: { value: 'alp' } })
     const shown = screen.getByRole('button', { name: /Fetch shown/ })
     expect(shown.getAttribute('title')).toMatch(/Ctrl\+Shift\+F fetches all/)

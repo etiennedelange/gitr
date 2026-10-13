@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { ArrowDownToLine, ArrowUpFromLine, Code, GitBranch, GitMerge, RefreshCw, SquareTerminal } from 'lucide-react'
+import { ArrowDownToLine, ArrowUpFromLine, Code, FolderOpen, GitBranch, GitMerge, Globe, RefreshCw, SquareTerminal } from 'lucide-react'
 import { ask } from '@tauri-apps/plugin-dialog'
 import { api } from '../api'
 import { splitChanges } from '../lib/git'
@@ -178,31 +178,48 @@ export function RepoView({ path }: { path: string }) {
           </>
         )}
         <div className="head-actions">
-          <button className="quiet" disabled={busy} onClick={() => fetch.mutate([])} title="Fetch from the remote">
-            <RefreshCw className={`ico ${busyOp === 'fetching' ? 'spin' : ''}`} aria-hidden />
-            {busyOp === 'fetching' ? 'Fetching…' : 'Fetch'}
-          </button>
-          <button
-            className={`quiet ${s?.behind ? 'next next-behind' : ''}`}
-            disabled={busy || !!s?.operation}
-            onClick={() => pull.mutate([])}
-            title={s?.operation ? `${operationTitle(s.operation)}: finish or abort it first` : 'Pull (fast-forward)'}
-          >
-            <ArrowDownToLine className="ico" aria-hidden />
-            {busyOp === 'pulling' ? 'Pulling…' : `Pull${s?.behind ? ` (${s.behind})` : ''}`}
-          </button>
-          <button
-            className={`quiet ${s?.ahead ? 'next next-ahead' : ''}`}
-            disabled={busy || s?.detached}
-            title={s?.detached ? 'Detached HEAD: check out a branch to push' : 'Push your commits'}
-            onClick={push}
-          >
-            <ArrowUpFromLine className="ico" aria-hidden />
-            {busyOp === 'pushing' ? 'Pushing…' : `Push${s?.ahead ? ` (${s.ahead})` : ''}`}
-          </button>
+          <div className="icon-group" role="group" aria-label="Sync">
+            <button
+              className="icon"
+              disabled={busy}
+              onClick={() => fetch.mutate([])}
+              aria-label={busyOp === 'fetching' ? 'Fetching…' : 'Fetch'}
+              title="Fetch from the remote"
+            >
+              <RefreshCw className={`ico ${busyOp === 'fetching' ? 'spin' : ''}`} aria-hidden />
+            </button>
+            <button
+              className={`icon ${s?.behind ? 'counted next next-behind' : ''}`}
+              disabled={busy || !!s?.operation}
+              onClick={() => pull.mutate([])}
+              aria-label={busyOp === 'pulling' ? 'Pulling…' : `Pull${s?.behind ? ` (${s.behind})` : ''}`}
+              title={s?.operation ? `${operationTitle(s.operation)}: finish or abort it first` : 'Pull (fast-forward)'}
+            >
+              <ArrowDownToLine className={`ico ${busyOp === 'pulling' ? 'pulse' : ''}`} aria-hidden />
+              {s?.behind ? (
+                <span className="count" aria-hidden>
+                  {s.behind}
+                </span>
+              ) : null}
+            </button>
+            <button
+              className={`icon ${s?.ahead ? 'counted next next-ahead' : ''}`}
+              disabled={busy || s?.detached}
+              aria-label={busyOp === 'pushing' ? 'Pushing…' : `Push${s?.ahead ? ` (${s.ahead})` : ''}`}
+              title={s?.detached ? 'Detached HEAD: check out a branch to push' : 'Push your commits'}
+              onClick={push}
+            >
+              <ArrowUpFromLine className={`ico ${busyOp === 'pushing' ? 'pulse' : ''}`} aria-hidden />
+              {s?.ahead ? (
+                <span className="count" aria-hidden>
+                  {s.ahead}
+                </span>
+              ) : null}
+            </button>
+          </div>
           <span className="toolbar-sep" aria-hidden />
-          {s?.remote && <DropMenu label={`Open in ${s.remote.kind === 'ado' ? 'ADO' : 'GitHub'}`} items={remoteItems} />}
-          <DropMenu label="Open" items={openItems} />
+          {s?.remote && <DropMenu label={`Open in ${s.remote.kind === 'ado' ? 'ADO' : 'GitHub'}`} icon={Globe} items={remoteItems} />}
+          <DropMenu label="Open" icon={FolderOpen} items={openItems} />
         </div>
       </header>
       {s?.error && <div className="banner error selectable">{s.error}</div>}
