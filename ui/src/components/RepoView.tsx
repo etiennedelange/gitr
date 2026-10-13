@@ -196,7 +196,11 @@ export function RepoView({ path }: { path: string }) {
               title={s?.operation ? `${operationTitle(s.operation)}: finish or abort it first` : 'Pull (fast-forward)'}
             >
               <ArrowDownToLine className={`ico ${busyOp === 'pulling' ? 'pulse' : ''}`} aria-hidden />
-              {s?.behind ? <span className="count" aria-hidden>{s.behind}</span> : null}
+              {s?.behind ? (
+                <span className="count" aria-hidden>
+                  {s.behind}
+                </span>
+              ) : null}
             </button>
             <button
               className={`icon ${s?.ahead ? 'counted next next-ahead' : ''}`}
@@ -206,13 +210,15 @@ export function RepoView({ path }: { path: string }) {
               onClick={push}
             >
               <ArrowUpFromLine className={`ico ${busyOp === 'pushing' ? 'pulse' : ''}`} aria-hidden />
-              {s?.ahead ? <span className="count" aria-hidden>{s.ahead}</span> : null}
+              {s?.ahead ? (
+                <span className="count" aria-hidden>
+                  {s.ahead}
+                </span>
+              ) : null}
             </button>
           </div>
           <span className="toolbar-sep" aria-hidden />
-          {s?.remote && (
-            <DropMenu label={`Open in ${s.remote.kind === 'ado' ? 'ADO' : 'GitHub'}`} icon={Globe} items={remoteItems} />
-          )}
+          {s?.remote && <DropMenu label={`Open in ${s.remote.kind === 'ado' ? 'ADO' : 'GitHub'}`} icon={Globe} items={remoteItems} />}
           <DropMenu label="Open" icon={FolderOpen} items={openItems} />
         </div>
       </header>
