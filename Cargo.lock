@@ -1509,7 +1509,7 @@ dependencies = [
 
 [[package]]
 name = "gitr"
-version = "0.1.2"
+version = "0.1.4"
 dependencies = [
  "gitr-ai",
  "gitr-core",
@@ -1536,7 +1536,7 @@ dependencies = [
 
 [[package]]
 name = "gitr-ai"
-version = "0.1.2"
+version = "0.1.4"
 dependencies = [
  "async-trait",
  "github-copilot-sdk",
@@ -1549,7 +1549,7 @@ dependencies = [
 
 [[package]]
 name = "gitr-core"
-version = "0.1.2"
+version = "0.1.4"
 dependencies = [
  "gix",
  "libc",
@@ -1565,7 +1565,7 @@ dependencies = [
 
 [[package]]
 name = "gitr-remote"
-version = "0.1.2"
+version = "0.1.4"
 dependencies = [
  "serde",
 ]
