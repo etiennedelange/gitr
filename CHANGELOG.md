@@ -5,6 +5,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Changed
+- **Icon toolbars.** The buttons at the top right are now icons instead of words. In a repository, Fetch, Pull and Push sit together in one small capsule; when there's something to pull or push, the arrow shows the count in blue or green. Open in GitHub/ADO is a globe and Open is a folder, each with a small menu arrow. On the dashboard, Fetch all and Pull all share the same capsule, set apart from Refresh, Rescan and Add folder. Hover over any icon to see what it does and its shortcut.
+
 ### Fixed
 - **Stop now really stops a hung hook on Windows.** Stopping a commit or push whose hook hangs ended git and the hook's shell, but the commands the hook had started (a lint or test run, say) kept running in the background until they finished by themselves. Stop now ends everything git started.
 

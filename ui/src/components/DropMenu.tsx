@@ -1,13 +1,14 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react'
-import { ChevronDown } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import { ChevronDown, type LucideIcon } from 'lucide-react'
 
 export interface DropMenuItem {
   label: string
   onSelect: () => void
 }
 
-/** A toolbar dropdown that closes like a native menu: on Escape, on a click elsewhere, when an item is chosen, and when another menu opens. */
-export function DropMenu({ label, items }: { label: ReactNode; items: DropMenuItem[] }) {
+/** A toolbar dropdown that closes like a native menu: on Escape, on a click elsewhere, when an item is chosen, and when another menu opens.
+ *  With an `icon`, the button shows just the icon and the label becomes its accessible name and tooltip. */
+export function DropMenu({ label, icon: Icon, items }: { label: string; icon?: LucideIcon; items: DropMenuItem[] }) {
   const [open, setOpen] = useState(false)
   const root = useRef<HTMLDetailsElement>(null)
 
@@ -47,12 +48,15 @@ export function DropMenu({ label, items }: { label: ReactNode; items: DropMenuIt
       }}
     >
       <summary
+        className={Icon ? 'icon' : undefined}
+        aria-label={Icon ? label : undefined}
+        title={Icon ? label : undefined}
         onClick={(e) => {
           e.preventDefault()
           setOpen(!open)
         }}
       >
-        {label} <ChevronDown className="ico chev" aria-hidden />
+        {Icon ? <Icon className="ico" aria-hidden /> : label} <ChevronDown className="ico chev" aria-hidden />
       </summary>
       <div className="menu-items" role="menu">
         {items.map((item) => (

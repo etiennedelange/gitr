@@ -208,24 +208,26 @@ export function Dashboard() {
           </span>
         )}
         <div className="spacer" />
-        <button
-          className="quiet"
-          disabled={running || !paths.length}
-          onClick={() => batch.mutate({ op: 'fetch', paths })}
-          title={showingAll ? 'Ctrl+Shift+F' : 'Fetch the shown repositories (Ctrl+Shift+F fetches all)'}
-        >
-          <RefreshCw className="ico" aria-hidden />
-          Fetch {showingAll ? 'all' : 'shown'}
-        </button>
-        <button
-          className="quiet"
-          disabled={running || !paths.length}
-          onClick={() => batch.mutate({ op: 'pull', paths })}
-          title={showingAll ? 'Ctrl+Shift+P' : 'Pull the shown repositories (Ctrl+Shift+P pulls all)'}
-        >
-          <ArrowDownToLine className="ico" aria-hidden />
-          Pull {showingAll ? 'all' : 'shown'}
-        </button>
+        <div className="icon-group" role="group" aria-label="Sync">
+          <button
+            className="icon"
+            disabled={running || !paths.length}
+            onClick={() => batch.mutate({ op: 'fetch', paths })}
+            aria-label={`Fetch ${showingAll ? 'all' : 'shown'}`}
+            title={showingAll ? 'Fetch all (Ctrl+Shift+F)' : 'Fetch the shown repositories (Ctrl+Shift+F fetches all)'}
+          >
+            <RefreshCw className="ico" aria-hidden />
+          </button>
+          <button
+            className="icon"
+            disabled={running || !paths.length}
+            onClick={() => batch.mutate({ op: 'pull', paths })}
+            aria-label={`Pull ${showingAll ? 'all' : 'shown'}`}
+            title={showingAll ? 'Pull all (Ctrl+Shift+P)' : 'Pull the shown repositories (Ctrl+Shift+P pulls all)'}
+          >
+            <ArrowDownToLine className="ico" aria-hidden />
+          </button>
+        </div>
         <span className="toolbar-sep" aria-hidden />
         <button
           className="icon"
