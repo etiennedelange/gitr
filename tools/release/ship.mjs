@@ -1,8 +1,12 @@
 #!/usr/bin/env node
 // One command for a whole release (docs/releasing.md, "Cutting a release"):
 //
-//   pnpm release 0.2.0          asks once, then does everything below
-//   pnpm release 0.2.0 --yes    without asking
+//   pnpm release                the next patch version after the newest v* tag (v0.1.3 → 0.1.4)
+//   pnpm release minor|major    the next minor (0.2.0) or major (1.0.0) version instead
+//   pnpm release 0.2.0          exactly this version
+//   … --yes                     without asking
+//
+// Asks once, then does everything below.
 //
 // 1. Checks: no uncommitted changes to tracked files, gh signed in, the version is new, and the
 //    CHANGELOG has entries under [Unreleased].
@@ -52,6 +56,23 @@ export function compareVersions(a, b) {
   return 0;
 }
 
+const BUMPS = ['patch', 'minor', 'major'];
+
+/** The version after the newest `v*` tag in `tags` (or after `current` when there are none), like `npm version <bump>`:
+ *  a pre-release is finished by the bump that reaches it (1.2.0-beta.1 → patch or minor → 1.2.0). */
+export function nextVersion(tags, current, bump = 'patch') {
+  const released = tags.filter((t) => /^v\d/.test(t)).map((t) => t.slice(1));
+  const base = released.sort(compareVersions).at(-1) ?? current;
+  const [core, pre] = base.split(/-(.*)/s);
+  let [major, minor, patch] = core.split('.').map(Number);
+  if (bump === 'major') {
+    if (!(pre && minor === 0 && patch === 0)) [major, minor, patch] = [major + 1, 0, 0];
+  } else if (bump === 'minor') {
+    if (!(pre && patch === 0)) [minor, patch] = [minor + 1, 0];
+  } else if (!pre) patch += 1;
+  return `${major}.${minor}.${patch}`;
+}
+
 /** Why `version` can't be released after the `v*` tags in `tags`, or null if it can. */
 export function versionProblem(version, tags) {
   const released = tags.filter((t) => /^v\d/.test(t)).map((t) => t.slice(1));
@@ -91,7 +112,10 @@ function findPr(branch) {
 
 async function main(argv) {
   const yes = argv.includes('--yes');
-  const version = parseVersion(argv.find((a) => !a.startsWith('--')));
+  const arg = argv.find((a) => !a.startsWith('--')) ?? 'patch';
+  // The next version comes from the tags on origin, so a rerun after a stop picks the same one.
+  if (BUMPS.includes(arg)) git('fetch', '--quiet', '--tags', 'origin');
+  const version = BUMPS.includes(arg) ? nextVersion(git('tag', '--list', 'v*').split('\n').filter(Boolean), readVersion(), arg) : parseVersion(arg);
   const tag = `v${version}`;
   const branch = `release/${version}`;
 
