@@ -57,7 +57,7 @@ describe('commit & push', () => {
     vi.mocked(api.push).mockRejectedValueOnce({ message: 'Push rejected' })
     wrap(<CommitBox path={PATH} stagedCount={1} branch="main" />)
     fireEvent.change(screen.getByRole('textbox'), { target: { value: 'Fix thing' } })
-    await act(async () => fireEvent.click(screen.getByRole('button', { name: '& Push' })))
+    await act(async () => fireEvent.click(screen.getByRole('button', { name: 'Commit and push' })))
     await flush()
     const messages = useApp.getState().toasts.map((t) => t.message)
     expect(messages).toContain('Committed abcdef0, but the push failed')

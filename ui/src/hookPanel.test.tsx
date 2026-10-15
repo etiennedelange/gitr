@@ -75,7 +75,7 @@ describe('hook panel', () => {
     fireEvent.change(screen.getByRole('textbox'), { target: { value: 'Fix thing' } })
     act(() => useApp.getState().hooksStarted(PATH, 'commit'))
     act(() => useApp.getState().hookOutput(PATH, 'lint failed: 3 problems'))
-    await act(async () => fireEvent.click(screen.getByRole('button', { name: /^Commit/ })))
+    await act(async () => fireEvent.click(screen.getByRole('button', { name: /^Commit(?! and push)/ })))
     await flush()
 
     expect(screen.getByRole('alert')).toHaveTextContent('The pre-commit hook rejected the commit.')
@@ -98,7 +98,7 @@ describe('hook panel', () => {
     ask.mockResolvedValueOnce(false)
     repoView()
     fireEvent.change(screen.getByRole('textbox'), { target: { value: 'wip' } })
-    await act(async () => fireEvent.click(screen.getByRole('button', { name: /^Commit/ })))
+    await act(async () => fireEvent.click(screen.getByRole('button', { name: /^Commit(?! and push)/ })))
     await flush()
     // No live output arrived: git's output is shown instead.
     expect(screen.getByText('lint failed: 3 problems')).toBeInTheDocument()
@@ -131,7 +131,7 @@ describe('hook panel', () => {
     repoView()
     fireEvent.change(screen.getByRole('textbox'), { target: { value: 'x' } })
     act(() => useApp.getState().hooksStarted(PATH, 'commit'))
-    await act(async () => fireEvent.click(screen.getByRole('button', { name: /^Commit/ })))
+    await act(async () => fireEvent.click(screen.getByRole('button', { name: /^Commit(?! and push)/ })))
     await flush()
     expect(screen.queryByLabelText('Hook output')).toBeNull()
     expect(useApp.getState().toasts.map((t) => t.message)).toEqual(['Commit signing failed.'])
