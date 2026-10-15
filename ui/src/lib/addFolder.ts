@@ -5,6 +5,7 @@ import { api } from '../api'
 import { notifyError, useRescan } from '../hooks'
 import { useApp } from '../store'
 import type { Config, Group, RepoEntry } from '../types'
+import { nextGroupColor } from './groupColor'
 
 /** "D:\Repos\" → "Repos". */
 export const folderName = (p: string) =>
@@ -66,7 +67,7 @@ export function useAddFolder() {
     const target = groupId ? saved.groups.find((g) => g.id === groupId) : undefined
     const added: Group = target
       ? { ...target, roots: [...target.roots, dir] }
-      : { id: crypto.randomUUID(), name: folderName(dir), roots: [dir] }
+      : { id: crypto.randomUUID(), name: folderName(dir), roots: [dir], color: nextGroupColor(saved.groups) }
     const withFolder = (c: Config): Config => ({
       ...c,
       groups: target ? c.groups.map((g) => (g.id === target.id ? { ...g, roots: [...g.roots, dir] } : g)) : [...c.groups, added],

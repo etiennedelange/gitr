@@ -5,6 +5,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+- **Group colours.** With more than one group, each group has a colour, shown as a thin stripe down the left edge of its repositories in the sidebar and on the dashboard, and as a small square next to its name. When All groups is showing and the dashboard is sorted by status, the repositories below **Needs attention** are split by group under each group's name, so you can see at a glance which are Work and which are Personal. New groups get the next unused colour; change it in Settings → Workspace groups.
+
 ## [0.1.5] - 2026-10-15
 
 ### Changed

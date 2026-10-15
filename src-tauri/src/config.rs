@@ -54,6 +54,10 @@ pub struct Group {
     pub id: String,
     pub name: String,
     pub roots: Vec<PathBuf>,
+    /// The group's colour in the sidebar and dashboard (`teal`, `rose`, …); the UI picks the next
+    /// free one when it's missing.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub color: Option<String>,
 }
 
 impl Default for Config {
@@ -170,7 +174,7 @@ mod tests {
     fn round_trips_and_tolerates_partial_files() {
         let tmp = tempfile::tempdir().unwrap();
         let mut c = Config::default();
-        c.groups.push(Group { id: "g1".into(), name: "Unity".into(), roots: vec!["D:\\Repos\\Unity".into()] });
+        c.groups.push(Group { id: "g1".into(), name: "Unity".into(), roots: vec!["D:\\Repos\\Unity".into()], color: Some("teal".into()) });
         c.copilot_model = Some("gpt-5-mini".into());
         save(tmp.path(), &c).unwrap();
         assert_eq!(load(tmp.path()), c);
@@ -191,6 +195,14 @@ mod tests {
         let backup = std::fs::read_to_string(tmp.path().join("config.toml.bak")).unwrap();
         assert_eq!(backup, "groups = [oops
 ");
+    }
+
+    #[test]
+    fn a_group_saved_before_colours_loads_without_one() {
+        let c = load_str("[[groups]]\nid = \"g1\"\nname = \"Work\"\nroots = [\"D:\\\\Repos\"]\n");
+        assert_eq!(c.groups.len(), 1);
+        assert_eq!(c.groups[0].color, None);
+        assert!(!toml::to_string(&c).unwrap().contains("color"));
     }
 
     fn load_str(text: &str) -> Config {
@@ -262,7 +274,7 @@ mod tests {
         for p in ["Tracer/.git", "Other/.git"] {
             std::fs::create_dir_all(parent.join(p)).unwrap();
         }
-        let group = |id: &str, root: &std::path::Path| Group { id: id.into(), name: id.into(), roots: vec![root.to_path_buf()] };
+        let group = |id: &str, root: &std::path::Path| Group { id: id.into(), name: id.into(), roots: vec![root.to_path_buf()], color: None };
         for parent_first in [true, false] {
             let mut c = Config::default();
             let (p, own) = (group("parent", &parent), group("own", &parent.join("Tracer")));
