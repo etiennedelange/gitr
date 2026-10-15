@@ -397,7 +397,11 @@ export function Dashboard() {
             }
             if (it.kind === 'band') {
               return (
-                <div key={'band:' + it.key} className={`band ${v.index === 0 ? 'first' : ''}`} style={{ ...place, ...groupStyle(it.color) }}>
+                <div
+                  key={'band:' + it.key}
+                  className={`band ${v.index === 0 ? 'first' : ''}`}
+                  style={{ ...place, ...groupStyle(it.color) }}
+                >
                   {it.color && <span className="group-swatch" aria-hidden />}
                   {it.label}
                   <span className="band-count">{it.count}</span>

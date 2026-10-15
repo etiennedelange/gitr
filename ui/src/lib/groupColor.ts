@@ -26,8 +26,7 @@ export function groupColors(groups: Group[]): Map<string, GroupColor> {
 }
 
 /** The colour a new group gets: the first one no group has. */
-export const nextGroupColor = (groups: Group[]): GroupColor =>
-  groupColors([...groups, { id: '\0new', name: '', roots: [] }]).get('\0new')!
+export const nextGroupColor = (groups: Group[]): GroupColor => groupColors([...groups, { id: '\0new', name: '', roots: [] }]).get('\0new')!
 
 /** The CSS value for a group colour. */
 export const groupColorVar = (c: GroupColor | undefined) => (c ? `var(--g-${c})` : undefined)

@@ -183,7 +183,10 @@ function SettingsForm({ saved }: { saved: Config }) {
   const addGroup = async () => {
     const dir = await pickFolder()
     if (!dir) return
-    const next = { ...draft, groups: [...draft.groups, { id: crypto.randomUUID(), name: folderName(dir), roots: [dir], color: nextGroupColor(draft.groups) }] }
+    const next = {
+      ...draft,
+      groups: [...draft.groups, { id: crypto.randomUUID(), name: folderName(dir), roots: [dir], color: nextGroupColor(draft.groups) }],
+    }
     // The first group is saved right away, so its repositories fill the sidebar without a Save step.
     if (!saved.groups.length && !draft.groups.length) {
       setDraft(next)
