@@ -12,6 +12,7 @@ import { BusyOr } from './Busy'
 import { SignInBanner } from './SignInBanner'
 import { operationNoun } from '../lib/operation'
 import { CountChips, Divergence, StatusMark } from './Marks'
+import { groupColors, groupStyle, type GroupColor } from '../lib/groupColor'
 import type { BatchProgress, RepoSummary } from '../types'
 
 const FILTERS: Filter[] = ['all', 'attention', 'dirty', 'behind', 'ahead']
@@ -20,7 +21,7 @@ const ROW_H = 30
 const BAND_H = 28
 
 /** A virtual list item: a repo row, or the heading of the band of rows below it. */
-type Item = { kind: 'band'; label: string; count: number } | { kind: 'row'; row: Row }
+type Item = { kind: 'band'; key: string; label: string; count: number; color?: GroupColor } | { kind: 'row'; row: Row }
 
 /** What the last Fetch all / Pull all did for a repo, in words: "Up to date", "Pull failed · …". */
 function batchText(p: BatchProgress): string {
@@ -91,20 +92,36 @@ export function Dashboard() {
 
   const attention = (r: Row) => needsAttention(r.summary, progress[r.repo.path]?.state === 'error')
 
-  // Sorted by status, the repos that need you get their own band above the rest. Held rows keep
-  // their places, so the bands only form when the order is fresh.
+  // With more than one group, each repo carries its group's colour as a stripe down its left edge.
+  const groups = useMemo(() => config.data?.groups ?? [], [config.data])
+  const colors = useMemo(() => groupColors(groups), [groups])
+  const colored = groups.length > 1
+
+  // Sorted by status, the repos that need you get their own band above the rest, and with all
+  // groups showing the rest are banded by group. Held rows keep their places, so the bands only
+  // form when the order is fresh.
   const items = useMemo((): Item[] => {
-    const urgent = sort === 'status' && filter !== 'attention' && !holdOrder ? rows.filter(attention) : []
-    if (!urgent.length || urgent.length === rows.length) return rows.map((row) => ({ kind: 'row', row }))
+    const flat = () => rows.map((row): Item => ({ kind: 'row', row }))
+    if (sort !== 'status' || holdOrder) return flat()
+    const urgent = filter !== 'attention' ? rows.filter(attention) : []
     const rest = rows.filter((r) => !urgent.includes(r))
-    return [
-      { kind: 'band', label: 'Needs attention', count: urgent.length },
-      ...urgent.map((row): Item => ({ kind: 'row', row })),
-      { kind: 'band', label: 'Everything else', count: rest.length },
-      ...rest.map((row): Item => ({ kind: 'row', row })),
-    ]
+    const bands: { key: string; label: string; color?: GroupColor; rows: Row[] }[] = []
+    if (urgent.length) bands.push({ key: 'attention', label: 'Needs attention', rows: urgent })
+    if (colored && !group) {
+      for (const g of groups) {
+        const mine = rest.filter((r) => r.repo.groupId === g.id)
+        if (mine.length) bands.push({ key: 'group:' + g.id, label: g.name, color: colors.get(g.id), rows: mine })
+      }
+      const other = rest.filter((r) => !colors.has(r.repo.groupId))
+      if (other.length) bands.push({ key: 'rest', label: 'Everything else', rows: other })
+    } else if (rest.length) bands.push({ key: 'rest', label: 'Everything else', rows: rest })
+    if (bands.length < 2) return flat()
+    return bands.flatMap((b): Item[] => [
+      { kind: 'band', key: b.key, label: b.label, count: b.rows.length, color: b.color },
+      ...b.rows.map((row): Item => ({ kind: 'row', row })),
+    ])
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rows, sort, filter, holdOrder])
+  }, [rows, sort, filter, holdOrder, group, groups, colors, colored])
 
   // How many repos each filter tab would show, within the chosen group and search.
   const counts = useMemo(() => {
@@ -380,7 +397,8 @@ export function Dashboard() {
             }
             if (it.kind === 'band') {
               return (
-                <div key={'band:' + it.label} className={`band ${v.index === 0 ? 'first' : ''}`} style={place}>
+                <div key={'band:' + it.key} className={`band ${v.index === 0 ? 'first' : ''}`} style={{ ...place, ...groupStyle(it.color) }}>
+                  {it.color && <span className="group-swatch" aria-hidden />}
                   {it.label}
                   <span className="band-count">{it.count}</span>
                 </div>
@@ -396,10 +414,11 @@ export function Dashboard() {
                 className={`row ${repo.path === cursor ? 'cursor' : ''} ${attention(it.row) ? 'urgent' : ''}`}
                 aria-current={repo.path === cursor ? 'true' : undefined}
                 onClick={() => setCursor(repo.path)}
-                style={place}
+                style={colored ? { ...place, ...groupStyle(colors.get(repo.groupId)) } : place}
                 onDoubleClick={open}
                 onContextMenu={repoMenu(repo.path)}
               >
+                {colored && <span className="group-stripe" aria-hidden />}
                 <StatusMark summary={s} />
                 <button className="link repo-link" tabIndex={-1} onClick={open} title={repo.path}>
                   {repo.name}

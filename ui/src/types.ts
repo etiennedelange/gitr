@@ -12,6 +12,8 @@ export interface Group {
   id: string
   name: string
   roots: string[]
+  /** One of GROUP_COLORS; missing on groups made before colours, which then get the next free one. */
+  color?: string | null
 }
 
 export interface Config {

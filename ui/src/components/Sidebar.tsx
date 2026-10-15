@@ -9,6 +9,7 @@ import { CountChips, StatusMark } from './Marks'
 import { needsAttention } from '../lib/git'
 import { useAddFolder } from '../lib/addFolder'
 import { groupMenu } from '../lib/menus'
+import { groupColors, groupStyle } from '../lib/groupColor'
 import { showMenu } from '../nativeMenu'
 import { saveThemePref, useTheme } from '../theme'
 
@@ -45,6 +46,10 @@ export function Sidebar() {
       }))
       .filter((g) => !q || g.repos.length > 0)
   }, [config.data, repos.data, filter])
+  // With more than one group, each carries its colour: a swatch on its heading and a stripe down
+  // its repos, matching the stripes on the dashboard.
+  const colors = useMemo(() => groupColors(config.data?.groups ?? []), [config.data])
+  const colored = (config.data?.groups.length ?? 0) > 1
 
   // The tree is one Tab stop; arrow keys move within it (like a Windows tree view). The stop is the
   // item last focused, else the open repo, else the first group.
@@ -143,7 +148,7 @@ export function Sidebar() {
           </div>
         )}
         {groups.map((g) => (
-          <div key={g.id} className="group">
+          <div key={g.id} className="group" style={colored ? groupStyle(colors.get(g.id)) : undefined}>
             <button
               className="group-head"
               data-key={'g:' + g.id}
@@ -164,6 +169,7 @@ export function Sidebar() {
               ) : (
                 <ChevronDown className="chevron" aria-hidden />
               )}
+              {colored && <span className="group-swatch" aria-hidden />}
               <span className="group-name">{g.name}</span>
               <span className="count">{g.repos.length}</span>
             </button>
@@ -183,6 +189,7 @@ export function Sidebar() {
                     onContextMenu={repoMenu(r.path)}
                     title={`${r.name}\n${r.path}`}
                   >
+                    {colored && <span className="group-stripe" aria-hidden />}
                     <StatusMark summary={s} />
                     <span className="repo-name">{r.name}</span>
                     <BusyDot path={r.path} />

@@ -29,6 +29,12 @@ colors:
   red-ink: "#ab2a1c"
   red-soft: "#fdece9"
   red-on: "#ffffff"
+  group-teal: "#13858a"
+  group-rose: "#c23f7d"
+  group-ochre: "#9a6a2c"
+  group-slate: "#5c6c88"
+  group-olive: "#6f7d1c"
+  group-plum: "#8a4fa0"
   add-bg: "#ebf7ef"
   del-bg: "#fdeeeb"
   accent-dark: "#9a88ff"
@@ -184,6 +190,9 @@ Cool graphite neutrals, one violet accent and four state hues that each do one j
 
 Each hue has a plain value for marks and bars, an `-ink` value for text at body size, and a `-soft` wash for full-width strips. Diff lines use their own add/del washes (add-bg, del-bg, plus line-number tints in the sidecar).
 
+### Group colours
+- **Teal, Rose, Ochre, Slate, Olive, Plum** (`--g-*`, each with a lighter dark-theme value): one per workspace group, chosen in Settings or given the next unused one. They are hues no state uses, so a group never reads as changes, behind, ahead or trouble. Shown only when there is more than one group, as a 3px stripe down the left edge of the group's rows (sidebar and ledger) and an 8px square swatch beside the group's name (sidebar heading, ledger band).
+
 ### Neutral
 - **Window** (window): the work area.
 - **Rail** (rail): the sidebar column, slightly darker than the window.
@@ -196,7 +205,7 @@ Each hue has a plain value for marks and bars, an `-ink` value for text at body 
 ### Named Rules
 **The One Voice Rule.** Violet marks selection, focus and at most one primary button per view. Everything else that wants emphasis uses weight or state ink.
 
-**The Hue Has A Job Rule.** Amber is changes, sky is behind/incoming, green is ahead/outgoing, red is error or conflict. A state hue is never decoration, and color never stands alone: a count, letter or word always sits beside it.
+**The Hue Has A Job Rule.** Amber is changes, sky is behind/incoming, green is ahead/outgoing, red is error or conflict. A state hue is never decoration, and color never stands alone: a count, letter or word always sits beside it. Group colours name a group and nothing else: the group's name always heads the rows that carry its stripe, as the sidebar heading and, with all groups showing, the ledger band.
 
 ## Typography
 
@@ -266,7 +275,7 @@ Text tabs at 34px in ink-2; the selected tab turns ink and 600 and gets a 2px vi
 - **Commit message:** mono 12px, line-height 1.55, at least 92px tall, resizable.
 
 ### Navigation (sidebar)
-A tinted column, not a card. Brand mark and name at the top in a 44px bar, Dashboard, a filter field, groups of repos, Settings at the foot. Nav items and repo rows have no face until hovered (rail-hover); the active one takes the violet wash, selection ink and weight 600. Group heads are band type in ink-2 with a chevron and a count. Each repo row carries its status mark and count notation in two fixed slots, so numerals align down the list.
+A tinted column, not a card. Brand mark and name at the top in a 44px bar, Dashboard, a filter field, groups of repos, Settings at the foot. Nav items and repo rows have no face until hovered (rail-hover); the active one takes the violet wash, selection ink and weight 600. Group heads are band type in ink-2 with a chevron and a count. Each repo row carries its status mark and count notation in two fixed slots, so numerals align down the list. With several groups, each group heading carries its swatch and its repos a stripe along the rail's left edge, unbroken down the group.
 
 ### State marks and counts (signature)
 - **Status mark:** one 8px mark per repo: filled in the state hue for changes, behind or ahead; a hollow ink-3 ring when clean; a red ring for an error; a solid red dot with a soft halo for conflicts; a half-filled ring while a merge or rebase waits.
@@ -278,7 +287,7 @@ A tinted column, not a card. Brand mark and name at the top in a 44px bar, Dashb
 Behind and ahead on one axis in every ledger row. A `line-strong` vertical axis runs down the column; behind commits draw a sky bar growing left with its number on the outside, ahead commits a green bar growing right. Bar length is linear for 1 to 4 commits, then logarithmic to a 40px cap. A repo with no upstream draws nothing.
 
 ### Ledger rows
-30px grid rows split by `line-soft`. Hover is the ink overlay; the keyboard cursor row is the violet wash, with a 1px inset violet ring when the table has focus. Row tools fade in on hover or cursor. Bands ("Needs attention" above "Everything else") are 11px band type with a count, on a hairline.
+30px grid rows split by `line-soft`. Hover is the ink overlay; the keyboard cursor row is the violet wash, with a 1px inset violet ring when the table has focus. Row tools fade in on hover or cursor. Bands are 11px band type with a count, on a hairline: "Needs attention" above "Everything else", or, sorted by status with all of several groups showing, above one band per group led by its swatch. With several groups, each row carries its group's 3px stripe at its left edge.
 
 ### History rows
 Two-line 44px rows. A `line-strong` branch line runs through 8px commit marks: ink-3 by default, violet and 10px for HEAD, a green ring for unpushed, a ringed target for merges. The second line (author, SHA, date) is 11px ink-3. Ref labels are quiet 18px outlines: HEAD in violet, tags in amber, remotes dashed.

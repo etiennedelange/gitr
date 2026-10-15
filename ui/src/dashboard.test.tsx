@@ -107,6 +107,41 @@ describe('dashboard', () => {
     expect(order).toEqual(['Needs attention1', 'beta', 'Everything else2', 'gamma', 'alpha'])
   })
 
+  it('bands the rest by group, with each repo striped in its group colour, when all groups show', async () => {
+    config.groups.push({ id: 'p', name: 'Personal', roots: ['D:/p'] })
+    repos.push({ path: 'D:/p/delta', name: 'delta', groupId: 'p' })
+    try {
+      useApp.setState({
+        summaries: {
+          'D:/w/alpha': summary('D:/w/alpha', {}),
+          'D:/w/beta': summary('D:/w/beta', { error: 'boom' }),
+          'D:/w/gamma': summary('D:/w/gamma', { unstaged: 4 }),
+          'D:/p/delta': summary('D:/p/delta', { behind: 1 }),
+        },
+      })
+      mount()
+      await screen.findByText('alpha')
+      const order = () => [...body().querySelectorAll('.band, .row .repo-link')].map((el) => el.textContent)
+      expect(order()).toEqual(['Needs attention1', 'beta', 'Work2', 'gamma', 'alpha', 'Personal1', 'delta'])
+      const stripe = (name: string) => screen.getByText(name).closest<HTMLElement>('.row')!.style.getPropertyValue('--group')
+      expect([stripe('beta'), stripe('gamma'), stripe('delta')]).toEqual(['var(--g-teal)', 'var(--g-teal)', 'var(--g-rose)'])
+      expect(body().querySelectorAll('.row .group-stripe')).toHaveLength(4)
+
+      // One group chosen: back to attention, then everything else.
+      act(() => useApp.getState().setDashboard({ group: 'g' }))
+      expect(order()).toEqual(['Needs attention1', 'beta', 'Everything else2', 'gamma', 'alpha'])
+    } finally {
+      config.groups.pop()
+      repos.pop()
+    }
+  })
+
+  it('draws no group stripes with only one group', async () => {
+    mount()
+    await screen.findByText('alpha')
+    expect(body().querySelector('.group-stripe')).toBeNull()
+  })
+
   it('keeps filter, search and sort when you leave and come back', async () => {
     const first = mount()
     await screen.findByText('alpha')
