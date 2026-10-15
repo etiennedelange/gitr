@@ -5,6 +5,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.1.5] - 2026-10-15
+
 ### Changed
 - **Push half of the commit button.** The "& Push" half of the commit button is now an upload arrow and **Push**, the same arrow as Push in the toolbar. It still commits first, then pushes (Ctrl+Shift+Enter).
 
