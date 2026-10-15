@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { listen } from '@tauri-apps/api/event'
-import { Sparkles, Square, Undo2 } from 'lucide-react'
+import { ArrowUpFromLine, Sparkles, Square, Undo2 } from 'lucide-react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { ask } from '@tauri-apps/plugin-dialog'
 import { api, errorMessage } from '../api'
@@ -229,7 +229,7 @@ export function CommitBox({ path, stagedCount, branch }: Props) {
           </button>
         )}
       </div>
-      {/* Commit and & Push sit together as one split action. */}
+      {/* Commit and Push sit together as one split action; Push commits first. */}
       <div className="commit-actions send">
         <button className="primary commit-main" disabled={!canCommit} onClick={() => commit(false)} title="Ctrl+Enter">
           {busyOp === 'committing'
@@ -242,9 +242,11 @@ export function CommitBox({ path, stagedCount, branch }: Props) {
           className="primary commit-push"
           disabled={!canCommit}
           onClick={() => commit(true)}
+          aria-label="Commit and push"
           title="Commit, then push (Ctrl+Shift+Enter)"
         >
-          & Push
+          <ArrowUpFromLine className="ico" aria-hidden />
+          Push
         </button>
       </div>
     </section>
