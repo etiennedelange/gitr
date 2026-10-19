@@ -5,6 +5,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Fixed
+- **Diff colours appear sooner.** Opening a diff could take a second or two before its code was coloured, longest for the first TypeScript or TSX file, and the end of a long file could stay uncoloured. Colouring now takes a fraction of that.
+
 ## [0.1.7] - 2026-10-19
 
 ### Added

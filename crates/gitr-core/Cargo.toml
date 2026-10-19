@@ -11,9 +11,10 @@ thiserror.workspace = true
 tokio.workspace = true
 tracing = "0.1"
 gix = { version = "0.88", default-features = false, features = ["sha1"] }
-# Diff syntax colours: syntect with bat's grammars (two-face), pure-Rust regexes (no Oniguruma).
-syntect = { version = "5.3", default-features = false, features = ["parsing", "regex-fancy"] }
-two-face = { version = "0.5", default-features = false, features = ["syntect-fancy"] }
+# Diff syntax colours: syntect with bat's grammars (two-face) on Oniguruma, which compiles and
+# searches the grammars several times faster than the pure-Rust fancy-regex.
+syntect = { version = "5.3", default-features = false, features = ["parsing", "regex-onig"] }
+two-face = { version = "0.5", default-features = false, features = ["syntect-onig"] }
 
 [target.'cfg(unix)'.dependencies]
 libc = "0.2"

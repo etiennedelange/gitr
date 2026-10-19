@@ -3,7 +3,9 @@
 //! multi-line comment or string is coloured as part of it. A line whose file text doesn't match
 //! the diff (no file to read, a filter, a conflict) is coloured from its hunk alone instead.
 //!
-//! The grammars are bat's (through two-face) on syntect, with pure-Rust regexes.
+//! The grammars are bat's (through two-face) on syntect, with Oniguruma regexes: the pure-Rust
+//! ones (fancy-regex) took about a second to compile a grammar such as TSX on first use, and
+//! searched several times slower.
 
 use std::collections::{BTreeMap, HashMap, HashSet};
 use std::sync::OnceLock;
@@ -331,6 +333,30 @@ mod tests {
         // é is one unit, the crab two: the comment starts at JavaScript index 16.
         assert_eq!((comment.0, comment.1), (16, 21));
         assert_eq!(text.encode_utf16().count(), 21);
+    }
+
+    /// A 1,000-line TSX file, coloured with the grammar not yet used in this process, finishes
+    /// well inside the app's 1.5 s budget. With the pure-Rust regexes the first TSX diff alone
+    /// took about a second, and a large one ran out of budget and stayed plain.
+    #[test]
+    fn a_large_tsx_file_is_coloured_quickly_on_first_use() {
+        let block = concat!(
+            "export function Row({ name, count }: { name: string; count: number }) {\n",
+            "  const label = `${name}: ${count}` // shown as is\n",
+            "  return <div className=\"row\" onClick={() => console.log(label)}>{label}</div>\n",
+            "}\n",
+            "\n",
+        );
+        let source = block.repeat(200);
+        let lines = source.lines().count();
+        let mut text = format!("@@ -0,0 +1,{lines} @@\n");
+        for l in source.lines() {
+            text.push_str(&format!("+{l}\n"));
+        }
+        let diff = parse_unified(&text);
+        let s = highlight_diff("ui/Rows.tsx", &diff, None, Some(&source), Instant::now() + Duration::from_millis(1500));
+        // The last block's `export` line.
+        assert!(s.new.contains_key(&(lines as u32 - 4)), "the last lines were left plain");
     }
 
     #[test]
