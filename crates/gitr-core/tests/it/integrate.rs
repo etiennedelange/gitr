@@ -1,9 +1,8 @@
 //! Integrating a diverged branch: rebase or merge, autostash, conflicts, Continue, Abort.
-mod common;
 
 use std::path::{Path, PathBuf};
 
-use common::*;
+use crate::common::*;
 use gitr_core::info::{Operation, read_info};
 use gitr_core::repo::{IntegrateOutcome, Strategy};
 

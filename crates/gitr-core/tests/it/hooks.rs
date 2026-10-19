@@ -1,10 +1,9 @@
 //! Hooks during commit and push: their output arrives while they run, and they can be skipped.
-mod common;
 
 use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
 
-use common::*;
+use crate::common::*;
 use gitr_core::repo::HookOpts;
 
 /// Hook output reaches `on_output` line by line while the hook still runs.

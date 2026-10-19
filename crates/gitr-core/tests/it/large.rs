@@ -1,11 +1,10 @@
-mod common;
 
 use std::time::Instant;
 
-use common::*;
+use crate::common::*;
 
 /// A repository with many changed files must stay responsive.
-/// Run with `cargo test -p gitr-core --test large -- --ignored --nocapture`.
+/// Run with `cargo test -p gitr-core --test it large:: -- --ignored --nocapture`.
 #[tokio::test]
 #[ignore = "slow: creates 20,000 files"]
 async fn twenty_thousand_changed_files_stay_responsive() {
@@ -49,7 +48,7 @@ async fn twenty_thousand_changed_files_stay_responsive() {
 }
 
 /// History of a long branch: the first page, and the unpushed check against many remote refs.
-/// Run with `cargo test -p gitr-core --test large -- --ignored --nocapture`.
+/// Run with `cargo test -p gitr-core --test it large:: -- --ignored --nocapture`.
 #[tokio::test]
 #[ignore = "slow: creates 20,000 commits and 2,000 remote refs"]
 async fn twenty_thousand_commits_page_quickly() {

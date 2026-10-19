@@ -26,6 +26,8 @@ env:
 jobs:
   windows:
     runs-on: windows-latest
+    # About 9 minutes; the slowest of recent runs took 14.
+    timeout-minutes: 60
     permissions:
       # Create the release and upload the installer.
       contents: write
@@ -138,6 +140,8 @@ jobs:
           name: gitr-${{ steps.version.outputs.version }}-windows
           path: dist/
           if-no-files-found: error
+          # The same files are on the GitHub Release; this copy only helps debug a failed publish.
+          retention-days: 7
 
       - name: Publish the GitHub Release
         env:

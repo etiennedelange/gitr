@@ -28,6 +28,8 @@ concurrency:
 jobs:
   windows:
     runs-on: windows-latest
+    # About 10 minutes; the slowest of recent runs took 21.
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v7
 

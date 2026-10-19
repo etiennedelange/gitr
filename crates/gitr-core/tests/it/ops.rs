@@ -1,6 +1,5 @@
-mod common;
 
-use common::*;
+use crate::common::*;
 use gitr_core::info;
 use gitr_core::repo::PullOutcome;
 use gitr_core::runner::Kind;

@@ -16,6 +16,8 @@ concurrency:
 jobs:
   ui:
     runs-on: ubuntu-latest
+    # Usually about a minute; a hung step otherwise runs for GitHub's 6-hour default.
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
         with:
@@ -59,6 +61,8 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
+    # About 5 minutes; the slowest of recent runs took 15.
+    timeout-minutes: 45
     env:
       # No debug info: faster compiling and linking, and a smaller cache.
       CARGO_PROFILE_DEV_DEBUG: 0

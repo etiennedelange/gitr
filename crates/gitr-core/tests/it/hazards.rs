@@ -1,11 +1,10 @@
 //! Regression tests for file names and contents that used to be dangerous or unusual (glob
 //! characters, leading dash, Unicode, CRLF, non-UTF-8), for path lists too long for one Windows
 //! command line, and for every kind of merge conflict entry.
-mod common;
 
 use std::path::Path;
 
-use common::*;
+use crate::common::*;
 use gitr_core::diff::LineKind;
 
 fn exists(dir: &Path, name: &str) -> bool {
