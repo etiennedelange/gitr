@@ -5,6 +5,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.1.7] - 2026-10-19
+
 ### Added
 - **Syntax colours in diffs.** Diffs now colour code by language, as other git clients do: keywords, types, function names, strings, numbers and comments each have their own colour, in both the unified and split layout, on the Changes and History tabs. The language comes from the file name (C#, TypeScript, Rust, XML, JSON, Markdown and about 200 more). Each side is coloured from the whole file, so a changed line inside a multi-line comment or string is coloured as part of it. The diff still shows straight away; the colours follow a moment later. Very large files and plain text stay uncoloured.
 
