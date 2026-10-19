@@ -5,6 +5,13 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+- **Resizable panes.** Drag the edge of the sidebar, the file list, the commit list in History, the line between Unstaged and Staged, or the foot of a commit's file list to resize it. Arrow keys move a focused edge; double-click or Enter puts it back. Sizes are remembered, and so are the window's size, position and whether it was maximised.
+- **Changed files as a tree.** Changes and History now show changed files in their folders, with single-folder chains such as `src/Export` on one row. Click a folder to collapse it; a folder's + and − stage or unstage everything in it, and its discard button discards it. The two buttons next to the list's title switch between the tree and the flat list; the tree is the default and your choice is remembered.
+
+### Fixed
+- **Diff colours appear sooner.** Opening a diff could take a second or two before its code was coloured, longest for the first TypeScript or TSX file, and the end of a long file could stay uncoloured. Colouring now takes a fraction of that.
+
 ## [0.1.7] - 2026-10-19
 
 ### Added

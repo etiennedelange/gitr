@@ -3,6 +3,7 @@ import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-libra
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import type React from 'react'
 import { useApp, initialDashboard } from './store'
+import { useLayout } from './layout'
 import type { Config, RepoStatus, RepoSummary } from './types'
 
 const PATH = 'D:/w/alpha'
@@ -170,10 +171,13 @@ describe('changes', () => {
 
   it('keeps leading dots of folder names in place in right-to-left clipped paths', async () => {
     statusImpl = () => Promise.resolve({ branch: 'main', files: [file('.github/workflows/ci.yml')] } as unknown as RepoStatus)
+    // The list view shows each file's folder beside it.
+    useLayout.setState({ fileView: 'list' })
     wrap(<Changes path={PATH} />)
     const dir = await screen.findByText(/workflows/)
     // <bdi> isolates the path from the right-to-left clipping so \u201c.github\u201d keeps its dot in front.
     expect(dir.tagName).toBe('BDI')
+    useLayout.setState({ fileView: 'tree' })
   })
 })
 

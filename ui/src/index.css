@@ -540,6 +540,16 @@ ul:focus-visible,
   background: var(--hover);
   color: var(--ink);
 }
+.segmented.icons button {
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  padding: 0;
+}
+.segmented.icons .ico {
+  width: 14px;
+  height: 14px;
+}
 .segmented button.on,
 .segmented button.on:hover:not(:disabled) {
   background: var(--raised);
@@ -728,7 +738,8 @@ ul:focus-visible,
 /* ---------------------------------------------------------------- shell */
 .app {
   display: grid;
-  grid-template-columns: var(--rail-w) minmax(0, 1fr);
+  /* The sidebar, the 0-wide track of its splitter, the main column. --rail-user is a dragged width. */
+  grid-template-columns: var(--rail-user, var(--rail-w)) 0 minmax(0, 1fr);
   height: 100%;
 }
 .main {
@@ -737,6 +748,69 @@ ul:focus-visible,
   min-width: 0;
   min-height: 0;
   background: var(--bg);
+}
+
+/*
+ * Splitters: a 0-wide (or 0-tall) item between two panes with an 8px grab area over their shared
+ * hairline. The hairline turns violet while hovered, dragged or focused.
+ */
+.splitter {
+  position: relative;
+  z-index: 20;
+  flex: none;
+  touch-action: none;
+  outline: none;
+}
+.splitter.x {
+  width: 0;
+  cursor: col-resize;
+}
+.splitter.y {
+  height: 0;
+  cursor: row-resize;
+}
+.splitter::before,
+.splitter::after {
+  content: '';
+  position: absolute;
+}
+.splitter.x::before {
+  inset: 0 -4px;
+}
+.splitter.y::before {
+  inset: -4px 0;
+}
+.splitter.x::after {
+  top: 0;
+  bottom: 0;
+  left: -1px;
+  width: 2px;
+}
+.splitter.y::after {
+  left: 0;
+  right: 0;
+  top: -1px;
+  height: 2px;
+}
+.splitter:hover::after,
+.splitter.dragging::after,
+.splitter:focus-visible::after {
+  background: var(--accent);
+  transition: background 0.1s ease 0.15s;
+}
+.splitter.dragging::after,
+.splitter:focus-visible::after {
+  transition: none;
+}
+body.resizing,
+body.resizing * {
+  user-select: none;
+}
+body.resizing-x * {
+  cursor: col-resize !important;
+}
+body.resizing-y * {
+  cursor: row-resize !important;
 }
 
 /* Sidebar: brand, Dashboard, the repos by group, Settings. A tinted column, not a card. */
@@ -1730,7 +1804,7 @@ button.icon .count {
 .changes {
   flex: 1;
   display: grid;
-  grid-template-columns: clamp(290px, 37%, 420px) minmax(0, 1fr);
+  grid-template-columns: clamp(290px, 37%, 420px) 0 minmax(0, 1fr);
   min-height: 0;
 }
 .changes-left {
@@ -1787,7 +1861,8 @@ button.icon .count {
   align-items: center;
   gap: var(--s4);
   height: var(--row);
-  padding: 0 var(--s2) 0 var(--s3);
+  /* --depth: the row's level in the tree view. */
+  padding: 0 var(--s2) 0 calc(var(--s3) + var(--depth, 0) * 16px);
   border-radius: var(--r-sm);
   white-space: nowrap;
 }
@@ -1861,6 +1936,49 @@ li:focus-within .row-actions {
 .file-list li:focus-within .lines {
   display: none;
 }
+/* Tree view: a folder row is its chevron and name; the row toggles it, its tools act on every file in it. */
+.file-list li.folder {
+  color: var(--ink-2);
+}
+.folder-toggle {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--s4);
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: default;
+}
+/* The row's hover shows; the button inside it has no face of its own. */
+.folder-toggle:hover:not(:disabled) {
+  background: none;
+  color: inherit;
+}
+.file-list li.folder .fname {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.chevron {
+  width: 14px;
+  height: 14px;
+  transition: transform 0.12s ease;
+}
+.chevron.open {
+  transform: rotate(90deg);
+}
+@media (prefers-reduced-motion: reduce) {
+  .chevron {
+    transition: none;
+  }
+}
+
 /* File status: git's letter in the state's ink. A conflict is the one solid tile. */
 .letter {
   display: inline-grid;
@@ -2154,7 +2272,7 @@ button.ai.generating .ico {
 .history {
   flex: 1;
   display: grid;
-  grid-template-columns: minmax(300px, 440px) minmax(340px, 1fr);
+  grid-template-columns: minmax(300px, 440px) 0 minmax(340px, 1fr);
   min-height: 0;
 }
 .history-left,
@@ -3315,6 +3433,13 @@ dialog::backdrop {
 @media (max-width: 1099px) {
   :root {
     --rail-w: 48px;
+  }
+  /* The strip keeps its width; a dragged sidebar width applies again in a wider window. */
+  .app {
+    grid-template-columns: var(--rail-w) 0 minmax(0, 1fr);
+  }
+  .app > .splitter {
+    display: none;
   }
   .sidebar .nav-label,
   .sidebar .repo-name,

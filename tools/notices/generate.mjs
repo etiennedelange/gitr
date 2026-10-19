@@ -68,7 +68,22 @@ function rustPackages() {
         texts: licenceTexts(dirname(p.manifest_path)),
       },
       ...(p.name === 'two-face' ? twoFaceGrammars(p) : []),
+      ...(p.name === 'onig_sys' ? [oniguruma(p)] : []),
     ])
+}
+
+// onig_sys compiles the Oniguruma C library it bundles into the app; that has its own licence.
+function oniguruma(p) {
+  const dir = join(dirname(p.manifest_path), 'oniguruma')
+  const version = readFileSync(join(dir, 'CMakeLists.txt'), 'utf8').match(/project\(oniguruma\s+VERSION\s+(\S+)/)?.[1]
+  return {
+    ecosystem: `C library bundled in onig_sys ${p.version}`,
+    name: 'Oniguruma',
+    version: version ?? 'unknown',
+    licence: 'BSD-2-Clause',
+    source: 'https://github.com/kkos/oniguruma',
+    texts: [readFileSync(join(dir, 'COPYING'), 'utf8').replace(/\r\n/g, '\n').trim()],
+  }
 }
 
 // two-face bundles bat's syntax grammars, each under its own licence. Their texts are in the

@@ -141,7 +141,7 @@ describe('commit list', () => {
     expect(within(list).getAllByRole('option')[1]).toHaveAttribute('aria-selected', 'true')
     fireEvent.keyDown(list, { key: 'End' })
     expect(within(list).getAllByRole('option')[3]).toHaveAttribute('aria-selected', 'true')
-    const files = await screen.findByRole('listbox', { name: 'Changed files' })
+    const files = await screen.findByRole('tree', { name: 'Changed files' })
     fireEvent.keyDown(list, { key: 'Enter' })
     expect(document.activeElement).toBe(files)
   })
@@ -167,10 +167,25 @@ describe('commit pane', () => {
   it('shows the message, files and the diff of the first file from the commit', async () => {
     wrap(<History path={PATH} remote={null} />)
     expect(await screen.findByText('Why it changed.')).toBeInTheDocument()
-    const files = await screen.findByRole('listbox', { name: 'Changed files' })
+    // A folder tree by default: the folder's row, then its files under it.
+    const files = await screen.findByRole('tree', { name: 'Changed files' })
+    const items = within(files).getAllByRole('treeitem')
+    expect(items[0]).toHaveTextContent('src')
+    expect(items[0]).toHaveAttribute('aria-expanded', 'true')
     expect(within(files).getByText('a.ts')).toBeInTheDocument()
     expect(within(files).getByText('from src/old/b.ts')).toBeInTheDocument()
-    await vi.waitFor(() => expect(api.commitFileDiff).toHaveBeenCalledWith(PATH, sha(1), 'src/a.ts', null))
+    // The first file the tree shows: folders come before files, so src/new/b.ts.
+    await vi.waitFor(() => expect(api.commitFileDiff).toHaveBeenCalledWith(PATH, sha(1), 'src/new/b.ts', 'src/old/b.ts'))
+    // Collapsing the folder hides its files.
+    fireEvent.click(items[0])
+    expect(within(files).queryByText('a.ts')).toBeNull()
+    fireEvent.click(items[0])
+    // The list view shows every file with its folder beside it.
+    fireEvent.click(screen.getByRole('button', { name: 'List' }))
+    const list = screen.getByRole('listbox', { name: 'Changed files' })
+    expect(within(list).getAllByRole('option')[0]).toHaveTextContent('a.ts')
+    expect(within(list).getByText('src')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Tree' }))
   })
 
   it('says a merge is shown against its first parent', async () => {
