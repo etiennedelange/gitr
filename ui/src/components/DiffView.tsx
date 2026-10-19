@@ -130,7 +130,9 @@ export function DiffView({ repo, source, note, conflicted }: { repo: string; sou
               : 'No textual changes'}
           </div>
         )}
-        {diff.data?.hunks.map((h, i) => (shown === 'unified' ? <Unified key={i} hunk={h} syntax={colours} /> : <Split key={i} hunk={h} syntax={colours} />))}
+        {diff.data?.hunks.map((h, i) =>
+          shown === 'unified' ? <Unified key={i} hunk={h} syntax={colours} /> : <Split key={i} hunk={h} syntax={colours} />,
+        )}
         {diff.data?.truncated && <div className="banner">Diff truncated: the file is too large to show completely.</div>}
       </div>
     </div>
