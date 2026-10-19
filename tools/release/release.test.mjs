@@ -72,7 +72,7 @@ test('nothingToTest skips Markdown-only changes and release bumps, nothing else'
   // Anything else runs CI: code, workflows, screenshots, a .md-looking name that isn't one.
   assert.equal(nothingToTest(['README.md', 'src-tauri/src/lib.rs'], b, a), false);
   assert.equal(nothingToTest(['.github/workflows/ci.yml'], b, a), false);
-  assert.equal(nothingToTest(['docs/screenshots/dashboard-light.png'], b, a), false);
+  assert.equal(nothingToTest(['docs/screenshots/dashboard-light.webp'], b, a), false);
   assert.equal(nothingToTest(['notes.md.txt'], b, a), false);
   assert.equal(nothingToTest([], b, a), false);
 });

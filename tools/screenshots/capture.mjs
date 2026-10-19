@@ -7,9 +7,11 @@
 //   pnpm screenshots                 # every theme and scene
 //   pnpm screenshots repo            # just the named scene(s)
 //
-// Writes, for each theme × scene:
-//   docs/screenshots/raw/<scene>-<theme>.png  client area only, 2800×1736
-//   docs/screenshots/<scene>-<theme>.png      window with a drawn title bar, on a backdrop
+// Writes, for each theme × scene, to tools/screenshots/out/ (not committed), for looking at:
+//   raw/<scene>-<theme>.png   client area only, 2800×1736
+//   <scene>-<theme>.webp      window with a drawn title bar, on a backdrop
+// and copies the framed shots the README shows (PUBLISHED) to docs/screenshots/, which is
+// committed.
 //
 // Gitr uses the native Windows title bar, which a browser can't render, so the framed shots
 // draw a Windows 11 style one (icon, "Gitr", caption buttons) in the theme's colours.
@@ -18,7 +20,7 @@
 // (add `--with-deps` on a fresh Linux box).
 import { chromium } from 'playwright'
 import { createServer } from 'vite-plus'
-import { mkdirSync, readFileSync } from 'node:fs'
+import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 
@@ -26,6 +28,7 @@ const HERE = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(HERE, '..', '..')
 const UI = join(ROOT, 'ui')
 const DOCS = join(ROOT, 'docs', 'screenshots')
+const OUT = join(HERE, 'out')
 const ICON = readFileSync(join(ROOT, 'src-tauri', 'icons', 'icon.svg'), 'utf8')
 
 // Window size in CSS px (the default from tauri.conf.json); captured at 2x.
@@ -35,6 +38,11 @@ const TITLE_H = 32
 const CLIENT_H = H - TITLE_H
 
 const THEMES = ['light', 'dark']
+
+// The shots README.md shows; only these are committed.
+const PUBLISHED = ['dashboard-light', 'repo-dark', 'history-light']
+// WebP quality for the framed shots: text stays sharp at 4x zoom, at ~40% of the PNG's size.
+const WEBP_QUALITY = 0.95
 
 // Preview URL parameters per scene; see the table in ui/src/preview/README.md.
 const SCENES = {
@@ -112,13 +120,31 @@ async function frame(page, theme, rawPath, out) {
     <img src="data:image/png;base64,${img}">
   </div>`)
   await page.evaluate(() => document.fonts.ready)
-  await page.screenshot({ path: out })
+  writeFileSync(out, await webp(page, await page.screenshot()))
+}
+
+// Chromium only screenshots PNG and JPEG; its canvas encodes WebP.
+async function webp(page, png) {
+  const data = await page.evaluate(
+    async ([b64, quality]) => {
+      const img = new Image()
+      img.src = `data:image/png;base64,${b64}`
+      await img.decode()
+      const canvas = document.createElement('canvas')
+      canvas.width = img.naturalWidth
+      canvas.height = img.naturalHeight
+      canvas.getContext('2d').drawImage(img, 0, 0)
+      return canvas.toDataURL('image/webp', quality).split(',')[1]
+    },
+    [png.toString('base64'), WEBP_QUALITY],
+  )
+  return Buffer.from(data, 'base64')
 }
 
 const args = process.argv.slice(2)
 const scenes = args.length ? args : Object.keys(SCENES)
 for (const s of scenes) if (!SCENES[s]) throw new Error(`Unknown scene "${s}"; pick from: ${Object.keys(SCENES).join(', ')}`)
-for (const dir of [DOCS, join(DOCS, 'raw')]) mkdirSync(dir, { recursive: true })
+for (const dir of [DOCS, join(OUT, 'raw')]) mkdirSync(dir, { recursive: true })
 
 // Off 5173 and not strict, so this can run next to `pnpm dev`.
 const server = await createServer({ root: UI, configFile: join(UI, 'vite.config.ts'), logLevel: 'warn', server: { port: 5174, strictPort: false } })
@@ -130,11 +156,13 @@ try {
   const framePage = await browser.newPage({ viewport: { width: W + 160, height: H + 160 }, deviceScaleFactor: 2 })
   for (const theme of THEMES) {
     for (const scene of scenes) {
-      const name = `${scene}-${theme}.png`
-      const raw = join(DOCS, 'raw', name)
+      const name = `${scene}-${theme}`
+      const raw = join(OUT, 'raw', `${name}.png`)
+      const framed = join(OUT, `${name}.webp`)
       await captureRaw(browser, url, theme, SCENES[scene], raw)
-      await frame(framePage, theme, raw, join(DOCS, name))
-      console.log(name)
+      await frame(framePage, theme, raw, framed)
+      if (PUBLISHED.includes(name)) copyFileSync(framed, join(DOCS, `${name}.webp`))
+      console.log(`${name}.webp${PUBLISHED.includes(name) ? '  (published)' : ''}`)
     }
   }
 } finally {

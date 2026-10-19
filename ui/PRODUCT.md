@@ -47,7 +47,7 @@ Four claims, held together:
 ## Evidence on Hand
 
 - Product description and feature list: `README.md`; user-facing history of changes: `CHANGELOG.md`.
-- Screenshots of the current UI generated from mock data: `docs/screenshots/` (via `pnpm screenshots`, scenes in `tools/screenshots/capture.mjs`).
+- Screenshots of the current UI generated from mock data: `pnpm screenshots` renders every scene to `tools/screenshots/out/`; the README's three are committed in `docs/screenshots/` (scenes in `tools/screenshots/capture.mjs`).
 - Mock scenarios for visual work (default, many repos, errors, all clean, first run): `ui/src/preview/`, run with `pnpm mock:web`.
 - No users, testimonials, download counts or benchmarks exist; do not invent them.
 
