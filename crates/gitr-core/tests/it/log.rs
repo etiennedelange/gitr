@@ -1,8 +1,7 @@
-mod common;
 
 use std::path::{Path, PathBuf};
 
-use common::*;
+use crate::common::*;
 use gitr_core::log::{RefKind, RefLabel, ResetMode};
 use gitr_core::repo::{HookOpts, IntegrateOutcome};
 use gitr_core::info;

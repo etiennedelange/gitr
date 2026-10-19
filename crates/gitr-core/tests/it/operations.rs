@@ -1,10 +1,9 @@
 //! In-progress merge / rebase / cherry-pick / revert / bisect / `git am`: detection, guards,
 //! abort, continue, skip, MERGE_MSG.
-mod common;
 
 use std::path::Path;
 
-use common::*;
+use crate::common::*;
 use gitr_core::info::{Operation, read_info};
 use gitr_core::repo::IntegrateOutcome;
 

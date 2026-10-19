@@ -1,9 +1,8 @@
 //! What a network command's environment tells credential helpers and ssh. The "remote" is an
 //! `ext::` command that records its environment (credential helpers and ssh are started by git
 //! with the same environment) and then fails.
-mod common;
 
-use common::*;
+use crate::common::*;
 use gitr_core::repo::{Prompt, ssh_command};
 
 /// A developer's own `GIT_SSH_COMMAND`/`GIT_SSH` rightly wins, which these tests can't control.
