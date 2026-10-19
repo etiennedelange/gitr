@@ -49,9 +49,8 @@ const SCENES = {
   update: { scenario: 'default', update: 'available', wait: 5800 },
 }
 
-// Cascadia Mono isn't on macOS or Linux; Google Fonts has it, so diffs look as they do on Windows.
-// Inter is bundled with the UI already; the frame page needs it for the title bar.
-const FONTS = 'https://fonts.googleapis.com/css2?family=Cascadia+Mono:wght@400;600;700&family=Inter:wght@400;500&display=block'
+// The app bundles its own fonts. The drawn title bar uses Inter, a stand-in for Segoe UI there.
+const FONTS = 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=block'
 
 // Title bar colours (Windows 11 defaults) and backdrop: two glows and a base, from the app palette.
 const LOOK = {

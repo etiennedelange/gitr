@@ -671,7 +671,7 @@
       "refersTo": "button",
       "description": "Windows command button: raised face, hairline, 28px.",
       "html": "<button class=\"ds-btn\">Open in VS Code</button>",
-      "css": ".ds-btn{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 12px;border:1px solid var(--line-strong,#cfcfd7);border-radius:5px;background:var(--raised,#fff);color:var(--ink,#1b1b20);font:500 13px/1 'Hanken Grotesk Variable','Segoe UI',sans-serif;transition:background-color 90ms cubic-bezier(.2,.7,.2,1)}.ds-btn:hover{background:color-mix(in oklab,var(--raised,#fff),var(--ink,#1b1b20) 4%)}.ds-btn:active{background:color-mix(in oklab,var(--raised,#fff),var(--ink,#1b1b20) 8%)}.ds-btn:focus-visible{outline:2px solid var(--focus,#6145d4);outline-offset:1px}"
+      "css": ".ds-btn{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 12px;border:1px solid var(--line-strong,#cfcfd7);border-radius:5px;background:var(--raised,#fff);color:var(--ink,#1b1b20);font:500 13px/1 'IBM Plex Sans Variable','Segoe UI',sans-serif;transition:background-color 90ms cubic-bezier(.2,.7,.2,1)}.ds-btn:hover{background:color-mix(in oklab,var(--raised,#fff),var(--ink,#1b1b20) 4%)}.ds-btn:active{background:color-mix(in oklab,var(--raised,#fff),var(--ink,#1b1b20) 8%)}.ds-btn:focus-visible{outline:2px solid var(--focus,#6145d4);outline-offset:1px}"
     },
     {
       "name": "Primary Button",
@@ -679,7 +679,7 @@
       "refersTo": "button-primary",
       "description": "The one action a view is for (Commit). One per view.",
       "html": "<button class=\"ds-btn-primary\">Commit to main</button>",
-      "css": ".ds-btn-primary{display:inline-flex;align-items:center;height:28px;padding:0 12px;border:1px solid var(--accent,#6145d4);border-radius:5px;background:var(--accent,#6145d4);color:var(--accent-ink,#fff);font:600 13px/1 'Hanken Grotesk Variable','Segoe UI',sans-serif;transition:background-color 90ms cubic-bezier(.2,.7,.2,1)}.ds-btn-primary:hover{background:var(--accent-hover,#5236c4);border-color:var(--accent-hover,#5236c4)}.ds-btn-primary:focus-visible{outline:2px solid var(--focus,#6145d4);outline-offset:1px}"
+      "css": ".ds-btn-primary{display:inline-flex;align-items:center;height:28px;padding:0 12px;border:1px solid var(--accent,#6145d4);border-radius:5px;background:var(--accent,#6145d4);color:var(--accent-ink,#fff);font:600 13px/1 'IBM Plex Sans Variable','Segoe UI',sans-serif;transition:background-color 90ms cubic-bezier(.2,.7,.2,1)}.ds-btn-primary:hover{background:var(--accent-hover,#5236c4);border-color:var(--accent-hover,#5236c4)}.ds-btn-primary:focus-visible{outline:2px solid var(--focus,#6145d4);outline-offset:1px}"
     },
     {
       "name": "Quiet Button",
@@ -687,7 +687,7 @@
       "refersTo": "button-quiet",
       "description": "Title-bar and inline actions; no face until hovered.",
       "html": "<button class=\"ds-btn-quiet\"><svg width=\"15\" height=\"15\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 15V3\"/><path d=\"m7 10 5 5 5-5\"/><path d=\"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\"/></svg>Pull all</button>",
-      "css": ".ds-btn-quiet{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 12px;border:1px solid transparent;border-radius:5px;background:transparent;color:var(--ink,#1b1b20);font:500 13px/1 'Hanken Grotesk Variable','Segoe UI',sans-serif}.ds-btn-quiet svg{color:var(--ink-2,#5a5a66)}.ds-btn-quiet:hover{background:var(--hover,rgb(27 27 40/.045))}.ds-btn-quiet:active{background:var(--press,rgb(27 27 40/.08))}.ds-btn-quiet:focus-visible{outline:2px solid var(--focus,#6145d4);outline-offset:1px}"
+      "css": ".ds-btn-quiet{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 12px;border:1px solid transparent;border-radius:5px;background:transparent;color:var(--ink,#1b1b20);font:500 13px/1 'IBM Plex Sans Variable','Segoe UI',sans-serif}.ds-btn-quiet svg{color:var(--ink-2,#5a5a66)}.ds-btn-quiet:hover{background:var(--hover,rgb(27 27 40/.045))}.ds-btn-quiet:active{background:var(--press,rgb(27 27 40/.08))}.ds-btn-quiet:focus-visible{outline:2px solid var(--focus,#6145d4);outline-offset:1px}"
     },
     {
       "name": "Search Field",
@@ -695,7 +695,7 @@
       "refersTo": "input",
       "description": "Raised field with an inset icon; violet border and ring on focus.",
       "html": "<label class=\"ds-search\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.3-4.3\"/></svg><input placeholder=\"Search name or branch (Ctrl+F)\"></label>",
-      "css": ".ds-search{position:relative;display:inline-flex;align-items:center}.ds-search svg{position:absolute;left:8px;color:var(--ink-3,#6b6b77);pointer-events:none}.ds-search input{width:260px;height:26px;padding:0 8px 0 28px;border:1px solid var(--line-strong,#cfcfd7);border-radius:5px;background:var(--field,#fff);color:var(--ink,#1b1b20);font:400 12px 'Hanken Grotesk Variable','Segoe UI',sans-serif;outline:none}.ds-search input:hover:not(:focus){border-color:color-mix(in oklab,var(--line-strong,#cfcfd7),var(--ink,#1b1b20) 18%)}.ds-search input:focus{border-color:var(--focus,#6145d4);box-shadow:0 0 0 1px var(--focus,#6145d4)}"
+      "css": ".ds-search{position:relative;display:inline-flex;align-items:center}.ds-search svg{position:absolute;left:8px;color:var(--ink-3,#6b6b77);pointer-events:none}.ds-search input{width:260px;height:26px;padding:0 8px 0 28px;border:1px solid var(--line-strong,#cfcfd7);border-radius:5px;background:var(--field,#fff);color:var(--ink,#1b1b20);font:400 12px 'IBM Plex Sans Variable','Segoe UI',sans-serif;outline:none}.ds-search input:hover:not(:focus){border-color:color-mix(in oklab,var(--line-strong,#cfcfd7),var(--ink,#1b1b20) 18%)}.ds-search input:focus{border-color:var(--focus,#6145d4);box-shadow:0 0 0 1px var(--focus,#6145d4)}"
     },
     {
       "name": "Filter Tabs",
@@ -703,7 +703,7 @@
       "refersTo": "filter-tab-on",
       "description": "Count-labelled filters; the selected one takes the violet wash.",
       "html": "<div class=\"ds-ftabs\"><button class=\"on\">All <span>12</span></button><button class=\"alert\">Attention <span>2</span></button><button>Changes <span>4</span></button></div>",
-      "css": ".ds-ftabs{display:inline-flex;gap:2px}.ds-ftabs button{display:inline-flex;align-items:center;gap:5px;height:26px;padding:0 6px 0 8px;border:0;border-radius:5px;background:transparent;color:var(--ink-2,#5a5a66);font:400 12px 'Hanken Grotesk Variable','Segoe UI',sans-serif;font-variant-numeric:tabular-nums}.ds-ftabs button span{color:var(--ink-3,#6b6b77);font-weight:500}.ds-ftabs button:hover{background:var(--hover,rgb(27 27 40/.045));color:var(--ink,#1b1b20)}.ds-ftabs button.on{background:var(--sel,#ebe7fc);color:var(--sel-ink,#2b1d74);font-weight:600}.ds-ftabs button.on span{color:var(--accent-text,#5236c4)}.ds-ftabs button.alert span{color:var(--red-ink,#ab2a1c);font-weight:650}.ds-ftabs button:focus-visible{outline:2px solid var(--focus,#6145d4);outline-offset:1px}"
+      "css": ".ds-ftabs{display:inline-flex;gap:2px}.ds-ftabs button{display:inline-flex;align-items:center;gap:5px;height:26px;padding:0 6px 0 8px;border:0;border-radius:5px;background:transparent;color:var(--ink-2,#5a5a66);font:400 12px 'IBM Plex Sans Variable','Segoe UI',sans-serif;font-variant-numeric:tabular-nums}.ds-ftabs button span{color:var(--ink-3,#6b6b77);font-weight:500}.ds-ftabs button:hover{background:var(--hover,rgb(27 27 40/.045));color:var(--ink,#1b1b20)}.ds-ftabs button.on{background:var(--sel,#ebe7fc);color:var(--sel-ink,#2b1d74);font-weight:600}.ds-ftabs button.on span{color:var(--accent-text,#5236c4)}.ds-ftabs button.alert span{color:var(--red-ink,#ab2a1c);font-weight:650}.ds-ftabs button:focus-visible{outline:2px solid var(--focus,#6145d4);outline-offset:1px}"
     },
     {
       "name": "View Tabs",
@@ -711,7 +711,7 @@
       "refersTo": "tabs",
       "description": "Repo view tabs: text with a 2px violet underline on the hairline.",
       "html": "<div class=\"ds-tabs\"><button class=\"on\">Changes</button><button>History</button><button>Branches</button></div>",
-      "css": ".ds-tabs{display:flex;gap:2px;padding:0 8px;border-bottom:1px solid var(--line,#e3e3e8)}.ds-tabs button{position:relative;height:34px;padding:0 8px;border:0;background:transparent;color:var(--ink-2,#5a5a66);font:500 13px 'Hanken Grotesk Variable','Segoe UI',sans-serif}.ds-tabs button::after{content:'';position:absolute;left:8px;right:8px;bottom:-1px;height:2px;border-radius:2px 2px 0 0;background:transparent;transition:background-color 140ms cubic-bezier(.2,.7,.2,1)}.ds-tabs button:hover{color:var(--ink,#1b1b20)}.ds-tabs button.on{color:var(--ink,#1b1b20);font-weight:600}.ds-tabs button.on::after{background:var(--accent,#6145d4)}.ds-tabs button:focus-visible{outline:2px solid var(--focus,#6145d4);outline-offset:-4px}"
+      "css": ".ds-tabs{display:flex;gap:2px;padding:0 8px;border-bottom:1px solid var(--line,#e3e3e8)}.ds-tabs button{position:relative;height:34px;padding:0 8px;border:0;background:transparent;color:var(--ink-2,#5a5a66);font:500 13px 'IBM Plex Sans Variable','Segoe UI',sans-serif}.ds-tabs button::after{content:'';position:absolute;left:8px;right:8px;bottom:-1px;height:2px;border-radius:2px 2px 0 0;background:transparent;transition:background-color 140ms cubic-bezier(.2,.7,.2,1)}.ds-tabs button:hover{color:var(--ink,#1b1b20)}.ds-tabs button.on{color:var(--ink,#1b1b20);font-weight:600}.ds-tabs button.on::after{background:var(--accent,#6145d4)}.ds-tabs button:focus-visible{outline:2px solid var(--focus,#6145d4);outline-offset:-4px}"
     },
     {
       "name": "Sidebar Repo List",
@@ -719,7 +719,7 @@
       "refersTo": "nav-item-active",
       "description": "Tinted rail; rows with status mark, name and count notation; active row in violet wash.",
       "html": "<nav class=\"ds-rail\"><div class=\"ds-grp\">Work <span>3</span></div><button class=\"ds-repo on\"><i class=\"ds-dot\" style=\"--c:var(--amber,#d48a1c)\"></i>billing-service<b class=\"am\">±9</b><b class=\"gr\">↑2</b></button><button class=\"ds-repo\"><i class=\"ds-dot\" style=\"--c:var(--blue,#2f84d6)\"></i>fleet-api<b></b><b class=\"sk\">↓3</b></button><button class=\"ds-repo\"><i class=\"ds-dot clean\"></i>design-tokens<b></b><b></b></button></nav>",
-      "css": ".ds-rail{width:240px;padding:4px 8px;background:var(--rail,#f3f3f6);font:400 13px 'Hanken Grotesk Variable','Segoe UI',sans-serif;font-variant-numeric:tabular-nums}.ds-grp{display:flex;justify-content:space-between;height:28px;align-items:center;padding:0 8px 0 4px;color:var(--ink-2,#5a5a66);font-size:11px;font-weight:650;letter-spacing:.02em}.ds-grp span{color:var(--ink-3,#6b6b77);font-weight:500}.ds-repo{display:grid;grid-template-columns:16px 1fr 28px 28px;align-items:center;gap:6px;width:100%;height:26px;padding:0 8px 0 4px;border:0;border-radius:5px;background:transparent;color:var(--ink,#1b1b20);font:450 13px inherit;text-align:left}.ds-repo:hover{background:var(--rail-hover,rgb(27 27 40/.055))}.ds-repo.on{background:var(--sel,#ebe7fc);color:var(--sel-ink,#2b1d74);font-weight:600}.ds-repo b{font-size:11px;font-weight:600;text-align:right}.ds-repo .am{color:var(--amber-ink,#8b4f00)}.ds-repo .sk{color:var(--blue-ink,#1b60a6)}.ds-repo .gr{color:var(--green-ink,#1c7244)}.ds-dot{display:inline-grid;place-items:center;width:16px;height:16px}.ds-dot::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--c,var(--ink-3,#6b6b77))}.ds-dot.clean::before{width:7px;height:7px;background:transparent;box-shadow:inset 0 0 0 1.5px var(--ink-3,#6b6b77)}.ds-repo:focus-visible{outline:2px solid var(--focus,#6145d4);outline-offset:1px}"
+      "css": ".ds-rail{width:240px;padding:4px 8px;background:var(--rail,#f3f3f6);font:400 14px 'IBM Plex Sans Variable','Segoe UI',sans-serif;font-variant-numeric:tabular-nums}.ds-grp{display:flex;justify-content:space-between;height:28px;align-items:center;padding:0 8px 0 4px;color:var(--ink-2,#5a5a66);font-size:11px;font-weight:650;letter-spacing:.02em}.ds-grp span{color:var(--ink-3,#6b6b77);font-weight:500}.ds-repo{display:grid;grid-template-columns:16px 1fr 28px 28px;align-items:center;gap:6px;width:100%;height:26px;padding:0 8px 0 4px;border:0;border-radius:5px;background:transparent;color:var(--ink,#1b1b20);font:450 13px inherit;text-align:left}.ds-repo:hover{background:var(--rail-hover,rgb(27 27 40/.055))}.ds-repo.on{background:var(--sel,#ebe7fc);color:var(--sel-ink,#2b1d74);font-weight:600}.ds-repo b{font-size:11px;font-weight:600;text-align:right}.ds-repo .am{color:var(--amber-ink,#8b4f00)}.ds-repo .sk{color:var(--blue-ink,#1b60a6)}.ds-repo .gr{color:var(--green-ink,#1c7244)}.ds-dot{display:inline-grid;place-items:center;width:16px;height:16px}.ds-dot::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--c,var(--ink-3,#6b6b77))}.ds-dot.clean::before{width:7px;height:7px;background:transparent;box-shadow:inset 0 0 0 1.5px var(--ink-3,#6b6b77)}.ds-repo:focus-visible{outline:2px solid var(--focus,#6145d4);outline-offset:1px}"
     },
     {
       "name": "Divergence Column",
@@ -727,7 +727,7 @@
       "refersTo": "ledger-row",
       "description": "Signature: behind bars grow left, ahead bars grow right from a shared axis.",
       "html": "<div class=\"ds-dv\"><span class=\"b\">3<i style=\"width:22px\"></i></span><span class=\"x\"></span><span class=\"a\"></span></div><div class=\"ds-dv\"><span class=\"b\"></span><span class=\"x\"></span><span class=\"a\"><i style=\"width:16px\"></i>2</span></div><div class=\"ds-dv\"><span class=\"b\">1<i style=\"width:10px\"></i></span><span class=\"x\"></span><span class=\"a\"><i style=\"width:28px\"></i>4</span></div>",
-      "css": ".ds-dv{display:grid;grid-template-columns:1fr 1px 1fr;align-items:center;gap:2px;width:112px;height:30px;font:600 12px 'Hanken Grotesk Variable','Segoe UI',sans-serif;font-variant-numeric:tabular-nums;border-bottom:1px solid var(--line-soft,#ececf0)}.ds-dv .x{width:1px;height:31px;background:var(--line-strong,#cfcfd7)}.ds-dv span{display:flex;align-items:center;gap:4px}.ds-dv .b{justify-content:flex-end;color:var(--blue-ink,#1b60a6)}.ds-dv .a{color:var(--green-ink,#1c7244)}.ds-dv i{height:8px;opacity:.75}.ds-dv .b i{border-radius:3px 0 0 3px;background:var(--blue,#2f84d6)}.ds-dv .a i{border-radius:0 3px 3px 0;background:var(--green,#2c9a5e)}"
+      "css": ".ds-dv{display:grid;grid-template-columns:1fr 1px 1fr;align-items:center;gap:2px;width:112px;height:30px;font:600 12px 'IBM Plex Sans Variable','Segoe UI',sans-serif;font-variant-numeric:tabular-nums;border-bottom:1px solid var(--line-soft,#ececf0)}.ds-dv .x{width:1px;height:31px;background:var(--line-strong,#cfcfd7)}.ds-dv span{display:flex;align-items:center;gap:4px}.ds-dv .b{justify-content:flex-end;color:var(--blue-ink,#1b60a6)}.ds-dv .a{color:var(--green-ink,#1c7244)}.ds-dv i{height:8px;opacity:.75}.ds-dv .b i{border-radius:3px 0 0 3px;background:var(--blue,#2f84d6)}.ds-dv .a i{border-radius:0 3px 3px 0;background:var(--green,#2c9a5e)}"
     },
     {
       "name": "Menu",
@@ -735,7 +735,7 @@
       "refersTo": "menu",
       "description": "Floating overlay: hairline, 8px radius, float shadow; items take the violet wash.",
       "html": "<div class=\"ds-menu\"><button>Open in VS Code</button><button>Open terminal here</button><button>Show in Explorer</button></div>",
-      "css": ".ds-menu{display:flex;flex-direction:column;min-width:200px;padding:4px;border:1px solid var(--line,#e3e3e8);border-radius:8px;background:var(--overlay,#fff);box-shadow:0 1px 2px rgb(0 0 0/.06),0 10px 28px -6px rgb(0 0 0/.22)}.ds-menu button{height:28px;padding:0 12px;border:0;border-radius:4px;background:transparent;color:var(--ink,#1b1b20);font:400 13px 'Hanken Grotesk Variable','Segoe UI',sans-serif;text-align:left}.ds-menu button:hover,.ds-menu button:focus-visible{outline:none;background:var(--sel,#ebe7fc);color:var(--sel-ink,#2b1d74)}"
+      "css": ".ds-menu{display:flex;flex-direction:column;min-width:200px;padding:4px;border:1px solid var(--line,#e3e3e8);border-radius:8px;background:var(--overlay,#fff);box-shadow:0 1px 2px rgb(0 0 0/.06),0 10px 28px -6px rgb(0 0 0/.22)}.ds-menu button{height:28px;padding:0 12px;border:0;border-radius:4px;background:transparent;color:var(--ink,#1b1b20);font:400 14px 'IBM Plex Sans Variable','Segoe UI',sans-serif;text-align:left}.ds-menu button:hover,.ds-menu button:focus-visible{outline:none;background:var(--sel,#ebe7fc);color:var(--sel-ink,#2b1d74)}"
     },
     {
       "name": "Ref Labels",
@@ -743,7 +743,7 @@
       "refersTo": "ref-label",
       "description": "Quiet outlines in history: HEAD branch in violet, tags amber, remotes dashed.",
       "html": "<span class=\"ds-ref head\">main</span> <span class=\"ds-ref remote\">origin/main</span> <span class=\"ds-ref tag\">v4.2.0</span>",
-      "css": ".ds-ref{display:inline-flex;align-items:center;height:18px;padding:0 5px;border:1px solid var(--line-strong,#cfcfd7);border-radius:4px;color:var(--ink-2,#5a5a66);font:500 11px/1 'Hanken Grotesk Variable','Segoe UI',sans-serif}.ds-ref.head{border-color:color-mix(in oklab,var(--accent,#6145d4) 55%,transparent);color:var(--accent-text,#5236c4);font-weight:600}.ds-ref.tag{border-color:color-mix(in oklab,var(--amber,#d48a1c) 45%,transparent);color:var(--amber-ink,#8b4f00)}.ds-ref.remote{border-style:dashed}"
+      "css": ".ds-ref{display:inline-flex;align-items:center;height:18px;padding:0 5px;border:1px solid var(--line-strong,#cfcfd7);border-radius:4px;color:var(--ink-2,#5a5a66);font:500 11px/1 'IBM Plex Sans Variable','Segoe UI',sans-serif}.ds-ref.head{border-color:color-mix(in oklab,var(--accent,#6145d4) 55%,transparent);color:var(--accent-text,#5236c4);font-weight:600}.ds-ref.tag{border-color:color-mix(in oklab,var(--amber,#d48a1c) 45%,transparent);color:var(--amber-ink,#8b4f00)}.ds-ref.remote{border-style:dashed}"
     }
   ],
   "narrative": {
@@ -753,7 +753,7 @@
       "Flat surfaces, hairline separators, no shadow except on things that float.",
       "Tabular numerals everywhere; counts and status words in state ink, never in filled chips.",
       "One violet accent, used for selection, focus and one primary button per view.",
-      "Hanken Grotesk for interface, Cascadia Mono for branches, paths, SHAs, diffs and the commit message.",
+      "IBM Plex Sans for interface, JetBrains Mono for branches, paths, SHAs, diffs and the commit message, both bundled with the app.",
       "The divergence column: behind bars grow left and ahead bars grow right from a shared axis."
     ],
     "rules": [
@@ -787,7 +787,7 @@
       "Do set state in columns of tabular numerals and 8px marks, with words for screen readers.",
       "Do keep violet to selection, focus and one primary button per view (Commit in the repo view).",
       "Do use the `-ink` variant of a state hue for text and the plain hue for marks and bars.",
-      "Do put branches, paths, SHAs, code and commit messages in Cascadia Mono 12px.",
+      "Do put branches, paths, SHAs, code and commit messages in JetBrains Mono 13px.",
       "Do divide regions and rows with 1px hairlines (`line` between regions, `line-soft` between rows).",
       "Do give anything that floats the 8px radius, `line` border and float shadow, and nothing else a shadow.",
       "Do keep motion quick and ease-out (90ms state changes, 140ms menus and tabs) and collapse it under reduced motion."

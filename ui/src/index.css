@@ -2,22 +2,40 @@
  * Gitr: the ledger. One flat window on cool graphite neutrals, split by hairlines. State is
  * read down aligned columns of numerals and small marks, never from filled chips. One violet
  * accent carries selection, focus and the single primary action of a view; amber, sky, green and
- * red only ever mean changes, behind, ahead and trouble. Type is Hanken Grotesk, code is Cascadia
- * Mono. Shadows belong to things that float (menus, dialogs, toasts) and nothing else.
+ * red only ever mean changes, behind, ahead and trouble. Type is IBM Plex Sans, code is JetBrains
+ * Mono, both bundled. Shadows belong to things that float (menus, dialogs, toasts) and nothing else.
  */
 
 /* ---------------------------------------------------------------- tokens */
-:root {
-  --font-ui: 'Hanken Grotesk Variable', 'Segoe UI Variable Text', 'Segoe UI', sans-serif;
-  --font-mono: 'Cascadia Mono', 'Cascadia Code', Consolas, monospace;
+/* Local faces sized to match the bundled fonts, so nothing moves if they load a frame late. */
+@font-face {
+  font-family: 'IBM Plex Sans Fallback';
+  src: local('Arial'), local('Liberation Sans');
+  size-adjust: 101.24%;
+  ascent-override: 101.24%;
+  descent-override: 27.16%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'JetBrains Mono Fallback';
+  src: local('Courier New'), local('Liberation Mono');
+  size-adjust: 99.98%;
+  ascent-override: 102.02%;
+  descent-override: 30%;
+  line-gap-override: 0%;
+}
 
-  /* Type scale: 11 / 12 / 13 / 14 / 16. Body is 13. */
-  --fs-xs: 11px;
-  --fs-sm: 12px;
-  --fs: 13px;
-  --fs-md: 14px;
-  --fs-lg: 16px;
-  --fs-mono: 12px;
+:root {
+  --font-ui: 'IBM Plex Sans Variable', 'IBM Plex Sans Fallback', 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono Variable', 'JetBrains Mono Fallback', Consolas, monospace;
+
+  /* Type scale: 12 / 13 / 14 / 15 / 17. Body is 14. */
+  --fs-xs: 12px;
+  --fs-sm: 13px;
+  --fs: 14px;
+  --fs-md: 15px;
+  --fs-lg: 17px;
+  --fs-mono: 13px;
 
   /* Spacing steps: 2 4 6 8 12 16 24. */
   --s1: 2px;
@@ -255,12 +273,12 @@ body,
 
 h1 {
   margin: 0;
-  font: 650 var(--fs-lg) / 1.2 var(--font-ui);
+  font: 600 var(--fs-lg) / 1.2 var(--font-ui);
   letter-spacing: -0.008em;
 }
 h2 {
   margin: 0 0 var(--s3);
-  font: 650 var(--fs-md) / 1.3 var(--font-ui);
+  font: 600 var(--fs-md) / 1.3 var(--font-ui);
 }
 h3 {
   margin: var(--s6) 0 var(--s3);
@@ -374,7 +392,7 @@ button.primary:active:not(:disabled) {
 /* Next: what the repo is waiting for (Pull when behind, Push when ahead). Still quiet, but in the
    state's ink, so it never competes with the view's one primary button. */
 button.next {
-  font-weight: 650;
+  font-weight: 600;
 }
 button.next.next-behind,
 button.next.next-behind .ico {
@@ -736,7 +754,7 @@ ul:focus-visible,
   height: var(--bar);
   flex: none;
   padding: 0 var(--s6);
-  font: 700 var(--fs-md) / 1 var(--font-ui);
+  font: 600 var(--fs-md) / 1 var(--font-ui);
   letter-spacing: -0.01em;
 }
 /* The mark: two commits on a line, the newer one in accent. */
@@ -798,7 +816,7 @@ ul:focus-visible,
   border-radius: 9px;
   display: inline-grid;
   place-items: center;
-  font: 650 var(--fs-xs) / 1 var(--font-ui);
+  font: 600 var(--fs-xs) / 1 var(--font-ui);
 }
 .nav-count.alert {
   background: var(--red);
@@ -862,7 +880,7 @@ ul:focus-visible,
   background: none;
   color: var(--ink-2);
   font-size: var(--fs-xs);
-  font-weight: 650;
+  font-weight: 600;
   letter-spacing: 0.02em;
 }
 .group-head:hover:not(:disabled) {
@@ -1249,7 +1267,7 @@ ul:focus-visible,
 }
 .filter-tabs button.alert .filter-count {
   color: var(--red-ink);
-  font-weight: 650;
+  font-weight: 600;
 }
 
 /* The ledger: one grid for head and rows, so every column lines up. */
@@ -1349,7 +1367,7 @@ ul:focus-visible,
   border-bottom: 1px solid var(--line);
   color: var(--ink-2);
   font-size: var(--fs-xs);
-  font-weight: 650;
+  font-weight: 600;
   letter-spacing: 0.02em;
 }
 .band:not(.first) {
@@ -1573,9 +1591,10 @@ ul:focus-visible,
   overflow: hidden;
   white-space: nowrap;
 }
+/* The branch keeps its width; the upstream beside it gives way first. */
 button.branch-name {
-  flex: 0 1 auto;
-  min-width: min(14ch, 100%);
+  flex: 0 0 auto;
+  max-width: 100%;
   height: var(--ctl-sm);
   padding: 0 var(--s4) 0 var(--s3);
   gap: var(--s2);
@@ -1711,7 +1730,7 @@ button.icon .count {
 .changes {
   flex: 1;
   display: grid;
-  grid-template-columns: clamp(270px, 32%, 380px) minmax(0, 1fr);
+  grid-template-columns: clamp(290px, 37%, 420px) minmax(0, 1fr);
   min-height: 0;
 }
 .changes-left {
@@ -1746,7 +1765,7 @@ button.icon .count {
   padding: 0 var(--s3) 0 var(--s5);
   border-bottom: 1px solid var(--line-soft);
   font-size: var(--fs-sm);
-  font-weight: 650;
+  font-weight: 600;
 }
 .section-head .section-title {
   display: inline-flex;
@@ -1943,7 +1962,7 @@ li:focus-within .row-actions {
 }
 .commit-actions .commit-push {
   height: 32px;
-  padding: 0 var(--s5);
+  padding: 0 var(--s4);
   border-left-color: color-mix(in oklab, var(--accent-ink) 30%, var(--accent));
   border-radius: 0 var(--r) var(--r) 0;
 }
@@ -2135,7 +2154,7 @@ button.ai.generating .ico {
 .history {
   flex: 1;
   display: grid;
-  grid-template-columns: minmax(280px, 400px) minmax(340px, 1fr);
+  grid-template-columns: minmax(300px, 440px) minmax(340px, 1fr);
   min-height: 0;
 }
 .history-left,
@@ -2412,7 +2431,7 @@ button.undo-reset {
   flex: 1 1 220px;
   min-width: 0;
   margin: 3px 0 0;
-  font: 650 var(--fs-md) / 1.35 var(--font-ui);
+  font: 600 var(--fs-md) / 1.35 var(--font-ui);
   overflow-wrap: anywhere;
 }
 .commit-actions-row {
@@ -2493,7 +2512,7 @@ button.sha-chip .ico {
   height: 32px;
   padding: 0 var(--s5) 0 var(--s6);
   font-size: var(--fs-sm);
-  font-weight: 650;
+  font-weight: 600;
 }
 .files-title {
   display: inline-flex;
@@ -2565,7 +2584,7 @@ button.sha-chip .ico {
 .branch-lists h2 {
   margin: var(--s5) var(--s2) var(--s2);
   color: var(--ink-2);
-  font: 650 var(--fs-xs) / 1.3 var(--font-ui);
+  font: 600 var(--fs-xs) / 1.3 var(--font-ui);
   letter-spacing: 0.02em;
 }
 .branch-list {
@@ -2594,7 +2613,7 @@ button.sha-chip .ico {
 }
 .branch-list li.head .bname {
   color: var(--accent-text);
-  font-weight: 650;
+  font-weight: 600;
 }
 .bmark {
   position: relative;
@@ -3017,7 +3036,7 @@ dialog::backdrop {
 }
 .reset-dialog h2 {
   margin: 0;
-  font: 650 var(--fs-lg) / 1.3 var(--font-ui);
+  font: 600 var(--fs-lg) / 1.3 var(--font-ui);
 }
 .reset-dialog h2 .mono {
   font-size: var(--fs-md);

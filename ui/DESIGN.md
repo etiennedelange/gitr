@@ -49,35 +49,35 @@ colors:
   ink-2-dark: "#a4a4ae"
 typography:
   headline:
-    fontFamily: "Hanken Grotesk Variable, Segoe UI Variable Text, Segoe UI, sans-serif"
-    fontSize: "16px"
-    fontWeight: 650
+    fontFamily: "IBM Plex Sans Variable, IBM Plex Sans Fallback, Segoe UI, sans-serif"
+    fontSize: "17px"
+    fontWeight: 600
     lineHeight: 1.2
     letterSpacing: "-0.008em"
   title:
-    fontFamily: "Hanken Grotesk Variable, Segoe UI Variable Text, Segoe UI, sans-serif"
-    fontSize: "14px"
-    fontWeight: 650
+    fontFamily: "IBM Plex Sans Variable, IBM Plex Sans Fallback, Segoe UI, sans-serif"
+    fontSize: "15px"
+    fontWeight: 600
     lineHeight: 1.3
   body:
-    fontFamily: "Hanken Grotesk Variable, Segoe UI Variable Text, Segoe UI, sans-serif"
-    fontSize: "13px"
+    fontFamily: "IBM Plex Sans Variable, IBM Plex Sans Fallback, Segoe UI, sans-serif"
+    fontSize: "14px"
     fontWeight: 400
     lineHeight: 1.45
     fontFeature: "tnum"
   label:
-    fontFamily: "Hanken Grotesk Variable, Segoe UI Variable Text, Segoe UI, sans-serif"
-    fontSize: "12px"
+    fontFamily: "IBM Plex Sans Variable, IBM Plex Sans Fallback, Segoe UI, sans-serif"
+    fontSize: "13px"
     fontWeight: 600
     lineHeight: 1.3
   band:
-    fontFamily: "Hanken Grotesk Variable, Segoe UI Variable Text, Segoe UI, sans-serif"
-    fontSize: "11px"
-    fontWeight: 650
+    fontFamily: "IBM Plex Sans Variable, IBM Plex Sans Fallback, Segoe UI, sans-serif"
+    fontSize: "12px"
+    fontWeight: 600
     letterSpacing: "0.02em"
   mono:
-    fontFamily: "Cascadia Mono, Cascadia Code, Consolas, monospace"
-    fontSize: "12px"
+    fontFamily: "JetBrains Mono Variable, JetBrains Mono Fallback, Consolas, monospace"
+    fontSize: "13px"
     fontWeight: 400
     lineHeight: 1.55
 rounded:
@@ -165,13 +165,13 @@ components:
 
 Gitr reads like a ledger of repositories. State is read down aligned columns of tabular numerals and small marks, not from cards, chips or pills. The window is one flat surface on cool graphite neutrals (hue near 285, almost no chroma), split by 1px hairlines into a tinted sidebar, a 44px title bar, a filter strip, a dense table and a status bar.
 
-The system is dense and quiet. Body text is 13px, rows are 26 to 30px, controls are 28px. One violet accent marks selection, focus and the single primary action of a view. Amber, sky, green and red only ever mean changes, behind, ahead and trouble. It follows Windows desktop conventions: raised command buttons with a hairline, F6-style focus rings, Explorer-like lists, light and dark themes that follow the OS.
+The system is dense and quiet. Body text is 14px, rows are 26 to 30px, controls are 28px. One violet accent marks selection, focus and the single primary action of a view. Amber, sky, green and red only ever mean changes, behind, ahead and trouble. It follows Windows desktop conventions: raised command buttons with a hairline, F6-style focus rings, Explorer-like lists, light and dark themes that follow the OS.
 
 **Key Characteristics:**
 - Flat surfaces, hairline separators, no shadow except on things that float.
 - Tabular numerals everywhere; counts and status words in state ink, never in filled chips.
 - One violet accent, used for selection, focus and one primary button per view.
-- Hanken Grotesk for interface, Cascadia Mono for branches, paths, SHAs, diffs and the commit message.
+- IBM Plex Sans for interface, JetBrains Mono for branches, paths, SHAs, diffs and the commit message, both bundled with the app.
 - The divergence column: behind bars grow left and ahead bars grow right from a shared axis.
 
 ## Colors
@@ -209,29 +209,31 @@ Each hue has a plain value for marks and bars, an `-ink` value for text at body 
 
 ## Typography
 
-**Body Font:** Hanken Grotesk Variable (with Segoe UI Variable Text, Segoe UI)
-**Mono Font:** Cascadia Mono (with Cascadia Code, Consolas)
+**Body Font:** IBM Plex Sans Variable (bundled; metric-matched Arial fallback, then Segoe UI)
+**Mono Font:** JetBrains Mono Variable (bundled; metric-matched Courier New fallback, then Consolas)
 
-**Character:** A plain grotesk at small sizes with weights between 400 and 700, tabular numerals on by default. Mono marks anything that is git's own text: branch names, diff paths, SHAs, code, the commit message (so the 50/72 line discipline stays visible). File-list folder paths stay in the grotesk for density.
+Both are the personal brand's defaults (`design/brand.md`), bundled so every machine shows the same type; Windows 10 has no Cascadia Mono.
+
+**Character:** A plain grotesk at small sizes with weights between 400 and 600, tabular numerals on by default. Mono marks anything that is git's own text: branch names, diff paths, SHAs, code, the commit message (so the 50/72 line discipline stays visible). File-list folder paths stay in the grotesk for density.
 
 ### Hierarchy
-- **Headline** (650, 16px, 1.2): view titles in the 44px title bar, dialog titles.
-- **Title** (650, 14px, 1.3): settings section headings, brand name (700).
-- **Body** (400, 13px, 1.45): everything by default. Repo names in the ledger are 600; sidebar repo names 450; file names and commit subjects 500.
-- **Label** (600, 12px): count numerals, divergence numbers, status words (500), filter tabs, small buttons, section heads in lists (650).
-- **Band** (650, 11px, 0.02em tracking, sentence case): ledger band headings ("Needs attention", "Everything else"), sidebar group names, table column heads (600), status bar, commit metadata line.
-- **Mono** (400, 12px): diff body (line-height 1.6), commit message box (1.55), branch cells, SHAs, file status letters (700, 11px).
+- **Headline** (600, 17px, 1.2): view titles in the 44px title bar, dialog titles.
+- **Title** (600, 15px, 1.3): settings section headings, brand name.
+- **Body** (400, 14px, 1.45): everything by default. Repo names in the ledger are 600; sidebar repo names 450; file names and commit subjects 500.
+- **Label** (600, 13px): count numerals, divergence numbers, status words (500), filter tabs, small buttons, section heads in lists.
+- **Band** (600, 12px, 0.02em tracking, sentence case): ledger band headings ("Needs attention", "Everything else"), sidebar group names, table column heads (600), status bar, commit metadata line.
+- **Mono** (400, 13px): diff body (line-height 1.6), commit message box (1.55), branch cells, SHAs, file status letters (700, 12px).
 
 ### Named Rules
 **The Tabular Rule.** `font-variant-numeric: tabular-nums` is set on the root. Numbers line up down every column; never turn it off.
 
-**The Sentence Case Rule.** Headings, bands and labels are sentence case at 11 to 16px. Hierarchy comes from weight and ink, not uppercase or tracking.
+**The Sentence Case Rule.** Headings, bands and labels are sentence case at 12 to 17px. Hierarchy comes from weight and ink, not uppercase or tracking.
 
 ## Layout
 
 A fixed two-column window: a 240px sidebar and a flexible main column. The main column stacks a 44px title bar, an optional 40px banner or filter strip, the content, and a 26px status bar, each split by a 1px hairline. Spacing steps are 2, 4, 6, 8, 12, 16, 24px; title bars and strips pad 16px left and 12px right.
 
-The dashboard ledger is one CSS grid shared by the head and every row, so columns line up: mark (16px), repository, branch, divergence (112px), changes (60px), status, row tools (88px). Rows are 30px, band headings 28px. Sidebar and file-list rows are 26px; history rows are 44px with two lines. The repo view splits into a file list column and a diff, with the commit box pinned at the foot of the lists.
+The dashboard ledger is one CSS grid shared by the head and every row, so columns line up: mark (16px), repository, branch, divergence (112px), changes (60px), status, row tools (88px). Rows are 30px, band headings 28px. Sidebar and file-list rows are 26px; history rows are 44px with two lines. The repo view splits into a file list column (37% of the main column, 290 to 420px) and a diff, with the commit box pinned at the foot of the lists.
 
 Responsive steps: below 980px of dashboard width the row tools go and the columns tighten; below 1100px window width the sidebar collapses to a 48px strip of marks and icons (names move to screen readers, Ctrl+P finds a repo); below 720px height the file lists shrink to their headers before the commit box leaves; below 760px the title bar wraps. Minimum window is 900x600.
 
@@ -257,40 +259,40 @@ Windows command buttons: quiet, compact, with a hairline.
 - **Standard:** raised face with a `line-strong` hairline; hover mixes 4% ink into the face, press 8%.
 - **Primary:** violet fill, white ink (dark theme: dark ink on light violet), weight 600. One per view. The commit button splits into Commit and a Push segment joined by a tinted seam; disabled it turns to a flat panel face instead of fading.
 - **Quiet:** no face until hovered; used in title bars and inline (Fetch all, Pull all).
-- **Next:** a quiet button in the state's ink and weight 650, for what the repo is waiting for (Pull when behind, Push when ahead). It never competes with the primary.
+- **Next:** a quiet button in the state's ink and weight 600, for what the repo is waiting for (Pull when behind, Push when ahead). It never competes with the primary.
 - **Icon:** 28px square, quiet, ink-2, labelled by aria-label and tooltip. Row tools use 26x24.
-- **Small:** 24px tall, 8px padding, 12px text. **Danger:** red ink only, no red fill.
+- **Small:** 24px tall, 8px padding, 13px text. **Danger:** red ink only, no red fill.
 - **Focus:** 2px violet outline, 1px offset. Lists and panes draw it 2px inside their edge.
 
 ### Filter tabs and segmented control
-- **Filter tabs:** 26px quiet buttons in ink-2, each followed by its count in ink-3. The selected tab takes the violet wash with its count in accent text; an alert count turns red ink at 650.
+- **Filter tabs:** 26px quiet buttons in ink-2, each followed by its count in ink-3. The selected tab takes the violet wash with its count in accent text; an alert count turns red ink at 600.
 - **Segmented control:** a panel track with a hairline; the selected segment is a raised face with a `line-strong` ring.
 
 ### View tabs
 Text tabs at 34px in ink-2; the selected tab turns ink and 600 and gets a 2px violet underline sitting on the hairline below.
 
 ### Inputs / Fields
-- **Style:** raised field, `line-strong` hairline, 5px radius, 28px tall (26px in filter strips, 12px text). Search fields carry a 14px icon inside on the left and a clear button on the right.
+- **Style:** raised field, `line-strong` hairline, 5px radius, 28px tall (26px in filter strips, 13px text). Search fields carry a 14px icon inside on the left and a clear button on the right.
 - **Hover:** border darkens by 18% ink. **Focus:** border and a 1px ring in violet.
-- **Commit message:** mono 12px, line-height 1.55, at least 92px tall, resizable.
+- **Commit message:** mono 13px, line-height 1.55, at least 92px tall, resizable.
 
 ### Navigation (sidebar)
 A tinted column, not a card. Brand mark and name at the top in a 44px bar, Dashboard, a filter field, groups of repos, Settings at the foot. Nav items and repo rows have no face until hovered (rail-hover); the active one takes the violet wash, selection ink and weight 600. Group heads are band type in ink-2 with a chevron and a count. Each repo row carries its status mark and count notation in two fixed slots, so numerals align down the list. With several groups, each group heading carries its swatch and its repos a stripe along the rail's left edge, unbroken down the group.
 
 ### State marks and counts (signature)
 - **Status mark:** one 8px mark per repo: filled in the state hue for changes, behind or ahead; a hollow ink-3 ring when clean; a red ring for an error; a solid red dot with a soft halo for conflicts; a half-filled ring while a merge or rebase waits.
-- **Counts:** colored numerals with notation and no fill (`±n` changes in amber ink, `↓n` behind in sky ink, `↑n` ahead in green ink), 12px 600. Screen readers get the words.
-- **Status words:** plain 12px text in the state's ink ("Merging · 1 conflict", "No upstream"). Never a filled pill.
+- **Counts:** colored numerals with notation and no fill (`±n` changes in amber ink, `↓n` behind in sky ink, `↑n` ahead in green ink), 13px 600. Screen readers get the words.
+- **Status words:** plain 13px text in the state's ink ("Merging · 1 conflict", "No upstream"). Never a filled pill.
 - **File status letters:** git's letter in mono 700 in the state's ink. A conflict is the one solid red tile.
 
 ### Divergence column (signature)
 Behind and ahead on one axis in every ledger row. A `line-strong` vertical axis runs down the column; behind commits draw a sky bar growing left with its number on the outside, ahead commits a green bar growing right. Bar length is linear for 1 to 4 commits, then logarithmic to a 40px cap. A repo with no upstream draws nothing.
 
 ### Ledger rows
-30px grid rows split by `line-soft`. Hover is the ink overlay; the keyboard cursor row is the violet wash, with a 1px inset violet ring when the table has focus. Row tools fade in on hover or cursor. Bands are 11px band type with a count, on a hairline: "Needs attention" above "Everything else", or, sorted by status with all of several groups showing, above one band per group led by its swatch. With several groups, each row carries its group's 3px stripe at its left edge.
+30px grid rows split by `line-soft`. Hover is the ink overlay; the keyboard cursor row is the violet wash, with a 1px inset violet ring when the table has focus. Row tools fade in on hover or cursor. Bands are 12px band type with a count, on a hairline: "Needs attention" above "Everything else", or, sorted by status with all of several groups showing, above one band per group led by its swatch. With several groups, each row carries its group's 3px stripe at its left edge.
 
 ### History rows
-Two-line 44px rows. A `line-strong` branch line runs through 8px commit marks: ink-3 by default, violet and 10px for HEAD, a green ring for unpushed, a ringed target for merges. The second line (author, SHA, date) is 11px ink-3. Ref labels are quiet 18px outlines: HEAD in violet, tags in amber, remotes dashed.
+Two-line 44px rows. A `line-strong` branch line runs through 8px commit marks: ink-3 by default, violet and 10px for HEAD, a green ring for unpushed, a ringed target for merges. The second line (author, SHA, date) is 12px ink-3. Ref labels are quiet 18px outlines: HEAD in violet, tags in amber, remotes dashed.
 
 ### Menus, dialogs, toasts
 Raised overlay, 1px `line` border, 8px radius, float shadow. Menus open 4px below their trigger with a 3px slide and fade (140ms); items are 28px, 4px radius, and take the violet wash on hover or focus. Toasts sit above the status bar bottom right, rise 6px over 180ms, and lead with a green or red icon.
@@ -299,7 +301,7 @@ Raised overlay, 1px `line` border, 8px radius, float shadow. Menus open 4px belo
 Full-width strips under the title bar, 40px minimum, 15px icon on the left, bold message, muted detail, actions on the right. Amber wash for sign-in and Git problems, panel for an operation in progress, red wash for conflicts and errors.
 
 ### Diff
-Mono 12px at line-height 1.6 in a table. Added lines on a green wash, removed on a red wash, with stronger tints in the line-number gutter. Hunk headers are 11px grotesk on a hunk panel.
+Mono 13px at line-height 1.6 in a table. Added lines on a green wash, removed on a red wash, with stronger tints in the line-number gutter. Hunk headers are 12px grotesk on a hunk panel.
 
 ## Do's and Don'ts
 
@@ -307,7 +309,7 @@ Mono 12px at line-height 1.6 in a table. Added lines on a green wash, removed on
 - **Do** set state in columns of tabular numerals and 8px marks, with words for screen readers.
 - **Do** keep violet to selection, focus and one primary button per view (Commit in the repo view).
 - **Do** use the `-ink` variant of a state hue for text and the plain hue for marks and bars.
-- **Do** put branches, paths, SHAs, code and commit messages in Cascadia Mono 12px.
+- **Do** put branches, paths, SHAs, code and commit messages in JetBrains Mono 13px.
 - **Do** divide regions and rows with 1px hairlines (`line` between regions, `line-soft` between rows).
 - **Do** give anything that floats the 8px radius, `line` border and float shadow, and nothing else a shadow.
 - **Do** keep motion quick and ease-out (90ms state changes, 140ms menus and tabs) and collapse it under reduced motion.
