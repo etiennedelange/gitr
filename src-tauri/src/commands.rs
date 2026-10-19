@@ -6,6 +6,7 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use gitr_ai::{MessageGenerator, build_prompt};
 use gitr_core::branches::Branch;
 use gitr_core::diff::{FileDiff, LineStats};
+use gitr_core::highlight::DiffSyntax;
 use gitr_core::Git;
 use gitr_core::error::ErrorKind;
 use gitr_core::locate::GitLocation;
@@ -655,6 +656,19 @@ pub async fn file_diff(
     Ok(state.git.diff_file(&repo, &file, staged, untracked).await?)
 }
 
+/// Syntax colours for `file_diff`'s lines. Separate, so the diff shows before colouring is done.
+#[tauri::command]
+pub async fn file_diff_syntax(
+    state: State<'_, AppState>,
+    path: String,
+    file: String,
+    staged: bool,
+    untracked: bool,
+) -> Res<DiffSyntax> {
+    let repo = state.known_repo(&path)?;
+    Ok(state.git.diff_file_syntax(&repo, &file, staged, untracked).await?)
+}
+
 /// A commit id from the UI: hex only, so nothing else (an option, a revision expression) reaches git.
 fn sha_arg(sha: &str) -> Res<&str> {
     let sha = sha.trim();
@@ -688,6 +702,18 @@ pub async fn commit_file_diff(
 ) -> Res<FileDiff> {
     let repo = state.known_repo(&path)?;
     Ok(state.git.commit_file_diff(&repo, sha_arg(&sha)?, &file, orig_path.as_deref()).await?)
+}
+
+#[tauri::command]
+pub async fn commit_file_diff_syntax(
+    state: State<'_, AppState>,
+    path: String,
+    sha: String,
+    file: String,
+    orig_path: Option<String>,
+) -> Res<DiffSyntax> {
+    let repo = state.known_repo(&path)?;
+    Ok(state.git.commit_file_diff_syntax(&repo, sha_arg(&sha)?, &file, orig_path.as_deref()).await?)
 }
 
 /// What a reset to `sha` would take off the branch, for the Reset dialog.

@@ -117,6 +117,15 @@
   --del-ink: #a5311f;
   --hunk-bg: #f4f4f7;
   --hunk-ink: #6a6a76;
+
+  /* Syntax colours in diffs: no green or red, which mean added and removed there. */
+  --syn-keyword: #5d36c4;
+  --syn-type: #0b6e7e;
+  --syn-function: #8a5300;
+  --syn-string: #1d5fa8;
+  --syn-number: #a8336b;
+  --syn-comment: #6b6b77;
+  --syn-meta: #7d4795;
 }
 
 :root[data-theme='dark'] {
@@ -175,6 +184,14 @@
   --del-ink: #f78d7e;
   --hunk-bg: #1f1f24;
   --hunk-ink: #9a9aa5;
+
+  --syn-keyword: #b4a7ff;
+  --syn-type: #5cc8cf;
+  --syn-function: #e5b567;
+  --syn-string: #8fc4f6;
+  --syn-number: #f08fbf;
+  --syn-comment: #9a9aa5;
+  --syn-meta: #c99ad9;
 }
 
 /* ---------------------------------------------------------------- base */
@@ -2016,6 +2033,29 @@ button.ai.generating .ico {
 }
 .hunk .code {
   white-space: pre;
+}
+.tk-keyword {
+  color: var(--syn-keyword);
+}
+.tk-type,
+.tk-tag {
+  color: var(--syn-type);
+}
+.tk-function,
+.tk-attribute {
+  color: var(--syn-function);
+}
+.tk-string {
+  color: var(--syn-string);
+}
+.tk-number {
+  color: var(--syn-number);
+}
+.tk-comment {
+  color: var(--syn-comment);
+}
+.tk-meta {
+  color: var(--syn-meta);
 }
 .hunk .sign {
   display: inline-block;

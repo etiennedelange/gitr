@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { api, errorMessage } from '../api'
 import { dirName, fileName, toSplitRows } from '../lib/git'
-import type { DiffLine, Hunk } from '../types'
+import type { DiffLine, DiffSyntax, Hunk, Span } from '../types'
 import { diffMenu } from '../lib/menus'
 import { copyText, showMenu } from '../nativeMenu'
 
@@ -40,6 +40,24 @@ export function DiffView({ repo, source, note, conflicted }: { repo: string; sou
           queryFn: () => api.fileDiff(repo, source.path, source.staged, source.untracked && !source.staged),
         },
   )
+
+  // Colours come separately: they take longer, so the diff shows first and they fill in.
+  const hasLines = !!diff.data && !diff.data.binary && diff.data.hunks.length > 0
+  const syntax = useQuery(
+    source.kind === 'commit'
+      ? {
+          queryKey: ['commitDiff', repo, source.sha, source.path, 'syntax'],
+          queryFn: () => api.commitFileDiffSyntax(repo, source.sha, source.path, source.origPath),
+          staleTime: Infinity,
+          enabled: hasLines,
+        }
+      : {
+          queryKey: ['diff', repo, source.path, source.staged, 'syntax'],
+          queryFn: () => api.fileDiffSyntax(repo, source.path, source.staged, source.untracked && !source.staged),
+          enabled: hasLines,
+        },
+  )
+  const colours = syntax.data
 
   // Two columns of code need room; in a narrow pane the diff shows unified instead.
   const root = useRef<HTMLDivElement>(null)
@@ -112,14 +130,42 @@ export function DiffView({ repo, source, note, conflicted }: { repo: string; sou
               : 'No textual changes'}
           </div>
         )}
-        {diff.data?.hunks.map((h, i) => (shown === 'unified' ? <Unified key={i} hunk={h} /> : <Split key={i} hunk={h} />))}
+        {diff.data?.hunks.map((h, i) => (shown === 'unified' ? <Unified key={i} hunk={h} syntax={colours} /> : <Split key={i} hunk={h} syntax={colours} />))}
         {diff.data?.truncated && <div className="banner">Diff truncated: the file is too large to show completely.</div>}
       </div>
     </div>
   )
 }
 
-function Unified({ hunk }: { hunk: Hunk }) {
+/** A line's colours: removed lines from the old file, the rest from the new one. */
+function spansOf(line: DiffLine | null, syntax: DiffSyntax | undefined): Span[] | undefined {
+  if (!line || !syntax) return undefined
+  if (line.kind === 'remove') return line.oldNo == null ? undefined : syntax.old[line.oldNo]
+  if (line.kind === 'nonewline') return undefined
+  return line.newNo == null ? undefined : syntax.new[line.newNo]
+}
+
+/** A line's text with its coloured pieces. */
+function Code({ text, spans }: { text: string; spans: Span[] | undefined }) {
+  if (!spans?.length) return <>{text}</>
+  const out: ReactNode[] = []
+  let at = 0
+  for (const [start, end, token] of spans) {
+    // Colours from before a refresh can be for older text; past the text's end they are dropped.
+    if (start < at || end > text.length) break
+    if (start > at) out.push(text.slice(at, start))
+    out.push(
+      <span key={start} className={`tk-${token}`}>
+        {text.slice(start, end)}
+      </span>,
+    )
+    at = end
+  }
+  out.push(text.slice(at))
+  return <>{out}</>
+}
+
+function Unified({ hunk, syntax }: { hunk: Hunk; syntax: DiffSyntax | undefined }) {
   return (
     <table className="hunk unified">
       <tbody>
@@ -132,7 +178,7 @@ function Unified({ hunk }: { hunk: Hunk }) {
             <td className="ln">{l.newNo ?? ''}</td>
             <td className="code selectable">
               <span className="sign">{sign[l.kind]}</span>
-              {l.text}
+              <Code text={l.text} spans={spansOf(l, syntax)} />
             </td>
           </tr>
         ))}
@@ -141,16 +187,18 @@ function Unified({ hunk }: { hunk: Hunk }) {
   )
 }
 
-function Side({ line, no }: { line: DiffLine | null; no: number | null | undefined }) {
+function Side({ line, no, syntax }: { line: DiffLine | null; no: number | null | undefined; syntax: DiffSyntax | undefined }) {
   return (
     <>
       <td className={`ln ${line?.kind ?? 'empty'}`}>{no ?? ''}</td>
-      <td className={`code selectable ${line?.kind ?? 'empty'}`}>{line?.text ?? ''}</td>
+      <td className={`code selectable ${line?.kind ?? 'empty'}`}>
+        <Code text={line?.text ?? ''} spans={spansOf(line, syntax)} />
+      </td>
     </>
   )
 }
 
-function Split({ hunk }: { hunk: Hunk }) {
+function Split({ hunk, syntax }: { hunk: Hunk; syntax: DiffSyntax | undefined }) {
   return (
     // Fixed column widths, so both sides get half whatever their lines are, and every hunk's
     // divider lines up with the next one's.
@@ -167,8 +215,8 @@ function Split({ hunk }: { hunk: Hunk }) {
         </tr>
         {toSplitRows(hunk).map((r, i) => (
           <tr key={i}>
-            <Side line={r.left} no={r.left?.oldNo} />
-            <Side line={r.right} no={r.right?.newNo} />
+            <Side line={r.left} no={r.left?.oldNo} syntax={syntax} />
+            <Side line={r.right} no={r.right?.newNo} syntax={syntax} />
           </tr>
         ))}
       </tbody>

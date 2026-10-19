@@ -3,6 +3,7 @@
 // No dependencies: it reads `cargo metadata` and `pnpm licenses`.
 import { execFileSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
+import { inflateSync } from 'node:zlib'
 import { readFileSync, readdirSync, writeFileSync, existsSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -57,14 +58,49 @@ function rustPackages() {
   return [...seen]
     .filter((id) => !members.has(id))
     .map((id) => byId.get(id))
-    .map((p) => ({
-      ecosystem: 'Rust crate',
-      name: p.name,
-      version: p.version,
-      licence: p.license ?? p.license_file ?? 'unknown',
-      source: p.repository ?? `https://crates.io/crates/${p.name}`,
-      texts: licenceTexts(dirname(p.manifest_path)),
-    }))
+    .flatMap((p) => [
+      {
+        ecosystem: 'Rust crate',
+        name: p.name,
+        version: p.version,
+        licence: p.license ?? p.license_file ?? 'unknown',
+        source: p.repository ?? `https://crates.io/crates/${p.name}`,
+        texts: licenceTexts(dirname(p.manifest_path)),
+      },
+      ...(p.name === 'two-face' ? twoFaceGrammars(p) : []),
+    ])
+}
+
+// two-face bundles bat's syntax grammars, each under its own licence. Their texts are in the
+// crate's acknowledgements file: zlib-compressed bincode of `{ for_syntaxes: Vec<License>,
+// for_themes: Vec<License> }`, where `License { ty: LicenseType, text: String, rel_path: PathBuf }`.
+// Gitr uses only the syntaxes.
+function twoFaceGrammars(p) {
+  const buf = inflateSync(readFileSync(join(dirname(p.manifest_path), 'generated', 'acknowledgements_full.bin')))
+  const TYPES = ['Sublime', 'MIT', 'BSD-2-Clause', 'BSD-2-Clause-FreeBSD', 'Unlicense', 'BSD-3-Clause', 'Apache-2.0', 'WTFPL']
+  let at = 0
+  const u32 = () => ((at += 4), buf.readUInt32LE(at - 4))
+  const u64 = () => ((at += 8), Number(buf.readBigUInt64LE(at - 8)))
+  const str = () => {
+    const n = u64()
+    return ((at += n), buf.toString('utf8', at - n, at))
+  }
+  return Array.from({ length: u64() }, () => {
+    const ty = TYPES[u32()]
+    if (!ty) throw new Error('Unknown licence type in two-face acknowledgements; update TYPES in generate.mjs')
+    const text = str().replace(/\r\n/g, '\n').trim()
+    const relPath = str()
+    // syntaxes/02_Extra/Kotlin/LICENSE -> Kotlin
+    const grammar = relPath.split('/').slice(2, -1).join('/')
+    return {
+      ecosystem: `syntax grammar bundled in two-face ${p.version}`,
+      name: `${grammar} grammar`,
+      version: relPath,
+      licence: ty,
+      source: `https://codeberg.org/CosmicHarper/two-face/src/tag/v${p.version}/generated/acknowledgements_full.md`,
+      texts: [text],
+    }
+  })
 }
 
 // npm: production dependencies of the UI, which Vite bundles into the app.
