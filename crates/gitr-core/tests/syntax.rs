@@ -1,5 +1,6 @@
+mod common;
 
-use crate::common::*;
+use common::*;
 use gitr_core::highlight::{DiffSyntax, Span, Token};
 
 /// A C# file whose fourth line is inside a block comment, so only colouring from the whole file

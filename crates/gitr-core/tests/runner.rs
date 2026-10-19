@@ -1,7 +1,8 @@
+mod common;
 
 use std::time::{Duration, Instant};
 
-use crate::common::*;
+use common::*;
 use gitr_core::Git;
 use gitr_core::runner::{Kind, RunOpts};
 

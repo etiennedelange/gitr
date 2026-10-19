@@ -3,10 +3,11 @@
 //! `Git` API; auth and dubious ownership can't be (no credentials server offline, and
 //! Git for Windows ignores GIT_TEST_ASSUME_DIFFERENT_OWNER), so their real messages are
 //! quoted verbatim.
+mod common;
 
 use std::path::{Path, PathBuf};
 
-use crate::common::*;
+use common::*;
 use gitr_core::GitError;
 use gitr_core::error::{ErrorKind, classify, lock_path};
 use gitr_core::runner::Kind;

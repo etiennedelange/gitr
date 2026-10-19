@@ -1,9 +1,10 @@
 //! Recoverable discard (files go to a bin first) and Undo last commit.
+mod common;
 
 use std::path::Path;
 use std::sync::Arc;
 
-use crate::common::*;
+use common::*;
 use gitr_core::repo::DiscardFailure;
 
 fn bin_for(dir: &Path) -> Arc<FakeBin> {
