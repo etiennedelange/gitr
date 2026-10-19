@@ -1,0 +1,79 @@
+name: Dependabot notices
+
+# Dependabot updates the lockfiles but can't run `pnpm notices`, so its PRs failed CI's
+# notices check every time. This regenerates THIRD_PARTY_NOTICES.txt on the PR branch.
+#
+# pull_request_target, because a Dependabot PR's own runs get a read-only token. It runs with
+# write access, so no code from the PR runs: the generator script is main's, pnpm skips install
+# scripts and .pnpmfile.cjs, and `cargo metadata` and `pnpm licenses` only read packages. No
+# caches either, so the PR's packages can't end up in caches main's workflows restore.
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dependabot-notices-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  notices:
+    if: github.event.pull_request.user.login == 'dependabot[bot]' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      # Push the regenerated file, and start CI on the new commit.
+      contents: write
+      actions: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: base
+          persist-credentials: false
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          path: pr
+          persist-credentials: false
+
+      # Same version as devEngines.packageManager in package.json.
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 12.8.1
+      - uses: actions/setup-node@v7
+        with:
+          node-version: lts/*
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Regenerate THIRD_PARTY_NOTICES.txt
+        working-directory: pr
+        env:
+          # No package scripts and no .pnpmfile.cjs hooks, for every pnpm call (the generator's too).
+          npm_config_ignore_scripts: 'true'
+          npm_config_ignore_pnpmfile: 'true'
+        run: |
+          pnpm install --frozen-lockfile --ignore-scripts
+          cp ../base/tools/notices/generate.mjs tools/notices/generate.mjs
+          node tools/notices/generate.mjs
+          git checkout -- tools/notices/generate.mjs
+
+      # Pushes made with this workflow's token start no workflows, so CI is started by hand on the
+      # new commit; its checks are the ones the PR needs.
+      - name: Commit it and run CI again
+        working-directory: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BRANCH: ${{ github.event.pull_request.head.ref }}
+        run: |
+          if git diff --quiet -- THIRD_PARTY_NOTICES.txt; then
+            echo "THIRD_PARTY_NOTICES.txt is up to date."
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'Update THIRD_PARTY_NOTICES.txt' -- THIRD_PARTY_NOTICES.txt
+          git push "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "HEAD:refs/heads/${BRANCH}"
+          gh workflow run ci.yml --repo "$GITHUB_REPOSITORY" --ref "$BRANCH"
