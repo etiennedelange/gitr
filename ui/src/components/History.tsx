@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { ask } from '@tauri-apps/plugin-dialog'
-import { ArrowUp, Copy, GitBranch, GitMerge, History as HistoryIcon, RotateCcw, Tag, Undo2 } from 'lucide-react'
+import { ArrowUp, ChevronRight, Copy, GitBranch, GitMerge, History as HistoryIcon, RotateCcw, Tag, Undo2 } from 'lucide-react'
 import { api, errorMessage } from '../api'
 import { notifyError, useBusy } from '../hooks'
 import { useApp } from '../store'
@@ -15,10 +15,20 @@ import { copyText, showMenu } from '../nativeMenu'
 import type { CommitDetails, CommitFile, LogEntry, RefLabel, RemoteInfo, ResetMode } from '../types'
 import { DiffView } from './DiffView'
 import { ResetDialog } from './ResetDialog'
+import { FileViewToggle } from './FileViewToggle'
+import { Splitter } from './Splitter'
+import { useLayout } from '../layout'
+import { buildTree, listRows, treeRows } from '../lib/fileTree'
 
 const PAGE = 200
 const ROW_H = 44
 const short = (sha: string) => sha.slice(0, 7)
+/** Narrowest the commit list and the commit beside it may get. */
+const LIST_MIN = 260
+const COMMIT_MIN = 340
+/** Shortest a commit's file list and its diff may get. */
+const FILES_MIN = 72
+const DIFF_MIN = 120
 
 export function History({ path, remote }: { path: string; remote: RemoteInfo | null }) {
   const log = useInfiniteQuery({
@@ -136,10 +146,22 @@ export function History({ path, remote }: { path: string; remote: RemoteInfo | n
     )
 
   const unborn = log.isSuccess && !commits.length
+  const listWidth = useLayout((s) => s.historyList)
+  const setPane = useLayout((s) => s.setPane)
+  const historyRoot = useRef<HTMLDivElement>(null)
+  const historyLeft = useRef<HTMLElement>(null)
 
   return (
-    <div className="history">
-      <section className="history-left" aria-label="Commits">
+    <div
+      className="history"
+      ref={historyRoot}
+      style={
+        listWidth
+          ? { gridTemplateColumns: `clamp(${LIST_MIN}px, ${listWidth}px, calc(100% - ${COMMIT_MIN}px)) 0 minmax(${COMMIT_MIN}px, 1fr)` }
+          : undefined
+      }
+    >
+      <section className="history-left" aria-label="Commits" ref={historyLeft}>
         <div className="section-head">
           <span className="section-title">
             History {log.isSuccess && <span className="count">{log.hasNextPage ? `${commits.length}+` : commits.length}</span>}
@@ -201,6 +223,15 @@ export function History({ path, remote }: { path: string; remote: RemoteInfo | n
           </div>
         )}
       </section>
+      <Splitter
+        axis="x"
+        label="Resize the commit list"
+        size={() => historyLeft.current?.offsetWidth ?? 0}
+        min={LIST_MIN}
+        max={() => (historyRoot.current?.clientWidth ?? 0) - COMMIT_MIN}
+        onResize={(px) => setPane('historyList', px)}
+        onReset={() => setPane('historyList', undefined)}
+      />
       <section className="history-right" aria-label="Commit">
         {selected ? (
           <CommitPane
@@ -356,15 +387,31 @@ function CommitPane({
     queryFn: () => api.commitDetails(path, c.sha),
     staleTime: Infinity,
   })
-  const files = details.data?.files ?? []
+  const files = useMemo(() => details.data?.files ?? [], [details.data])
+  const fileView = useLayout((s) => s.fileView)
+  const filesHeight = useLayout((s) => s.historyFiles)
+  const setPane = useLayout((s) => s.setPane)
+  const [closed, setClosed] = useState<ReadonlySet<string>>(new Set())
+  const toggleFolder = (dir: string) =>
+    setClosed((c) => {
+      const next = new Set(c)
+      if (!next.delete(dir)) next.add(dir)
+      return next
+    })
+  const rows = useMemo(() => (fileView === 'tree' ? treeRows(buildTree(files), closed) : listRows(files)), [files, fileView, closed])
+  // The files in the order they show, without those in collapsed folders: what the arrow keys walk.
+  const shown = useMemo(() => rows.flatMap((r) => (r.kind === 'file' ? [r.file] : [])), [rows])
   const [selPath, setSelPath] = useState<string | null>(null)
-  const file = files.find((f) => f.path === selPath) ?? files[0] ?? null
-  const fi = file ? files.indexOf(file) : -1
+  const file = files.find((f) => f.path === selPath) ?? shown[0] ?? files[0] ?? null
+  const fi = file ? shown.indexOf(file) : -1
   const merge = c.parents.length > 1
+  const pane = useRef<HTMLDivElement>(null)
+  const filesBox = useRef<HTMLDivElement>(null)
+  const tree = fileView === 'tree'
 
   const onFilesKey = (e: React.KeyboardEvent) => {
     if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-      const next = files[Math.max(0, Math.min(files.length - 1, fi + (e.key === 'ArrowDown' ? 1 : -1)))]
+      const next = shown[Math.max(0, Math.min(shown.length - 1, fi + (e.key === 'ArrowDown' ? 1 : -1)))]
       if (next) setSelPath(next.path)
     } else if (e.key === 'ArrowLeft' || e.key === 'Escape') onBack()
     else return
@@ -372,7 +419,7 @@ function CommitPane({
   }
 
   return (
-    <div className="commit-pane">
+    <div className="commit-pane" ref={pane}>
       <header className="commit-head">
         <div className="commit-title-row">
           <h2 className="commit-title selectable">{c.subject || '(no message)'}</h2>
@@ -396,7 +443,7 @@ function CommitPane({
         {details.data && <Body message={details.data.message} />}
         {details.isError && <div className="banner error small selectable">{errorMessage(details.error)}</div>}
       </header>
-      <div className="commit-files">
+      <div className="commit-files" ref={filesBox} style={filesHeight ? { flex: 'none', height: filesHeight, maxHeight: `calc(100% - ${DIFF_MIN}px)` } : undefined}>
         <div className="files-head">
           <span className="files-title">Files {details.data && <span className="count">{files.length}</span>}</span>
           {details.data && <Totals files={files} />}
@@ -406,27 +453,63 @@ function CommitPane({
               vs first parent
             </span>
           )}
+          <FileViewToggle />
         </div>
         {details.isPending && <div className="empty small loading">Loading…</div>}
         {details.data && !files.length && <div className="empty small">No file changes</div>}
         {files.length > 0 && (
           <ul
             className="file-list"
-            role="listbox"
+            role={tree ? 'tree' : 'listbox'}
             tabIndex={0}
             data-pane
             ref={filesRef}
             onKeyDown={onFilesKey}
             aria-label="Changed files"
-            aria-activedescendant={file ? `file-${fi}` : undefined}
+            aria-activedescendant={file && fi >= 0 ? `file-${files.indexOf(file)}` : undefined}
           >
-            {files.map((f, i) => (
-              <FileRow key={f.path} id={`file-${i}`} f={f} active={f === file} onSelect={() => setSelPath(f.path)} />
-            ))}
+            {rows.map((r) =>
+              r.kind === 'folder' ? (
+                <li
+                  key={`dir:${r.path}`}
+                  className="folder"
+                  role="treeitem"
+                  aria-level={r.depth + 1}
+                  aria-expanded={r.open}
+                  aria-selected={false}
+                  style={{ '--depth': r.depth } as CSSProperties}
+                  title={r.path}
+                  onClick={() => toggleFolder(r.path)}
+                >
+                  <span className="folder-toggle">
+                    <ChevronRight className={`ico chevron${r.open ? ' open' : ''}`} aria-hidden />
+                    <span className="fname">{r.name}</span>
+                  </span>
+                </li>
+              ) : (
+                <FileRow
+                  key={r.file.path}
+                  id={`file-${files.indexOf(r.file)}`}
+                  f={r.file}
+                  depth={tree ? r.depth : null}
+                  active={r.file === file}
+                  onSelect={() => setSelPath(r.file.path)}
+                />
+              ),
+            )}
           </ul>
         )}
         {details.data?.truncated && <div className="banner small">Too many files to list them all.</div>}
       </div>
+      <Splitter
+        axis="y"
+        label="Resize the file list"
+        size={() => filesBox.current?.offsetHeight ?? 0}
+        min={FILES_MIN}
+        max={() => (pane.current?.getBoundingClientRect().bottom ?? 0) - (filesBox.current?.getBoundingClientRect().top ?? 0) - DIFF_MIN}
+        onResize={(px) => setPane('historyFiles', px)}
+        onReset={() => setPane('historyFiles', undefined)}
+      />
       <div className="commit-diff">
         {file ? (
           <DiffView
@@ -505,14 +588,19 @@ function Totals({ files }: { files: CommitFile[] }) {
   )
 }
 
-function FileRow({ id, f, active, onSelect }: { id: string; f: CommitFile; active: boolean; onSelect: () => void }) {
+/** A changed file; `depth` is its level in the tree view, null in the list view. */
+function FileRow(props: { id: string; f: CommitFile; depth: number | null; active: boolean; onSelect: () => void }) {
+  const { id, f, depth, active, onSelect } = props
   const st = letterStatus(f.status.charAt(0) || 'M')
+  const tree = depth !== null
   return (
     <li
       id={id}
-      role="option"
+      role={tree ? 'treeitem' : 'option'}
+      aria-level={tree ? depth + 1 : undefined}
       aria-selected={active}
       className={active ? 'active' : ''}
+      style={depth ? ({ '--depth': depth } as CSSProperties) : undefined}
       onClick={onSelect}
       onContextMenu={(e) => {
         e.preventDefault()
@@ -525,9 +613,11 @@ function FileRow({ id, f, active, onSelect }: { id: string; f: CommitFile; activ
         <span className="sr-only">{st.label}</span>
       </span>
       <span className="fname">{fileName(f.path)}</span>
-      <span className="fdir">
-        <bdi>{f.origPath ? `from ${f.origPath}` : dirName(f.path)}</bdi>
-      </span>
+      {(!tree || f.origPath) && (
+        <span className="fdir">
+          <bdi>{f.origPath ? `from ${f.origPath}` : dirName(f.path)}</bdi>
+        </span>
+      )}
       {f.binary ? (
         <span className="lines muted">binary</span>
       ) : (

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { api, errorMessage } from './api'
 import { notifyError, useBackendEvents, useBatch, useBatchRunning, useConfig, useRepos } from './hooks'
@@ -17,6 +17,11 @@ import { UpdateBanner } from './components/UpdateBanner'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { RepoSwitcher } from './components/RepoSwitcher'
 import { cyclePane } from './lib/panes'
+import { Splitter } from './components/Splitter'
+import { useLayout } from './layout'
+
+const SIDEBAR_MIN = 180
+const SIDEBAR_MAX = 480
 
 export default function App() {
   useBackendEvents()
@@ -29,6 +34,9 @@ export default function App() {
   const batchRunning = useBatchRunning()
   const started = useRef(false)
   const [switcher, setSwitcher] = useState(false)
+  const sidebarWidth = useLayout((s) => s.sidebar)
+  const setPane = useLayout((s) => s.setPane)
+  const app = useRef<HTMLDivElement>(null)
   useWheelZoom(config.data?.zoom)
 
   // A failed backend call nobody handled still tells the user instead of vanishing.
@@ -110,8 +118,21 @@ export default function App() {
   }, [repos.data, batch, batchRunning, setView])
 
   return (
-    <div className="app">
+    <div
+      className="app"
+      ref={app}
+      style={sidebarWidth ? ({ '--rail-user': `${sidebarWidth}px` } as CSSProperties) : undefined}
+    >
       <Sidebar />
+      <Splitter
+        axis="x"
+        label="Resize sidebar"
+        size={() => app.current?.querySelector('.sidebar')?.getBoundingClientRect().width ?? 240}
+        min={SIDEBAR_MIN}
+        max={() => Math.min(SIDEBAR_MAX, (app.current?.clientWidth ?? 1400) - 600)}
+        onResize={(px) => setPane('sidebar', px)}
+        onReset={() => setPane('sidebar', undefined)}
+      />
       <main className="main">
         <GitBanner />
         <UpdateBanner />

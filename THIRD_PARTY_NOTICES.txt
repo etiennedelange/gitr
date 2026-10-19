@@ -1835,6 +1835,11 @@ tauri-plugin-updater 2.13.3 (Rust crate)
   Source:  https://github.com/tauri-apps/plugins-workspace
   Texts:   [7] [4] [5]
 
+tauri-plugin-window-state 2.5.0 (Rust crate)
+  Licence: Apache-2.0 OR MIT
+  Source:  https://github.com/tauri-apps/plugins-workspace
+  Texts:   [7] [4] [5]
+
 tauri-runtime 2.12.1 (Rust crate)
   Licence: Apache-2.0 OR MIT
   Source:  https://github.com/tauri-apps/tauri
@@ -2553,7 +2558,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 
------ [4] used by: @tauri-apps/api 2.12.1, Lean grammar syntaxes/02_Extra/Lean/LICENSE, Lean/lean4-unicode-input grammar syntaxes/02_Extra/Lean/lean4-unicode-input/LICENSE, Lean/lean4-unicode-input-component grammar syntaxes/02_Extra/Lean/lean4-unicode-input-component/LICENSE, Lean/vscode-lean4 grammar syntaxes/02_Extra/Lean/vscode-lean4/LICENSE, fdeflate 0.3.7, gix 0.88.0, gix-actor 0.43.0, gix-attributes 0.36.0, gix-chunk 0.9.0, gix-command 0.11.0, gix-commitgraph 0.40.0, gix-config 0.61.0, gix-config-value 0.20.0, gix-date 0.17.0, gix-diff 0.68.0, gix-discover 0.56.0, gix-error 0.4.0, gix-features 0.50.0, gix-filter 0.35.0, gix-fs 0.23.0, gix-glob 0.28.0, gix-hash 0.27.0, gix-hashtable 0.17.0, gix-lock 25.0.0, gix-macros 0.2.0, gix-note 0.2.0, gix-object 0.65.0, gix-odb 0.85.0, gix-pack 0.75.0, gix-packetline 0.23.0, gix-path 0.13.0, gix-protocol 0.66.0, gix-quote 0.9.0, gix-ref 0.68.0, gix-refspec 0.46.0, gix-revision 0.50.0, gix-revwalk 0.36.0, gix-sec 0.15.0, gix-shallow 0.14.0, gix-tempfile 25.0.0, gix-trace 0.2.0, gix-transport 0.60.0, gix-traverse 0.62.0, gix-url 0.39.0, gix-utils 0.4.0, gix-validate 0.12.0, gix-worktree-stream 0.37.0, gix-zlib 0.2.0, miniz_oxide 0.8.9, miniz_oxide 0.9.1, num-conv 0.2.2, pin-project-lite 0.2.17, raw-window-handle 0.6.2, simdutf8 0.1.5, sync_wrapper 1.0.2, tauri 2.12.1, tauri-codegen 2.7.1, tauri-macros 2.7.1, tauri-plugin-dialog 2.8.1, tauri-plugin-fs 2.6.0, tauri-plugin-opener 2.7.0, tauri-plugin-updater 2.13.3, tauri-runtime 2.12.1, tauri-runtime-wry 2.12.1, tauri-utils 2.10.1, time 0.3.55, time-core 0.1.9, time-macros 0.2.32
+----- [4] used by: @tauri-apps/api 2.12.1, Lean grammar syntaxes/02_Extra/Lean/LICENSE, Lean/lean4-unicode-input grammar syntaxes/02_Extra/Lean/lean4-unicode-input/LICENSE, Lean/lean4-unicode-input-component grammar syntaxes/02_Extra/Lean/lean4-unicode-input-component/LICENSE, Lean/vscode-lean4 grammar syntaxes/02_Extra/Lean/vscode-lean4/LICENSE, fdeflate 0.3.7, gix 0.88.0, gix-actor 0.43.0, gix-attributes 0.36.0, gix-chunk 0.9.0, gix-command 0.11.0, gix-commitgraph 0.40.0, gix-config 0.61.0, gix-config-value 0.20.0, gix-date 0.17.0, gix-diff 0.68.0, gix-discover 0.56.0, gix-error 0.4.0, gix-features 0.50.0, gix-filter 0.35.0, gix-fs 0.23.0, gix-glob 0.28.0, gix-hash 0.27.0, gix-hashtable 0.17.0, gix-lock 25.0.0, gix-macros 0.2.0, gix-note 0.2.0, gix-object 0.65.0, gix-odb 0.85.0, gix-pack 0.75.0, gix-packetline 0.23.0, gix-path 0.13.0, gix-protocol 0.66.0, gix-quote 0.9.0, gix-ref 0.68.0, gix-refspec 0.46.0, gix-revision 0.50.0, gix-revwalk 0.36.0, gix-sec 0.15.0, gix-shallow 0.14.0, gix-tempfile 25.0.0, gix-trace 0.2.0, gix-transport 0.60.0, gix-traverse 0.62.0, gix-url 0.39.0, gix-utils 0.4.0, gix-validate 0.12.0, gix-worktree-stream 0.37.0, gix-zlib 0.2.0, miniz_oxide 0.8.9, miniz_oxide 0.9.1, num-conv 0.2.2, pin-project-lite 0.2.17, raw-window-handle 0.6.2, simdutf8 0.1.5, sync_wrapper 1.0.2, tauri 2.12.1, tauri-codegen 2.7.1, tauri-macros 2.7.1, tauri-plugin-dialog 2.8.1, tauri-plugin-fs 2.6.0, tauri-plugin-opener 2.7.0, tauri-plugin-updater 2.13.3, tauri-plugin-window-state 2.5.0, tauri-runtime 2.12.1, tauri-runtime-wry 2.12.1, tauri-utils 2.10.1, time 0.3.55, time-core 0.1.9, time-macros 0.2.32
 
 Apache License
                            Version 2.0, January 2004
@@ -2733,7 +2738,7 @@ Apache License
    END OF TERMS AND CONDITIONS
 
 
------ [5] used by: @tauri-apps/api 2.12.1, tauri 2.12.1, tauri-codegen 2.7.1, tauri-macros 2.7.1, tauri-plugin-dialog 2.8.1, tauri-plugin-fs 2.6.0, tauri-plugin-opener 2.7.0, tauri-plugin-updater 2.13.3, tauri-runtime 2.12.1, tauri-runtime-wry 2.12.1, tauri-utils 2.10.1
+----- [5] used by: @tauri-apps/api 2.12.1, tauri 2.12.1, tauri-codegen 2.7.1, tauri-macros 2.7.1, tauri-plugin-dialog 2.8.1, tauri-plugin-fs 2.6.0, tauri-plugin-opener 2.7.0, tauri-plugin-updater 2.13.3, tauri-plugin-window-state 2.5.0, tauri-runtime 2.12.1, tauri-runtime-wry 2.12.1, tauri-utils 2.10.1
 
 MIT License
 
@@ -2782,7 +2787,7 @@ PackageDownloadLocation: git+ssh://github.com/tauri-apps/tauri.git
 Creator: Person: Daniel Thompson-Yvetot
 
 
------ [7] used by: @tauri-apps/plugin-dialog 2.8.1, @tauri-apps/plugin-opener 2.7.0, tauri-plugin-dialog 2.8.1, tauri-plugin-fs 2.6.0, tauri-plugin-opener 2.7.0, tauri-plugin-updater 2.13.3
+----- [7] used by: @tauri-apps/plugin-dialog 2.8.1, @tauri-apps/plugin-opener 2.7.0, tauri-plugin-dialog 2.8.1, tauri-plugin-fs 2.6.0, tauri-plugin-opener 2.7.0, tauri-plugin-updater 2.13.3, tauri-plugin-window-state 2.5.0
 
 SPDXVersion: SPDX-2.1
 DataLicense: CC0-1.0

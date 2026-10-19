@@ -1,7 +1,7 @@
-import { useMemo, useRef, useState } from 'react'
+import { useMemo, useRef, useState, type CSSProperties } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { ask } from '@tauri-apps/plugin-dialog'
-import { Check, Minus, Plus, TriangleAlert, Undo2 } from 'lucide-react'
+import { Check, ChevronRight, Minus, Plus, TriangleAlert, Undo2 } from 'lucide-react'
 import { api, errorMessage } from '../api'
 import { useAction, useBusy } from '../hooks'
 import { useApp } from '../store'
@@ -11,10 +11,25 @@ import { DiffView } from './DiffView'
 import { CommitBox } from './CommitBox'
 import { fileMenu } from '../lib/menus'
 import { copyText, showMenu } from '../nativeMenu'
+import { buildTree, listRows, treeRows, type TreeRow } from '../lib/fileTree'
+import { useLayout, type FileView } from '../layout'
+import { FileViewToggle } from './FileViewToggle'
+import { Splitter } from './Splitter'
 
 interface Selection {
   path: string
   staged: boolean
+}
+
+/** Narrowest the file lists and the diff beside them may get. */
+const LIST_MIN = 220
+const DIFF_MIN = 320
+
+/** A list's rows; `closed` holds collapsed folders of both lists, each behind its list's prefix. */
+function rowsOf(list: FileEntry[], prefix: string, view: FileView, closed: ReadonlySet<string>): TreeRow<FileEntry>[] {
+  if (view === 'list') return listRows(list)
+  const mine = new Set([...closed].filter((k) => k.startsWith(prefix)).map((k) => k.slice(prefix.length)))
+  return treeRows(buildTree(list), mine)
 }
 
 export function Changes({ path }: { path: string }) {
@@ -51,6 +66,22 @@ export function Changes({ path }: { path: string }) {
   })
   const busy = !!useBusy(path)
 
+  const fileView = useLayout((s) => s.fileView)
+  const layout = useLayout()
+  // Collapsed folders, "s:" / "u:" + folder path; they stay collapsed for as long as the tab is open.
+  const [closed, setClosed] = useState<ReadonlySet<string>>(new Set())
+  const toggleFolder = (key: string) =>
+    setClosed((c) => {
+      const next = new Set(c)
+      if (!next.delete(key)) next.add(key)
+      return next
+    })
+  const unstagedRows = useMemo(() => rowsOf(unstaged, 'u:', fileView, closed), [unstaged, fileView, closed])
+  const stagedRows = useMemo(() => rowsOf(staged, 's:', fileView, closed), [staged, fileView, closed])
+  // The files in the order they show, without those in collapsed folders: what the arrow keys walk.
+  const shownUnstaged = useMemo(() => unstagedRows.flatMap((r) => (r.kind === 'file' ? [r.file] : [])), [unstagedRows])
+  const shownStaged = useMemo(() => stagedRows.flatMap((r) => (r.kind === 'file' ? [r.file] : [])), [stagedRows])
+
   // A conflict blocks everything else, so with nothing selected the first one is.
   const firstConflict = unstaged.find((f) => f.conflicted)
   // Follow the selected file across lists after stage/unstage; drop it when it disappears.
@@ -86,7 +117,7 @@ export function Changes({ path }: { path: string }) {
     // The dialog is modal to the user, not to the repo: a pull or commit may have started meanwhile.
     if (useApp.getState().busy[path]) return
     if (current && !current.staged && files.some((f) => f.path === current.path)) {
-      const next = neighbour(unstaged, new Set(files.map((f) => f.path)))
+      const next = neighbour(shownUnstaged, new Set(files.map((f) => f.path)))
       if (next) setSel({ path: next.path, staged: false })
     }
     discard.mutate([files.filter((f) => !f.untracked).map((f) => f.path), files.filter((f) => f.untracked).map((f) => f.path)])
@@ -98,12 +129,22 @@ export function Changes({ path }: { path: string }) {
     if (busy) return true
     let stays = true
     if (current?.path === f.path && current.staged === isStaged) {
-      const next = neighbour(isStaged ? staged : unstaged, new Set([f.path]))
+      const next = neighbour(isStaged ? shownStaged : shownUnstaged, new Set([f.path]))
       if (next) setSel({ path: next.path, staged: isStaged })
       else stays = false
     }
     ;(isStaged ? unstage : stage).mutate([[f.path]])
     return stays
+  }
+
+  // A folder's stage or unstage button: the selection, if inside, moves on as for one file.
+  const toggleFolderFiles = (files: FileEntry[], isStaged: boolean) => {
+    if (busy) return
+    if (current?.staged === isStaged && files.some((f) => f.path === current.path)) {
+      const next = neighbour(isStaged ? shownStaged : shownUnstaged, new Set(files.map((f) => f.path)))
+      if (next) setSel({ path: next.path, staged: isStaged })
+    }
+    ;(isStaged ? unstage : stage).mutate([files.map((f) => f.path)])
   }
 
   const onListKey = (e: React.KeyboardEvent, list: FileEntry[], isStaged: boolean) => {
@@ -124,13 +165,27 @@ export function Changes({ path }: { path: string }) {
     }
   }
 
-  const fileList = (title: string, list: FileEntry[], isStaged: boolean) => (
-    <section className={`file-section ${isStaged ? 'staged' : 'unstaged'}`}>
+  const split = layout.changesSplit
+  const sectionStyle = (isStaged: boolean): CSSProperties | undefined =>
+    split === undefined ? undefined : { flexGrow: isStaged ? 1 - split : split }
+  const unstagedSection = useRef<HTMLElement>(null)
+  const stagedSection = useRef<HTMLElement>(null)
+  const sectionsHeight = () => (unstagedSection.current?.offsetHeight ?? 0) + (stagedSection.current?.offsetHeight ?? 0)
+  const changesRoot = useRef<HTMLDivElement>(null)
+  const left = useRef<HTMLDivElement>(null)
+
+  const fileList = (title: string, list: FileEntry[], rows: TreeRow<FileEntry>[], isStaged: boolean) => (
+    <section
+      className={`file-section ${isStaged ? 'staged' : 'unstaged'}`}
+      ref={isStaged ? stagedSection : unstagedSection}
+      style={sectionStyle(isStaged)}
+    >
       <div className="section-head">
         <span className="section-title">
           {title} <span className="count">{list.length}</span>
         </span>
         <div className="spacer" />
+        {!isStaged && <FileViewToggle />}
         {!isStaged && list.length > 0 && (
           <button
             className="quiet small"
@@ -156,9 +211,49 @@ export function Changes({ path }: { path: string }) {
         data-pane
         aria-label={`${title} files`}
         ref={isStaged ? stagedList : unstagedList}
-        onKeyDown={(e) => onListKey(e, list, isStaged)}
+        onKeyDown={(e) => onListKey(e, isStaged ? shownStaged : shownUnstaged, isStaged)}
       >
-        {list.map((f) => {
+        {rows.map((r) => {
+          if (r.kind === 'folder') {
+            const key = (isStaged ? 's:' : 'u:') + r.path
+            return (
+              <li key={`dir:${r.path}`} className="folder" style={{ '--depth': r.depth } as CSSProperties} title={r.path}>
+                <button
+                  className="folder-toggle"
+                  tabIndex={-1}
+                  aria-expanded={r.open}
+                  onClick={() => toggleFolder(key)}
+                  onDoubleClick={(e) => e.stopPropagation()}
+                >
+                  <ChevronRight className={`ico chevron${r.open ? ' open' : ''}`} aria-hidden />
+                  <span className="fname">{r.name}</span>
+                </button>
+                <span className="row-actions">
+                  {!isStaged && (
+                    <button
+                      className="icon"
+                      title="Discard folder"
+                      tabIndex={-1}
+                      disabled={busy}
+                      onClick={() => confirmDiscard(r.files)}
+                    >
+                      <Undo2 className="ico" aria-hidden />
+                    </button>
+                  )}
+                  <button
+                    className="icon"
+                    tabIndex={-1}
+                    disabled={busy}
+                    title={isStaged ? 'Unstage folder' : 'Stage folder'}
+                    onClick={() => toggleFolderFiles(r.files, isStaged)}
+                  >
+                    {isStaged ? <Minus className="ico" aria-hidden /> : <Plus className="ico" aria-hidden />}
+                  </button>
+                </span>
+              </li>
+            )
+          }
+          const f = r.file
           const active = current?.path === f.path && current.staged === isStaged
           const st = fileStatus(f, isStaged)
           const lc = lineCount.get((isStaged ? 's:' : 'u:') + f.path)
@@ -166,6 +261,7 @@ export function Changes({ path }: { path: string }) {
             <li
               key={f.path}
               className={active ? 'active' : ''}
+              style={r.depth ? ({ '--depth': r.depth } as CSSProperties) : undefined}
               onClick={() => setSel({ path: f.path, staged: isStaged })}
               onDoubleClick={() => toggle(f, isStaged)}
               onContextMenu={(e) => {
@@ -185,9 +281,11 @@ export function Changes({ path }: { path: string }) {
                 <span className="sr-only">{st.label}</span>
               </span>
               <span className="fname">{fileName(f.path)}</span>
-              <span className="fdir">
-                <bdi>{dirName(f.path)}</bdi>
-              </span>
+              {fileView === 'list' && (
+                <span className="fdir">
+                  <bdi>{dirName(f.path)}</bdi>
+                </span>
+              )}
               {lc && (
                 <span className="lines mono" title={`+${lc.added} −${lc.removed} lines`}>
                   <span className="add-n">+{lc.added}</span>
@@ -224,13 +322,42 @@ export function Changes({ path }: { path: string }) {
   )
 
   return (
-    <div className="changes">
-      <div className="changes-left">
+    <div
+      className="changes"
+      ref={changesRoot}
+      style={
+        layout.changesList
+          ? { gridTemplateColumns: `clamp(${LIST_MIN}px, ${layout.changesList}px, calc(100% - ${DIFF_MIN}px)) 0 minmax(0, 1fr)` }
+          : undefined
+      }
+    >
+      <div className="changes-left" ref={left}>
         {status.isError && <div className="banner error selectable">Could not read status: {errorMessage(status.error)}</div>}
-        {fileList('Unstaged', unstaged, false)}
-        {fileList('Staged', staged, true)}
+        {fileList('Unstaged', unstaged, unstagedRows, false)}
+        <Splitter
+          axis="y"
+          label="Resize the unstaged and staged lists"
+          size={() => unstagedSection.current?.offsetHeight ?? 0}
+          min={0}
+          max={sectionsHeight}
+          onResize={(px) => {
+            const total = sectionsHeight()
+            if (total > 0) layout.setPane('changesSplit', Math.min(0.95, Math.max(0.05, px / total)))
+          }}
+          onReset={() => layout.setPane('changesSplit', undefined)}
+        />
+        {fileList('Staged', staged, stagedRows, true)}
         <CommitBox path={path} stagedCount={staged.length} branch={status.data?.branch ?? null} />
       </div>
+      <Splitter
+        axis="x"
+        label="Resize the file list"
+        size={() => left.current?.offsetWidth ?? 0}
+        min={LIST_MIN}
+        max={() => (changesRoot.current?.clientWidth ?? 0) - DIFF_MIN}
+        onResize={(px) => layout.setPane('changesList', px)}
+        onReset={() => layout.setPane('changesList', undefined)}
+      />
       <div className="changes-right">
         {/* Arrow keys move the selection without moving focus; this says where it landed. */}
         <span className="sr-only" aria-live="polite">
