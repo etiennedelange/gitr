@@ -37,7 +37,10 @@ const wrap = (ui: React.ReactNode) =>
   render(<QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}>{ui}</QueryClientProvider>)
 const flush = () => act(() => new Promise((r) => setTimeout(r, 20)))
 const unstaged = () => screen.getByRole('list', { name: 'Unstaged files' })
-const rowTexts = () => within(unstaged()).getAllByRole('listitem').map((li) => li.querySelector('.fname')?.textContent)
+const rowTexts = () =>
+  within(unstaged())
+    .getAllByRole('listitem')
+    .map((li) => li.querySelector('.fname')?.textContent)
 const saved = () => JSON.parse(localStorage.getItem('layout') ?? '{}')
 
 beforeEach(() => {

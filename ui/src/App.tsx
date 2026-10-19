@@ -118,11 +118,7 @@ export default function App() {
   }, [repos.data, batch, batchRunning, setView])
 
   return (
-    <div
-      className="app"
-      ref={app}
-      style={sidebarWidth ? ({ '--rail-user': `${sidebarWidth}px` } as CSSProperties) : undefined}
-    >
+    <div className="app" ref={app} style={sidebarWidth ? ({ '--rail-user': `${sidebarWidth}px` } as CSSProperties) : undefined}>
       <Sidebar />
       <Splitter
         axis="x"

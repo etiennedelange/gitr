@@ -7,7 +7,14 @@ const shape = (rows: ReturnType<typeof treeRows<{ path: string }>>) =>
 
 describe('file tree', () => {
   it('lists folders first by name, then files in the order given, and folds single-folder chains', () => {
-    const tree = buildTree([f('z.md'), f('ui/src/components/B.tsx'), f('ui/src/components/A.tsx'), f('ui/src/App.tsx'), f('Cargo.toml'), f('docs/a.md')])
+    const tree = buildTree([
+      f('z.md'),
+      f('ui/src/components/B.tsx'),
+      f('ui/src/components/A.tsx'),
+      f('ui/src/App.tsx'),
+      f('Cargo.toml'),
+      f('docs/a.md'),
+    ])
     expect(shape(treeRows(tree, new Set()))).toEqual([
       'docs/',
       '  a.md',

@@ -443,7 +443,11 @@ function CommitPane({
         {details.data && <Body message={details.data.message} />}
         {details.isError && <div className="banner error small selectable">{errorMessage(details.error)}</div>}
       </header>
-      <div className="commit-files" ref={filesBox} style={filesHeight ? { flex: 'none', height: filesHeight, maxHeight: `calc(100% - ${DIFF_MIN}px)` } : undefined}>
+      <div
+        className="commit-files"
+        ref={filesBox}
+        style={filesHeight ? { flex: 'none', height: filesHeight, maxHeight: `calc(100% - ${DIFF_MIN}px)` } : undefined}
+      >
         <div className="files-head">
           <span className="files-title">Files {details.data && <span className="count">{files.length}</span>}</span>
           {details.data && <Totals files={files} />}

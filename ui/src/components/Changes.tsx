@@ -230,13 +230,7 @@ export function Changes({ path }: { path: string }) {
                 </button>
                 <span className="row-actions">
                   {!isStaged && (
-                    <button
-                      className="icon"
-                      title="Discard folder"
-                      tabIndex={-1}
-                      disabled={busy}
-                      onClick={() => confirmDiscard(r.files)}
-                    >
+                    <button className="icon" title="Discard folder" tabIndex={-1} disabled={busy} onClick={() => confirmDiscard(r.files)}>
                       <Undo2 className="ico" aria-hidden />
                     </button>
                   )}
