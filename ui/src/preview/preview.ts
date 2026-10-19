@@ -11,6 +11,7 @@ import { runHooks, stopHooks } from './hooks'
 import { batchResult } from './signin'
 import { UNTRACKED_DIRS, f as fileEntry } from './data'
 import * as history from './history'
+import { syntaxOf } from './syntax'
 
 const params = new URLSearchParams(location.search)
 const scenario = scenarioById(params.get('scenario'))
@@ -187,6 +188,8 @@ function handle(cmd: string, args: unknown): unknown {
       const known = Object.values(scenario.lines).some((l) => l[file])
       return (scenario.diffs[file] ?? (known ? fallbackDiff : { binary: false, truncated: false, hunks: [] })) satisfies FileDiff
     }
+    case 'file_diff_syntax':
+      return syntaxOf(a.file as string, handle('file_diff', args) as FileDiff)
     case 'stage':
       return move(path, a.files as string[], true)
     case 'unstage':
@@ -295,6 +298,8 @@ function handle(cmd: string, args: unknown): unknown {
       return history.details(summaries[path], a.sha as string)
     case 'commit_file_diff':
       return history.fileDiff(summaries[path], a.sha as string, a.file as string, fallbackDiff)
+    case 'commit_file_diff_syntax':
+      return syntaxOf(a.file as string, handle('commit_file_diff', args) as FileDiff)
     case 'reset_preview':
       return history.resetPreview(summaries[path], a.sha as string)
     case 'revert_commit': {

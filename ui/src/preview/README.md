@@ -53,6 +53,9 @@ counts it as one change while the Changes list and its tab show each file.
 Actions the preview does not implement reject explicitly rather than pretending to succeed;
 use the isolated Git tests or the real-app E2E scripts for those operations.
 
+Diff syntax colours come from a rough stand-in (`syntax.ts`) that knows only the C# and XML
+samples; the app colours with real grammars in Rust (`crates/gitr-core/src/highlight.rs`).
+
 ## Scenarios
 
 | id        | What it shows |

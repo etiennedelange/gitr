@@ -7,6 +7,7 @@ use serde::Serialize;
 
 use crate::branches::{self, Branch};
 use crate::diff::{self, FileDiff, LineStats};
+use crate::highlight::{self, DiffSyntax};
 use crate::hooks::TraceFile;
 use crate::runner::{GitRunner, Kind, OnLine, RunOpts};
 use crate::status::{self, RepoStatus};
@@ -483,6 +484,69 @@ impl Git {
         Ok(diff::parse_unified(&out))
     }
 
+    /// Syntax colours for [`Self::diff_file`]'s lines, from the files on both sides: the index
+    /// against the working tree, or HEAD against the index when `staged`.
+    pub async fn diff_file_syntax(&self, repo: &Path, path: &str, staged: bool, untracked: bool) -> Result<DiffSyntax, GitError> {
+        let diff = self.diff_file(repo, path, staged, untracked).await?;
+        let index = Text::Blob(format!(":0:{path}"));
+        let (old, new) = match (untracked, staged) {
+            (true, _) => (Text::None, Text::Disk),
+            (false, true) => (Text::Blob(format!("HEAD:{path}")), index),
+            (false, false) => (index, Text::Disk),
+        };
+        Ok(self.syntax_of(repo, path, diff, old, new).await)
+    }
+
+    /// Syntax colours for [`Self::commit_file_diff`]'s lines.
+    pub async fn commit_file_diff_syntax(&self, repo: &Path, sha: &str, path: &str, orig_path: Option<&str>) -> Result<DiffSyntax, GitError> {
+        let diff = self.commit_file_diff(repo, sha, path, orig_path).await?;
+        let old = match self.parents_of(repo, sha).await?.first() {
+            Some(parent) => Text::Blob(format!("{parent}:{}", orig_path.unwrap_or(path))),
+            None => Text::None,
+        };
+        Ok(self.syntax_of(repo, path, diff, old, Text::Blob(format!("{sha}:{path}"))).await)
+    }
+
+    async fn syntax_of(&self, repo: &Path, path: &str, diff: FileDiff, old: Text, new: Text) -> DiffSyntax {
+        let (old_needed, new_needed) = highlight::sides_needed(&diff);
+        let old = if old_needed { self.text_of(repo, path, &old).await } else { None };
+        let new = if new_needed { self.text_of(repo, path, &new).await } else { None };
+        // Colouring is CPU work, at most HIGHLIGHT_BUDGET of it; lines it didn't reach stay plain.
+        let deadline = std::time::Instant::now() + HIGHLIGHT_BUDGET;
+        let path = path.to_string();
+        tokio::task::spawn_blocking(move || highlight::highlight_diff(&path, &diff, old.as_deref(), new.as_deref(), deadline))
+            .await
+            .unwrap_or_default()
+    }
+
+    /// A file's text for colouring, as the diff shows it. None when it is missing or too large.
+    async fn text_of(&self, repo: &Path, path: &str, text: &Text) -> Option<String> {
+        let bytes = match text {
+            Text::None => return None,
+            Text::Disk => {
+                if !is_safe_relative(path) {
+                    return None;
+                }
+                let file = repo.join(crate::pathbytes::to_os(path));
+                let meta = tokio::fs::metadata(&file).await.ok()?;
+                if !meta.is_file() || meta.len() > highlight::MAX_SOURCE_BYTES {
+                    return None;
+                }
+                crate::pathbytes::decode(&tokio::fs::read(&file).await.ok()?)
+            }
+            Text::Blob(spec) => {
+                // 128: no such object (a new file, an unborn HEAD, a conflict with no stage 0).
+                let missing = RunOpts { ok_codes: &[128], ..Default::default() };
+                let size = self.runner.run_with(repo, Kind::Read, &["cat-file", "-s", spec], missing).await.ok()?;
+                if size.trim().parse::<u64>().ok()? > highlight::MAX_SOURCE_BYTES {
+                    return None;
+                }
+                self.runner.run(repo, Kind::Read, &["cat-file", "blob", spec]).await.ok()?
+            }
+        };
+        Some(crate::pathbytes::display(&bytes))
+    }
+
     async fn parents_of(&self, repo: &Path, sha: &str) -> Result<Vec<String>, GitError> {
         let out = self.runner.run(repo, Kind::Read, &["rev-list", "--parents", "-n", "1", sha, "--"]).await?;
         Ok(out.split_whitespace().skip(1).map(str::to_string).collect())
@@ -950,6 +1014,18 @@ fn hook_failure(err: GitError, trace: &TraceFile) -> GitError {
         Some(run) => err.into_hook_failure(&run.name),
         None => err,
     }
+}
+
+/// How long colouring one diff may take.
+const HIGHLIGHT_BUDGET: std::time::Duration = std::time::Duration::from_millis(1500);
+
+/// Where one side of a diff comes from, for colouring it.
+enum Text {
+    None,
+    /// The working-tree file.
+    Disk,
+    /// `<rev>:<path>` or `:0:<path>` (the index).
+    Blob(String),
 }
 
 /// Refuses anything but an object id before it reaches git (see [`log::is_object_id`]).

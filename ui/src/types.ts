@@ -97,6 +97,17 @@ export interface FileDiff {
   hunks: Hunk[]
 }
 
+export type Token = 'keyword' | 'type' | 'function' | 'string' | 'number' | 'comment' | 'tag' | 'attribute' | 'meta'
+
+/** `[start, end, token]` in string indices of the line's text. */
+export type Span = [number, number, Token]
+
+/** Syntax colours by line number: `old` for removed lines, `new` for added and unchanged ones. */
+export interface DiffSyntax {
+  old: Record<number, Span[]>
+  new: Record<number, Span[]>
+}
+
 export interface Branch {
   name: string
   remote: boolean

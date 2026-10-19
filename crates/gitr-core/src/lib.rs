@@ -3,6 +3,7 @@ pub mod diff;
 pub mod discovery;
 pub mod error;
 pub mod hooks;
+pub mod highlight;
 pub mod info;
 #[cfg(windows)]
 mod job;

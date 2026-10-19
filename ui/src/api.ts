@@ -7,6 +7,7 @@ import type {
   CmdError,
   CommitDetails,
   Config,
+  DiffSyntax,
   DiscardOutcome,
   Divergence,
   FileDiff,
@@ -67,6 +68,9 @@ export const api = {
   undoLastCommit: (path: string) => invoke<string>('undo_last_commit', { path }),
   fileDiff: (path: string, file: string, staged: boolean, untracked: boolean) =>
     invoke<FileDiff>('file_diff', { path, file, staged, untracked }),
+  /** Syntax colours for `fileDiff`'s lines; slower, so the diff shows first. */
+  fileDiffSyntax: (path: string, file: string, staged: boolean, untracked: boolean) =>
+    invoke<DiffSyntax>('file_diff_syntax', { path, file, staged, untracked }),
   commit: (path: string, message: string, amend: boolean, skipHooks = false) =>
     invoke<string>('commit', { path, message, amend, skipHooks }),
   lastCommitMessage: (path: string) => invoke<string>('last_commit_message', { path }),
@@ -103,6 +107,8 @@ export const api = {
   commitDetails: (path: string, sha: string) => invoke<CommitDetails>('commit_details', { path, sha }),
   commitFileDiff: (path: string, sha: string, file: string, origPath: string | null) =>
     invoke<FileDiff>('commit_file_diff', { path, sha, file, origPath }),
+  commitFileDiffSyntax: (path: string, sha: string, file: string, origPath: string | null) =>
+    invoke<DiffSyntax>('commit_file_diff_syntax', { path, sha, file, origPath }),
   resetPreview: (path: string, sha: string) => invoke<ResetPreview>('reset_preview', { path, sha }),
   /** A new commit that undoes `sha`; stops in the Reverting state on conflicts. */
   revertCommit: (path: string, sha: string) => invoke<IntegrateOutcome>('revert_commit', { path, sha }),
