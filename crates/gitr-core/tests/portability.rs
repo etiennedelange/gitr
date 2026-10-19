@@ -2,12 +2,13 @@
 //! 2026-10-03): non-UTF-8 paths, worktrees and file/symlink type changes. Each test asserts what
 //! a user would expect; a failure is a confirmed exposure.
 #![cfg(unix)]
+mod common;
 
 use std::ffi::OsStr;
 use std::os::unix::ffi::OsStrExt;
 use std::os::unix::fs::symlink;
 
-use crate::common::*;
+use common::*;
 
 #[tokio::test]
 async fn utf8_path_with_accent_can_be_staged() {

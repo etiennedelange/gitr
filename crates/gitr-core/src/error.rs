@@ -34,7 +34,7 @@ pub enum ErrorKind {
 
 /// Patterns in priority order: the first kind with a matching pattern wins, so the most
 /// specific kinds come first. Matched case-insensitively against stderr and stdout (git runs
-/// with `LC_ALL=C`). Samples of the real output are in `tests/it/errors.rs`.
+/// with `LC_ALL=C`). Samples of the real output are in `tests/errors.rs`.
 const PATTERNS: &[(ErrorKind, &[&str])] = &[
     (ErrorKind::Lock, &["another git process seems to be running", ".lock': file exists"]),
     (ErrorKind::DubiousOwnership, &["detected dubious ownership"]),
