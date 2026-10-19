@@ -3,3 +3,6 @@ node_modules/
 ui/dist/
 src-tauri/gen/
 .claude/settings.local.json
+
+# Screenshot output for review; only docs/screenshots/ is committed.
+tools/screenshots/out/

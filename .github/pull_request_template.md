@@ -9,5 +9,5 @@
 - [ ] Read the whole diff on GitHub
 - [ ] `CHANGELOG.md` updated for user-visible changes
 - [ ] Bug fixes have a row in `docs/bug-ledger.md`
-- [ ] UI changes: `pnpm screenshots` run and `docs/screenshots/` checked
+- [ ] UI changes: `pnpm screenshots` run, `tools/screenshots/out/` looked at, `docs/screenshots/` committed
 - [ ] Dependency changes: `pnpm notices` run

@@ -6,7 +6,7 @@ Work on a short branch (`feature/…`, `fix/…`) and land it on `main` through 
 
 ## Screenshots stay current (required)
 
-After any visible UI change (layout, copy, colours, icons, new or removed views, changed preview mock data), run `pnpm screenshots` (or `pnpm screenshots <scene>` for one scene) and commit the updated `docs/screenshots/` in the same commit as the change. Look at the images before committing. A new view or state worth showing gets a new scene in `tools/screenshots/capture.mjs`.
+After any visible UI change (layout, copy, colours, icons, new or removed views, changed preview mock data), run `pnpm screenshots` (or `pnpm screenshots <scene>` for one scene). It renders every scene in light and dark to `tools/screenshots/out/` (not committed): look at the ones your change affects. It also refreshes the README's three shots in `docs/screenshots/`; commit those in the same commit as the change. A new view or state worth showing gets a new scene in `tools/screenshots/capture.mjs`; only add it to `PUBLISHED` there if the README shows it.
 
 ## Bug-fix ledger (required)
 

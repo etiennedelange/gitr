@@ -12,15 +12,15 @@ Built with Tauri 2 (Rust) and a React + TypeScript UI.
 
 **Dashboard**: every repository with branch, ahead/behind, changes and status.
 
-![Dashboard](docs/screenshots/dashboard-light.png)
+![Dashboard](docs/screenshots/dashboard-light.webp)
 
 **Changes**: stage, unstage and discard files, see the diff, write or generate the commit message.
 
-![Changes tab](docs/screenshots/repo-dark.png)
+![Changes tab](docs/screenshots/repo-dark.webp)
 
 **History**: commits on the current branch, what isn't pushed yet, and the files and diff of each commit.
 
-![History tab](docs/screenshots/history-light.png)
+![History tab](docs/screenshots/history-light.webp)
 
 ## Install
 
@@ -57,14 +57,16 @@ pnpm dev           # launches the app with hot reload
 pnpm test          # UI tests
 cargo test --workspace
 pnpm build         # NSIS installer in target\release\bundle\nsis
-pnpm screenshots   # regenerate docs/screenshots/ (light and dark)
+pnpm screenshots   # every scene to tools/screenshots/out/; README shots to docs/screenshots/
 ```
 
 Releases are built by GitHub Actions from a version tag on `main`; see
 [docs/releasing.md](docs/releasing.md) for the branch, PR and release workflow.
 
 The screenshots come from `tools/screenshots/`. The script runs the design preview
-(`ui/src/preview/`) in headless Chromium, so it needs no Tauri build and works on any OS.
+(`ui/src/preview/`) in headless Chromium, so it needs no Tauri build and works on any OS. It
+renders every scene in light and dark to `tools/screenshots/out/` (not committed) and copies the
+three this README shows to `docs/screenshots/`, as WebP.
 Run `pnpm exec playwright install chromium` once before the first run. The dev container
 (`.devcontainer/`) has everything installed, including the Tauri libraries `cargo test` needs.
 
@@ -81,7 +83,7 @@ not on the installers.
   preview, forwarded on port 5173) and `pnpm screenshots` all work. Keep the repo on the Mac's
   filesystem; Docker Desktop's VirtioFS makes `pnpm install` acceptable there. Colima or OrbStack
   are faster still.
-- **Screenshots:** regenerate `docs/screenshots/` in the container, so the
+- **Screenshots:** regenerate them in the container, so the
   rendering matches and the diffs show real changes only.
 - **Commit signing:** commits are SSH-signed (`gpg.format ssh`, `commit.gpgsign true`,
   `user.signingkey key::ssh-ed25519 ...`), which `post-create.sh` sets inside the container. The
