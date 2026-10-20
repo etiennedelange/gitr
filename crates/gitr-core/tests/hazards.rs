@@ -211,7 +211,7 @@ async fn line_ending_only_change_is_listed_and_diffs() {
 
     let st = g.status(&dir).await.unwrap();
     assert!(st.files.iter().any(|f| f.path == "e.txt" && f.worktree == 'M'), "{:?}", st.files);
-    let diff = g.diff_file(&dir, "e.txt", false, false).await.unwrap();
+    let diff = g.diff_file(&dir, "e.txt", false, false, false).await.unwrap();
     let count = |k| diff.hunks.iter().flat_map(|h| &h.lines).filter(|l| l.kind == k).count();
     assert_eq!((count(LineKind::Remove), count(LineKind::Add)), (2, 2), "{diff:?}");
     let stats = g.line_stats(&dir).await.unwrap();
@@ -244,9 +244,9 @@ async fn non_utf8_content_loads() {
 
     let st = g.status(&dir).await.unwrap();
     assert_eq!(st.files.len(), 2, "{:?}", st.files);
-    let tracked = g.diff_file(&dir, "l1.txt", false, false).await.unwrap();
+    let tracked = g.diff_file(&dir, "l1.txt", false, false, false).await.unwrap();
     assert!(!tracked.binary && !tracked.hunks.is_empty(), "{tracked:?}");
-    let untracked = g.diff_file(&dir, "new.txt", false, true).await.unwrap();
+    let untracked = g.diff_file(&dir, "new.txt", false, true, false).await.unwrap();
     assert!(!untracked.hunks.is_empty(), "{untracked:?}");
     let stats = g.line_stats(&dir).await.unwrap();
     assert!(stats.unstaged.iter().any(|s| s.path == "l1.txt" && s.added == 1 && s.removed == 1), "{stats:?}");
@@ -272,7 +272,7 @@ async fn non_utf8_file_name_is_acted_on_by_its_bytes() {
     assert_ne!(paths[0], paths[1], "the two names stay distinct");
     let bad = paths.iter().find(|p| **p != "caf\u{FFFD}.txt").unwrap().to_string();
 
-    let diff = g.diff_file(&dir, &bad, false, true).await.unwrap();
+    let diff = g.diff_file(&dir, &bad, false, true, false).await.unwrap();
     assert!(!diff.hunks.is_empty(), "untracked diff of the odd name");
 
     g.stage(&dir, std::slice::from_ref(&bad)).await.unwrap();
@@ -332,7 +332,7 @@ async fn every_conflict_kind_counts_as_conflicted() {
     assert_eq!(st.staged_count(), 0);
     assert_eq!(st.unstaged_count(), 4);
     for f in &st.files {
-        g.diff_file(&dir, &f.path, false, false).await.unwrap_or_else(|e| panic!("{}: {e}", f.path));
+        g.diff_file(&dir, &f.path, false, false, false).await.unwrap_or_else(|e| panic!("{}: {e}", f.path));
     }
     let e = g.continue_operation(&dir).await.expect_err("Continue must wait for the conflicts");
     assert!(e.to_string().contains("Resolve and stage"), "{e}");

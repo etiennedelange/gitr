@@ -651,9 +651,10 @@ pub async fn file_diff(
     file: String,
     staged: bool,
     untracked: bool,
+    full: bool,
 ) -> Res<FileDiff> {
     let repo = state.known_repo(&path)?;
-    Ok(state.git.diff_file(&repo, &file, staged, untracked).await?)
+    Ok(state.git.diff_file(&repo, &file, staged, untracked, full).await?)
 }
 
 /// Syntax colours for `file_diff`'s lines. Separate, so the diff shows before colouring is done.
@@ -664,9 +665,10 @@ pub async fn file_diff_syntax(
     file: String,
     staged: bool,
     untracked: bool,
+    full: bool,
 ) -> Res<DiffSyntax> {
     let repo = state.known_repo(&path)?;
-    Ok(state.git.diff_file_syntax(&repo, &file, staged, untracked).await?)
+    Ok(state.git.diff_file_syntax(&repo, &file, staged, untracked, full).await?)
 }
 
 /// A commit id from the UI: hex only, so nothing else (an option, a revision expression) reaches git.
@@ -699,9 +701,10 @@ pub async fn commit_file_diff(
     sha: String,
     file: String,
     orig_path: Option<String>,
+    full: bool,
 ) -> Res<FileDiff> {
     let repo = state.known_repo(&path)?;
-    Ok(state.git.commit_file_diff(&repo, sha_arg(&sha)?, &file, orig_path.as_deref()).await?)
+    Ok(state.git.commit_file_diff(&repo, sha_arg(&sha)?, &file, orig_path.as_deref(), full).await?)
 }
 
 #[tauri::command]
@@ -711,9 +714,10 @@ pub async fn commit_file_diff_syntax(
     sha: String,
     file: String,
     orig_path: Option<String>,
+    full: bool,
 ) -> Res<DiffSyntax> {
     let repo = state.known_repo(&path)?;
-    Ok(state.git.commit_file_diff_syntax(&repo, sha_arg(&sha)?, &file, orig_path.as_deref()).await?)
+    Ok(state.git.commit_file_diff_syntax(&repo, sha_arg(&sha)?, &file, orig_path.as_deref(), full).await?)
 }
 
 /// What a reset to `sha` would take off the branch, for the Reset dialog.

@@ -5,6 +5,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+- **Full file diffs.** A new **Hunks / Full file** switch next to Unified and Split shows the whole file with its changes inline, instead of only the changed lines and a few around them. It works on the Changes and History tabs, in both layouts, and your choice is remembered.
+
 ## [0.1.8] - 2026-10-19
 
 ### Added

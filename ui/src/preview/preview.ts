@@ -9,7 +9,7 @@ import type { BatchOp, Branch, FileDiff, FileEntry, RepoStatus, RepoSummary } fr
 import { SCENARIOS, scenarioById } from './scenarios'
 import { runHooks, stopHooks } from './hooks'
 import { batchResult } from './signin'
-import { UNTRACKED_DIRS, f as fileEntry } from './data'
+import { FULL_DIFFS, UNTRACKED_DIRS, f as fileEntry } from './data'
 import * as history from './history'
 import { syntaxOf } from './syntax'
 
@@ -24,6 +24,8 @@ const inApp = '__TAURI_INTERNALS__' in window
 const status: Record<string, RepoStatus> = structuredClone(scenario.status)
 const summaries: Record<string, RepoSummary> = structuredClone(scenario.summaries)
 const fallbackDiff = Object.values(scenario.diffs)[0]
+/** Full file: the sample's whole-file version where there is one; other diffs keep their hunks. */
+const extentOf = (diff: FileDiff, full: unknown) => (full ? (FULL_DIFFS.get(diff) ?? diff) : diff)
 history.setSample(fallbackDiff)
 let shaN = 0
 // Files a mock reset put in the working tree, so Undo reset can take them out again.
@@ -186,7 +188,10 @@ function handle(cmd: string, args: unknown): unknown {
       const file = a.file as string
       // Any file with line counts gets a sample diff, so big change lists can be browsed.
       const known = Object.values(scenario.lines).some((l) => l[file])
-      return (scenario.diffs[file] ?? (known ? fallbackDiff : { binary: false, truncated: false, hunks: [] })) satisfies FileDiff
+      return extentOf(
+        scenario.diffs[file] ?? (known ? fallbackDiff : { binary: false, truncated: false, hunks: [] }),
+        a.full,
+      ) satisfies FileDiff
     }
     case 'file_diff_syntax':
       return syntaxOf(a.file as string, handle('file_diff', args) as FileDiff)
@@ -297,7 +302,7 @@ function handle(cmd: string, args: unknown): unknown {
     case 'commit_details':
       return history.details(summaries[path], a.sha as string)
     case 'commit_file_diff':
-      return history.fileDiff(summaries[path], a.sha as string, a.file as string, fallbackDiff)
+      return extentOf(history.fileDiff(summaries[path], a.sha as string, a.file as string, fallbackDiff), a.full)
     case 'commit_file_diff_syntax':
       return syntaxOf(a.file as string, handle('commit_file_diff', args) as FileDiff)
     case 'reset_preview':

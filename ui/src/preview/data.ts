@@ -208,10 +208,55 @@ const exporter: FileDiff = {
   ],
 }
 
+/** The exporter's diff as Full file shows it: the hunks above with the rest of the file around them. */
+const exporterFull: FileDiff = {
+  binary: false,
+  truncated: false,
+  hunks: [
+    hunk(1, 1, '', [
+      ' using System;',
+      ' using System.Collections.Generic;',
+      ' using System.IO;',
+      ' using System.Linq;',
+      ' using System.Threading;',
+      ' using System.Threading.Tasks;',
+      ' using Acme.Billing.Domain;',
+      ' ',
+      ' namespace Acme.Billing.Export;',
+      ' ',
+      ' /// <summary>Exports a period of invoices to a file.</summary>',
+      ...exporter.hunks[0].lines.map((l) => (l.kind === 'add' ? '+' : l.kind === 'remove' ? '-' : ' ') + l.text),
+      ' ',
+      '     /// <summary>The formats this exporter can write.</summary>',
+      '     public IEnumerable<ExportFormat> Formats => Enum.GetValues<ExportFormat>();',
+      ' ',
+      '     /// <summary>',
+      "     /// Writes every invoice dated within the request's period to its destination,",
+      '     /// in the requested format. An empty period writes nothing.',
+      '     /// </summary>',
+      '     public async Task<ExportResult> ExportAsync(ExportRequest request, CancellationToken ct)',
+      '     {',
+      '         ArgumentNullException.ThrowIfNull(request);',
+      '         ct.ThrowIfCancellationRequested();',
+      ' ',
+      '         if (request.To < request.From)',
+      '             throw new ArgumentException("The period ends before it starts.", nameof(request));',
+      ' ',
+      '         if (request.Destination is not { CanWrite: true })',
+      '             throw new ArgumentException("The destination is not writable.", nameof(request));',
+      ' ',
+      ...exporter.hunks[1].lines.map((l) => (l.kind === 'add' ? '+' : l.kind === 'remove' ? '-' : ' ') + l.text),
+    ]),
+  ],
+}
+
 export const DIFFS: Record<string, FileDiff> = {
   'src/Export/InvoiceExporter.cs': exporter,
   'src/Export/CsvWriter.cs': exporter,
 }
+
+/** What Full file shows for a diff in DIFFS. A diff without an entry shows its hunks either way. */
+export const FULL_DIFFS = new Map<FileDiff, FileDiff>([[exporter, exporterFull]])
 
 const br = (name: string, b: Partial<Branch>): Branch => ({
   name,
