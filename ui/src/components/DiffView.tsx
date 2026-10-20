@@ -90,6 +90,26 @@ function useTextZoom(root: RefObject<HTMLDivElement | null>) {
   return { zoom, reset: () => setZoom(DEFAULT_ZOOM), onKeyDown }
 }
 
+/**
+ * Clicking or arrowing quickly through files: a diff opened within this long of the previous one
+ * waits until the selection rests, so the files passed over run no git.
+ */
+const SETTLE_MS = 150
+let lastOpened = 0
+
+function useSettled(): boolean {
+  const [settled, setSettled] = useState(() => Date.now() - lastOpened >= SETTLE_MS)
+  useEffect(() => {
+    lastOpened = Date.now()
+  }, [])
+  useEffect(() => {
+    if (settled) return
+    const t = setTimeout(() => setSettled(true), SETTLE_MS)
+    return () => clearTimeout(t)
+  }, [settled])
+  return settled
+}
+
 /** Where the diff comes from: the working tree (Changes) or a commit (History). */
 export type DiffSource =
   | { kind: 'worktree'; path: string; origPath: string | null; staged: boolean; untracked: boolean }
@@ -99,6 +119,7 @@ export function DiffView({ repo, source, note, conflicted }: { repo: string; sou
   const [mode, setMode] = useState<Mode>(loadMode)
   const [extent, setExtent] = useState<Extent>(loadExtent)
   const full = extent === 'full'
+  const settled = useSettled()
   // Commit diffs never change, so they stay cached; worktree diffs are invalidated on refresh.
   const diff = useQuery(
     source.kind === 'commit'
@@ -106,10 +127,12 @@ export function DiffView({ repo, source, note, conflicted }: { repo: string; sou
           queryKey: ['commitDiff', repo, source.sha, source.path, extent],
           queryFn: () => api.commitFileDiff(repo, source.sha, source.path, source.origPath, full),
           staleTime: Infinity,
+          enabled: settled,
         }
       : {
           queryKey: ['diff', repo, source.path, source.staged, extent],
           queryFn: () => api.fileDiff(repo, source.path, source.staged, source.untracked && !source.staged, full),
+          enabled: settled,
         },
   )
 
@@ -210,7 +233,7 @@ export function DiffView({ repo, source, note, conflicted }: { repo: string; sou
           void showMenu(diffMenu({ hasSelection: !!text }, { copy: () => void copyText(text) }))
         }}
       >
-        {diff.isLoading && (
+        {(diff.isLoading || (!settled && !diff.data)) && (
           <div className="empty loading" role="status">
             Loading…
           </div>
