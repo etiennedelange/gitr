@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type ReactNode, type RefObject } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { api, errorMessage } from '../api'
 import { dirName, fileName, toSplitRows } from '../lib/git'
 import type { DiffLine, DiffSyntax, Hunk, Span } from '../types'
 import { diffMenu } from '../lib/menus'
 import { copyText, showMenu } from '../nativeMenu'
+import { createWheelZoomAccumulator, DEFAULT_ZOOM, stepZoom, ZOOM_PRESETS } from '../lib/zoom'
 
 type Mode = 'unified' | 'split'
 /** Only the changed hunks, or the whole file with its changes inline. */
@@ -36,6 +37,51 @@ function remember(key: string, value: string) {
   } catch {
     // Storage can be unavailable; the choice then lasts until the view closes.
   }
+}
+
+function loadTextZoom(): number {
+  try {
+    const z = Number(localStorage.getItem('diffZoom'))
+    return (ZOOM_PRESETS as readonly number[]).includes(z) ? z : DEFAULT_ZOOM
+  } catch {
+    return DEFAULT_ZOOM
+  }
+}
+
+/**
+ * Ctrl + wheel and Ctrl +/−/0 over the diff size its text alone, one zoom preset per step,
+ * remembered across diffs. The app-wide zoom leaves wheel events inside `data-own-zoom` to this.
+ */
+function useTextZoom(root: RefObject<HTMLDivElement | null>) {
+  const [zoom, setZoom] = useState(loadTextZoom)
+  const first = useRef(true)
+  useEffect(() => {
+    if (first.current) first.current = false
+    else remember('diffZoom', String(zoom))
+  }, [zoom])
+  useEffect(() => {
+    const el = root.current
+    if (!el) return
+    const accumulate = createWheelZoomAccumulator()
+    const onWheel = (e: WheelEvent) => {
+      if (!e.ctrlKey) return
+      e.preventDefault()
+      const dir = accumulate(e.deltaY, e.deltaMode)
+      if (dir) setZoom((z) => stepZoom(z, dir))
+    }
+    el.addEventListener('wheel', onWheel, { passive: false })
+    return () => el.removeEventListener('wheel', onWheel)
+  }, [root])
+  const onKeyDown = (e: KeyboardEvent) => {
+    if (!e.ctrlKey || e.altKey) return
+    const k = e.key
+    if (k === '=' || k === '+') setZoom(stepZoom(zoom, 1))
+    else if (k === '-' || k === '_') setZoom(stepZoom(zoom, -1))
+    else if (k === '0') setZoom(DEFAULT_ZOOM)
+    else return
+    e.preventDefault()
+  }
+  return { zoom, reset: () => setZoom(DEFAULT_ZOOM), onKeyDown }
 }
 
 /** Where the diff comes from: the working tree (Changes) or a commit (History). */
@@ -90,6 +136,7 @@ export function DiffView({ repo, source, note, conflicted }: { repo: string; sou
     return () => ro.disconnect()
   }, [])
   const shown: Mode = narrow ? 'unified' : mode
+  const text = useTextZoom(root)
 
   const changeMode = (m: Mode) => {
     remember('diffMode', m)
@@ -101,7 +148,13 @@ export function DiffView({ repo, source, note, conflicted }: { repo: string; sou
   }
 
   return (
-    <div className="diff" ref={root}>
+    <div
+      className="diff"
+      ref={root}
+      data-own-zoom
+      style={text.zoom === DEFAULT_ZOOM ? undefined : ({ '--diff-zoom': text.zoom / 100 } as CSSProperties)}
+      onKeyDown={text.onKeyDown}
+    >
       <div className="diff-head">
         <span className="diff-path ellipsis selectable" title={source.origPath ? `${source.origPath} → ${source.path}` : source.path}>
           {source.origPath ? <span className="diff-dir">{source.origPath} → </span> : null}
@@ -110,6 +163,11 @@ export function DiffView({ repo, source, note, conflicted }: { repo: string; sou
         </span>
         {note && <span className="diff-note">{note}</span>}
         <div className="spacer" />
+        {text.zoom !== DEFAULT_ZOOM && (
+          <button className="diff-zoom-level" title="Diff text size (Ctrl + scroll). Click to reset." onClick={text.reset}>
+            {text.zoom}%
+          </button>
+        )}
         <div className="segmented" role="group" aria-label="Diff extent">
           <button className={full ? '' : 'on'} aria-pressed={!full} onClick={() => changeExtent('hunks')}>
             Hunks
