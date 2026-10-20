@@ -79,12 +79,12 @@ struct CachedDiff {
 /// Enough for the diffs whose syntax requests are still on their way.
 const CACHED_DIFFS: usize = 8;
 
-fn worktree_diff_key(path: &str, staged: bool, untracked: bool) -> String {
-    format!("w\0{staged}\0{untracked}\0{path}")
+fn worktree_diff_key(path: &str, staged: bool, untracked: bool, full: bool) -> String {
+    format!("w\0{staged}\0{untracked}\0{full}\0{path}")
 }
 
-fn commit_diff_key(sha: &str, path: &str, orig_path: Option<&str>) -> String {
-    format!("c\0{sha}\0{}\0{path}", orig_path.unwrap_or(""))
+fn commit_diff_key(sha: &str, path: &str, orig_path: Option<&str>, full: bool) -> String {
+    format!("c\0{sha}\0{}\0{full}\0{path}", orig_path.unwrap_or(""))
 }
 
 impl Git {
@@ -440,21 +440,25 @@ impl Git {
         Ok(Some((LastCommit { subject, message }, parent_count == 1)))
     }
 
+    /// One file's working-tree diff. `full` keeps every unchanged line, so the whole file shows
+    /// with its changes inline; otherwise git's usual three lines of context around each change.
     pub async fn diff_file(
         &self,
         repo: &Path,
         path: &str,
         staged: bool,
         untracked: bool,
+        full: bool,
     ) -> Result<FileDiff, GitError> {
         let generation = self.diff_generation(repo);
-        let diff = self.read_diff_file(repo, path, staged, untracked).await?;
-        let key = worktree_diff_key(path, staged, untracked);
+        let diff = self.read_diff_file(repo, path, staged, untracked, full).await?;
+        let key = worktree_diff_key(path, staged, untracked, full);
         self.keep_diff(repo, key, generation, CachedDiff { diff: diff.clone(), base: None });
         Ok(diff)
     }
 
-    async fn read_diff_file(&self, repo: &Path, path: &str, staged: bool, untracked: bool) -> Result<FileDiff, GitError> {
+    async fn read_diff_file(&self, repo: &Path, path: &str, staged: bool, untracked: bool, full: bool) -> Result<FileDiff, GitError> {
+        // An untracked file is all added lines, so it is the whole file either way.
         let out = if untracked {
             self.runner
                 .run_with(
@@ -468,6 +472,9 @@ impl Git {
             let mut args = vec!["diff", "--no-ext-diff", "-M"];
             if staged {
                 args.push("--cached");
+            }
+            if full {
+                args.push(FULL_CONTEXT);
             }
             args.extend(["--", path]);
             self.runner.run(repo, Kind::Read, &args).await?
@@ -538,19 +545,23 @@ impl Git {
     }
 
     /// The diff of one file in a commit, against the commit's first parent (or the empty tree).
-    /// `orig_path` is the old name of a renamed file, so the rename is shown as one diff.
-    pub async fn commit_file_diff(&self, repo: &Path, sha: &str, path: &str, orig_path: Option<&str>) -> Result<FileDiff, GitError> {
+    /// `orig_path` is the old name of a renamed file, so the rename is shown as one diff. `full`
+    /// as for [`Self::diff_file`].
+    pub async fn commit_file_diff(&self, repo: &Path, sha: &str, path: &str, orig_path: Option<&str>, full: bool) -> Result<FileDiff, GitError> {
         let generation = self.diff_generation(repo);
-        let cached = self.read_commit_file_diff(repo, sha, path, orig_path).await?;
+        let cached = self.read_commit_file_diff(repo, sha, path, orig_path, full).await?;
         let diff = cached.diff.clone();
-        self.keep_diff(repo, commit_diff_key(sha, path, orig_path), generation, cached);
+        self.keep_diff(repo, commit_diff_key(sha, path, orig_path, full), generation, cached);
         Ok(diff)
     }
 
-    async fn read_commit_file_diff(&self, repo: &Path, sha: &str, path: &str, orig_path: Option<&str>) -> Result<CachedDiff, GitError> {
+    async fn read_commit_file_diff(&self, repo: &Path, sha: &str, path: &str, orig_path: Option<&str>, full: bool) -> Result<CachedDiff, GitError> {
         check_object_id(sha)?;
         let parents = self.parents_of(repo, sha).await?;
         let mut args = vec!["diff-tree", "-p", "-M", "--no-ext-diff", "--no-commit-id"];
+        if full {
+            args.push(FULL_CONTEXT);
+        }
         match parents.first() {
             Some(parent) => args.push(parent),
             None => args.push("--root"),
@@ -567,10 +578,10 @@ impl Git {
     /// Syntax colours for [`Self::diff_file`]'s lines, from the files on both sides: the index
     /// against the working tree, or HEAD against the index when `staged`. Colours the diff
     /// `diff_file` just returned when it is remembered.
-    pub async fn diff_file_syntax(&self, repo: &Path, path: &str, staged: bool, untracked: bool) -> Result<DiffSyntax, GitError> {
-        let diff = match self.take_diff(repo, &worktree_diff_key(path, staged, untracked)) {
+    pub async fn diff_file_syntax(&self, repo: &Path, path: &str, staged: bool, untracked: bool, full: bool) -> Result<DiffSyntax, GitError> {
+        let diff = match self.take_diff(repo, &worktree_diff_key(path, staged, untracked, full)) {
             Some(cached) => cached.diff,
-            None => self.read_diff_file(repo, path, staged, untracked).await?,
+            None => self.read_diff_file(repo, path, staged, untracked, full).await?,
         };
         let index = Text::Blob(format!(":0:{path}"));
         let (old, new) = match (untracked, staged) {
@@ -582,10 +593,10 @@ impl Git {
     }
 
     /// Syntax colours for [`Self::commit_file_diff`]'s lines.
-    pub async fn commit_file_diff_syntax(&self, repo: &Path, sha: &str, path: &str, orig_path: Option<&str>) -> Result<DiffSyntax, GitError> {
-        let CachedDiff { diff, base } = match self.take_diff(repo, &commit_diff_key(sha, path, orig_path)) {
+    pub async fn commit_file_diff_syntax(&self, repo: &Path, sha: &str, path: &str, orig_path: Option<&str>, full: bool) -> Result<DiffSyntax, GitError> {
+        let CachedDiff { diff, base } = match self.take_diff(repo, &commit_diff_key(sha, path, orig_path, full)) {
             Some(cached) => cached,
-            None => self.read_commit_file_diff(repo, sha, path, orig_path).await?,
+            None => self.read_commit_file_diff(repo, sha, path, orig_path, full).await?,
         };
         let old = match base {
             Some(parent) => Text::Blob(format!("{parent}:{}", orig_path.unwrap_or(path))),
@@ -1143,6 +1154,11 @@ fn hook_failure(err: GitError, trace: &TraceFile) -> GitError {
         None => err,
     }
 }
+
+/// Context for a full-file diff: more unchanged lines than any diff shows (it stops at
+/// `MAX_DIFF_LINES`), so every change lands in one hunk. Small enough that git's line arithmetic
+/// can't overflow a 32-bit `long` on Windows.
+const FULL_CONTEXT: &str = "-U1000000";
 
 /// How long colouring one diff may take.
 const HIGHLIGHT_BUDGET: std::time::Duration = std::time::Duration::from_millis(1500);

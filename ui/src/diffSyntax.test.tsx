@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vite-plus/test'
-import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
+import { cleanup, render, screen } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import type { DiffSyntax, FileDiff } from './types'
 
@@ -44,7 +44,6 @@ vi.mock('./api', () => ({
 }))
 const { api } = await import('./api')
 const { DiffView } = await import('./components/DiffView')
-const { useApp } = await import('./store')
 
 const wrap = (ui: React.ReactNode) =>
   render(<QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}>{ui}</QueryClientProvider>)
@@ -61,7 +60,7 @@ describe('diff syntax colours', () => {
     await vi.waitFor(() => expect(tokens('string')).toEqual(['"x"']))
     expect(tokens('keyword')).toEqual(['int', 'var'])
     expect(tokens('comment')).toEqual(['// done'])
-    expect(api.fileDiffSyntax).toHaveBeenCalledWith(PATH, 'a.cs', true, false)
+    expect(api.fileDiffSyntax).toHaveBeenCalledWith(PATH, 'a.cs', true, false, false)
     // The text itself is unchanged, so copying a line copies what the file says.
     expect(screen.getByText('"x"').closest('td')?.textContent).toBe('+var total = "x";')
   })
@@ -77,7 +76,7 @@ describe('diff syntax colours', () => {
   it('drops colours that no longer fit the text', async () => {
     wrap(<DiffView repo={PATH} source={{ kind: 'commit', sha: 'a'.repeat(40), path: 'a.cs', origPath: null }} />)
     await vi.waitFor(() => expect(tokens('keyword')).toEqual(['var']))
-    expect(api.commitFileDiffSyntax).toHaveBeenCalledWith(PATH, 'a'.repeat(40), 'a.cs', null)
+    expect(api.commitFileDiffSyntax).toHaveBeenCalledWith(PATH, 'a'.repeat(40), 'a.cs', null, false)
     expect(tokens('comment')).toEqual([])
     expect(screen.getByText('// done')).toBeInTheDocument()
   })
@@ -97,21 +96,7 @@ describe('diff loading', () => {
     view.rerender(at('b.cs'))
     expect(screen.getByRole('status')).toHaveTextContent('Loading')
     view.rerender(at('c.cs'))
-    await vi.waitFor(() => expect(api.fileDiff).toHaveBeenLastCalledWith(PATH, 'c.cs', false, false))
+    await vi.waitFor(() => expect(api.fileDiff).toHaveBeenLastCalledWith(PATH, 'c.cs', false, false, false))
     expect(vi.mocked(api.fileDiff).mock.calls.map((c) => c[1])).not.toContain('b.cs')
-  })
-})
-
-describe('diff zoom', () => {
-  it('scales the code only and resets from the badge', async () => {
-    act(() => useApp.getState().setDiffZoom(125))
-    wrap(<DiffView repo={PATH} source={{ kind: 'worktree', path: 'a.cs', origPath: null, staged: false, untracked: false }} />)
-    const body = screen.getByRole('region', { name: 'Diff of a.cs' })
-    expect(body.style.getPropertyValue('--diff-zoom')).toBe('1.25')
-    expect(body.closest('[data-zoom="diff"]')).not.toBeNull()
-    fireEvent.click(screen.getByRole('button', { name: '125%' }))
-    expect(useApp.getState().diffZoom).toBe(100)
-    expect(body.style.getPropertyValue('--diff-zoom')).toBe('')
-    expect(screen.queryByRole('button', { name: '125%' })).toBeNull()
   })
 })

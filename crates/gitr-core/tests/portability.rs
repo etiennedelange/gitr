@@ -50,7 +50,7 @@ async fn latin1_file_name_can_be_diffed_and_discarded() {
     let g = isolated_git();
     let st = g.status(&dir).await.unwrap();
     let entry = st.files.iter().find(|f| f.path.starts_with("caf")).expect("listed");
-    let diff = g.diff_file(&dir, &entry.path, false, false).await;
+    let diff = g.diff_file(&dir, &entry.path, false, false, false).await;
     eprintln!("diff: {:?}", diff.as_ref().map(|d| d.hunks.len()));
     assert!(diff.is_ok_and(|d| !d.hunks.is_empty()), "diff of the modified file");
 }
@@ -62,7 +62,7 @@ async fn latin1_file_content_diff_loads() {
     git(&dir, &["add", "-A"]);
     git(&dir, &["commit", "-q", "-m", "latin1 content"]);
     std::fs::write(dir.join("l.txt"), b"caf\xe9 two\n").unwrap();
-    let d = isolated_git().diff_file(&dir, "l.txt", false, false).await.unwrap();
+    let d = isolated_git().diff_file(&dir, "l.txt", false, false, false).await.unwrap();
     let text: String = d.hunks.iter().flat_map(|h| h.lines.iter().map(|l| l.text.clone())).collect::<Vec<_>>().join("|");
     // Shown as U+FFFD (decoding other encodings is not done yet); nothing may fail.
     assert_eq!(text, "caf\u{fffd} one|caf\u{fffd} two");
@@ -102,18 +102,18 @@ async fn file_replaced_by_symlink_shows_a_diff_and_stages() {
     let st = g.status(&dir).await.unwrap();
     let e = st.files.iter().find(|f| f.path == "link.txt").expect("listed");
     eprintln!("status entry: {e:?}");
-    let d = g.diff_file(&dir, "link.txt", false, false).await.unwrap();
+    let d = g.diff_file(&dir, "link.txt", false, false, false).await.unwrap();
     eprintln!("hunks: {}", d.hunks.len());
     assert!(!d.hunks.is_empty(), "unstaged type change has a diff");
     g.stage(&dir, &["link.txt".into()]).await.unwrap();
-    let d = g.diff_file(&dir, "link.txt", true, false).await.unwrap();
+    let d = g.diff_file(&dir, "link.txt", true, false, false).await.unwrap();
     assert!(!d.hunks.is_empty(), "staged type change has a diff");
     git(&dir, &["commit", "-q", "-m", "now a symlink"]);
     let sha = git_out(&dir, &["rev-parse", "HEAD"]).trim().to_string();
     let details = g.commit_details(&dir, &sha).await.unwrap();
     let f = details.files.iter().find(|f| f.path == "link.txt").unwrap();
     eprintln!("commit file: {f:?}");
-    let cd = g.commit_file_diff(&dir, &sha, "link.txt", None).await.unwrap();
+    let cd = g.commit_file_diff(&dir, &sha, "link.txt", None, false).await.unwrap();
     assert!(!cd.hunks.is_empty(), "commit diff of a type change");
 }
 

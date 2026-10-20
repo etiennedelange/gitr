@@ -6,9 +6,13 @@
 //! The grammars are bat's (through two-face) on syntect, with Oniguruma regexes: the pure-Rust
 //! ones (fancy-regex) took about a second to compile a grammar such as TSX on first use, and
 //! searched several times slower.
+//!
+//! A file's colours are kept for the next few diffs that show it ([`CACHED_FILES`]): the other
+//! extent (Hunks or Full file), a refresh that changed only the other side, or coming back to it.
 
 use std::collections::{BTreeMap, HashMap, HashSet};
-use std::sync::OnceLock;
+use std::hash::{DefaultHasher, Hash, Hasher};
+use std::sync::{Arc, Mutex, OnceLock, PoisonError};
 use std::time::Instant;
 
 use serde::Serialize;
@@ -20,6 +24,8 @@ use crate::diff::{FileDiff, LineKind};
 pub const MAX_SOURCE_BYTES: u64 = 2 * 1024 * 1024;
 /// Colouring stops at a longer line (minified code), which alone could take seconds.
 const MAX_LINE_BYTES: usize = 4096;
+/// How many files' colours are kept; the one used longest ago goes first.
+const CACHED_FILES: usize = 16;
 
 /// What a piece of code is. The UI gives each its own colour; anything else stays plain.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
@@ -110,19 +116,20 @@ fn colour_side(syntax: &SyntaxReference, source: Option<&str>, hunks: &[Vec<Side
     // Lines coloured from the file, whose text matched the diff's.
     let mut done = HashSet::new();
     if let Some(source) = source {
-        let mut h = Highlighter::new(syntax);
-        for (i, text) in source.lines().enumerate().take(last as usize) {
-            if Instant::now() > deadline {
-                return out;
-            }
-            let Some(spans) = h.line(text) else { break };
+        let file = coloured_file(syntax, source);
+        let mut file = file.lock().unwrap_or_else(PoisonError::into_inner);
+        let finished = file.colour_to(source, last as usize, deadline);
+        for ((i, text), spans) in source.lines().enumerate().zip(&file.lines) {
             let no = i as u32 + 1;
             if wanted.get(&no) == Some(&text) {
                 done.insert(no);
                 if !spans.is_empty() {
-                    out.insert(no, spans);
+                    out.insert(no, spans.clone());
                 }
             }
+        }
+        if !finished {
+            return out;
         }
     }
     for hunk in hunks.iter().filter(|h| h.iter().any(|(no, _, w)| *w && !done.contains(no))) {
@@ -138,6 +145,58 @@ fn colour_side(syntax: &SyntaxReference, source: Option<&str>, hunks: &[Vec<Side
         }
     }
     out
+}
+
+/// A file's colours from its first line on, and where colouring got to.
+struct ColouredFile {
+    /// None once a line stopped colouring (too long, or the grammar failed on it).
+    next: Option<Highlighter>,
+    lines: Vec<Vec<Span>>,
+}
+
+// SAFETY: the parse state holds Oniguruma match regions (raw pointers, so not `Send`). Each is
+// an allocation of its own that nothing else points to and that no thread is tied to, so it may
+// move to another thread; the mutex around each file lets only one thread use it at a time.
+unsafe impl Send for ColouredFile {}
+
+impl ColouredFile {
+    /// Colours `source` up to line `last` (1-based), unless colouring stops first. False when
+    /// `deadline` passed before then.
+    fn colour_to(&mut self, source: &str, last: usize, deadline: Instant) -> bool {
+        let Some(h) = &mut self.next else { return true };
+        for text in source.lines().skip(self.lines.len()).take(last.saturating_sub(self.lines.len())) {
+            if Instant::now() > deadline {
+                return false;
+            }
+            match h.line(text) {
+                Some(spans) => self.lines.push(spans),
+                None => {
+                    self.next = None;
+                    break;
+                }
+            }
+        }
+        true
+    }
+}
+
+/// The kept colours of `source` with `syntax`, new ones when it isn't kept.
+fn coloured_file(syntax: &SyntaxReference, source: &str) -> Arc<Mutex<ColouredFile>> {
+    type Key = (String, u64, usize);
+    static FILES: Mutex<Vec<(Key, Arc<Mutex<ColouredFile>>)>> = Mutex::new(Vec::new());
+    let mut hasher = DefaultHasher::new();
+    source.hash(&mut hasher);
+    let key = (syntax.name.clone(), hasher.finish(), source.len());
+    let mut files = FILES.lock().unwrap_or_else(PoisonError::into_inner);
+    let file = match files.iter().position(|(k, _)| *k == key) {
+        Some(i) => files.remove(i).1,
+        None => Arc::new(Mutex::new(ColouredFile { next: Some(Highlighter::new(syntax)), lines: Vec::new() })),
+    };
+    files.push((key, file.clone()));
+    if files.len() > CACHED_FILES {
+        files.remove(0);
+    }
+    file
 }
 
 struct Highlighter {
@@ -357,6 +416,28 @@ mod tests {
         let s = highlight_diff("ui/Rows.tsx", &diff, None, Some(&source), Instant::now() + Duration::from_millis(1500));
         // The last block's `export` line.
         assert!(s.new.contains_key(&(lines as u32 - 4)), "the last lines were left plain");
+    }
+
+    /// Showing a file again (the other extent, or after a refresh that changed only the other
+    /// side) reuses its colours: with no time left at all, it is still coloured.
+    #[test]
+    fn a_file_coloured_before_is_not_coloured_again() {
+        let source = format!("{CS}// kept {}\n", line!());
+        let whole = |deadline| {
+            let mut text = format!("@@ -0,0 +1,{} @@\n", source.lines().count());
+            for l in source.lines() {
+                text.push_str(&format!("+{l}\n"));
+            }
+            highlight_diff("a.cs", &parse_unified(&text), None, Some(&source), deadline)
+        };
+        let first = whole(later());
+        assert_eq!(first.new.len(), 7, "every line but the braces: {first:?}");
+        let past = Instant::now() - Duration::from_millis(1);
+        assert_eq!(whole(past), first);
+        // Only the hunks: the same colours, for the lines shown.
+        let diff = parse_unified("@@ -3,1 +3,1 @@\n-   int total = 0; */\n+   int count = 0; */\n");
+        let hunks = highlight_diff("a.cs", &diff, None, Some(&source), past);
+        assert_eq!(hunks.new[&3], first.new[&3]);
     }
 
     #[test]

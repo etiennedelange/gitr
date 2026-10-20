@@ -148,18 +148,18 @@
 
 :root[data-theme='dark'] {
   color-scheme: dark;
-  --bg: #19191c;
-  --rail: #141417;
-  --panel: #1e1e22;
-  --raised: #25252a;
-  --field: #141417;
-  --overlay: #26262b;
-  --line: #2b2b31;
-  --line-soft: #232328;
-  --line-strong: #3b3b43;
+  --bg: #242428;
+  --rail: #1e1e22;
+  --panel: #29292d;
+  --raised: #303035;
+  --field: #1e1e22;
+  --overlay: #323237;
+  --line: #38383f;
+  --line-soft: #2f2f34;
+  --line-strong: #4a4a53;
   --ink: #ebebef;
-  --ink-2: #a4a4ae;
-  --ink-3: #85858f;
+  --ink-2: #b4b4be;
+  --ink-3: #9d9da8;
   --hover: rgb(235 235 245 / 0.045);
   --press: rgb(235 235 245 / 0.08);
   --rail-hover: rgb(235 235 245 / 0.05);
@@ -168,23 +168,23 @@
   --accent-hover: #ae9fff;
   --accent-ink: #130e2e;
   --accent-text: #b4a7ff;
-  --sel: #2c2747;
+  --sel: #393258;
   --sel-ink: #e4defe;
-  --text-sel: #463c80;
+  --text-sel: #4f4590;
   --focus: #9a88ff;
 
   --amber: #e5a443;
   --amber-ink: #f2bf6c;
-  --amber-soft: #382b16;
+  --amber-soft: #3f3220;
   --blue: #5aa6f0;
   --blue-ink: #8fc4f6;
-  --blue-soft: #172a3e;
+  --blue-soft: #1f3348;
   --green: #4cbd80;
   --green-ink: #82d6a7;
-  --green-soft: #15301f;
+  --green-soft: #1c3727;
   --red: #f0705f;
   --red-ink: #ff9d90;
-  --red-soft: #3a1f1c;
+  --red-soft: #432826;
   --red-on: #2a0c08;
 
   --g-teal: #3bb3b6;
@@ -194,13 +194,13 @@
   --g-olive: #a3b23e;
   --g-plum: #b884cc;
 
-  --add-bg: #15291d;
-  --add-ln: #1b3526;
+  --add-bg: #1c3125;
+  --add-ln: #223b2c;
   --add-ink: #7fd3a1;
-  --del-bg: #2e1b1a;
-  --del-ln: #3d2320;
+  --del-bg: #372422;
+  --del-ln: #452a27;
   --del-ink: #f78d7e;
-  --hunk-bg: #1f1f24;
+  --hunk-bg: #2a2a2f;
   --hunk-ink: #9a9aa5;
 
   --syn-keyword: #b4a7ff;
@@ -208,7 +208,7 @@
   --syn-function: #e5b567;
   --syn-string: #8fc4f6;
   --syn-number: #f08fbf;
-  --syn-comment: #9a9aa5;
+  --syn-comment: #9d9da8;
   --syn-meta: #c99ad9;
 }
 
@@ -2140,9 +2140,18 @@ button.ai.generating .ico {
   flex: 1;
   overflow: auto;
 }
-.diff-zoom {
+.diff-zoom-level {
   flex: none;
+  padding: 1px 6px;
+  border: 0;
+  border-radius: var(--r-sm);
+  background: var(--panel);
+  color: var(--ink-2);
+  font: 500 var(--fs-xs) / 1.3 var(--font-ui);
   font-variant-numeric: tabular-nums;
+}
+.diff-zoom-level:hover {
+  color: var(--ink);
 }
 .diff-empty {
   display: flex;
@@ -2211,8 +2220,25 @@ button.ai.generating .ico {
   background: var(--hunk-bg);
   color: var(--hunk-ink);
 }
-.hunk:first-child .hunk-header td {
+.hunk .hunk-header.first td {
   border-top: 0;
+}
+/* The space between one hunk and the next header (the 1px is the header's top border, which
+   the collapsed borders share with this row). */
+.hunk tr.hunk-gap td {
+  height: calc(var(--s5) + 1px);
+  padding: 0;
+}
+/* Long diffs draw only the rows in view: spacers stand in for the rest, and the sizer (the
+   widest line, at no height) keeps the columns as wide as if every row were drawn. */
+.hunk tr.spacer td {
+  padding: 0;
+}
+.hunk tr.sizer td {
+  height: 0;
+  padding-block: 0;
+  line-height: 0;
+  visibility: hidden;
 }
 .hunk tr.add,
 .hunk td.add {

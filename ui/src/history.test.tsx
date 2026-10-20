@@ -175,7 +175,7 @@ describe('commit pane', () => {
     expect(within(files).getByText('a.ts')).toBeInTheDocument()
     expect(within(files).getByText('from src/old/b.ts')).toBeInTheDocument()
     // The first file the tree shows: folders come before files, so src/new/b.ts.
-    await vi.waitFor(() => expect(api.commitFileDiff).toHaveBeenCalledWith(PATH, sha(1), 'src/new/b.ts', 'src/old/b.ts'))
+    await vi.waitFor(() => expect(api.commitFileDiff).toHaveBeenCalledWith(PATH, sha(1), 'src/new/b.ts', 'src/old/b.ts', false))
     // Collapsing the folder hides its files.
     fireEvent.click(items[0])
     expect(within(files).queryByText('a.ts')).toBeNull()

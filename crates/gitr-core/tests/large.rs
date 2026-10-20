@@ -31,7 +31,7 @@ async fn twenty_thousand_changed_files_stay_responsive() {
     assert_eq!(lines.staged.len(), 20_000);
 
     let t = Instant::now();
-    let d = g.diff_file(&dir, "d0/f0.txt", true, false).await.unwrap();
+    let d = g.diff_file(&dir, "d0/f0.txt", true, false, false).await.unwrap();
     timed("diff_file", t);
     assert!(!d.hunks.is_empty());
 

@@ -185,17 +185,46 @@ async fn commit_file_diff_matches_the_commit() {
     let sha = commit(&dir, "a.txt", "one\nTWO\n", "changes");
     let g = isolated_git();
 
-    let m = g.commit_file_diff(&dir, &sha, "a.txt", None).await.unwrap();
+    let m = g.commit_file_diff(&dir, &sha, "a.txt", None, false).await.unwrap();
     let lines: Vec<String> = m.hunks.iter().flat_map(|h| h.lines.iter().map(|l| format!("{:?}:{}", l.kind, l.text))).collect();
     assert_eq!(lines, ["Context:one", "Add:TWO"]);
-    let added = g.commit_file_diff(&dir, &sha, "new.txt", None).await.unwrap();
+    let added = g.commit_file_diff(&dir, &sha, "new.txt", None, false).await.unwrap();
     assert_eq!(added.hunks[0].lines.len(), 1);
-    let deleted = g.commit_file_diff(&dir, &sha, "gone.txt", None).await.unwrap();
+    let deleted = g.commit_file_diff(&dir, &sha, "gone.txt", None, false).await.unwrap();
     assert_eq!(format!("{:?}", deleted.hunks[0].lines[0].kind), "Remove");
-    let renamed = g.commit_file_diff(&dir, &sha, "moved.txt", Some("move me.txt")).await.unwrap();
+    let renamed = g.commit_file_diff(&dir, &sha, "moved.txt", Some("move me.txt"), false).await.unwrap();
     assert!(renamed.hunks.is_empty() && !renamed.binary, "a pure rename has no content change");
-    let root_diff = g.commit_file_diff(&dir, &root, "a.txt", None).await.unwrap();
+    let root_diff = g.commit_file_diff(&dir, &root, "a.txt", None, false).await.unwrap();
     assert_eq!(root_diff.hunks[0].lines[0].text, "one");
+}
+
+#[tokio::test]
+async fn full_file_diffs_keep_every_unchanged_line() {
+    let (_t, dir) = repo_with_commit();
+    let before: String = (1..=30).map(|n| format!("line {n}\n")).collect();
+    commit(&dir, "f.txt", &before, "thirty lines");
+    let after = before.replace("line 3\n", "line three\n").replace("line 28\n", "line twenty-eight\n");
+    let sha = commit(&dir, "f.txt", &after, "two edits far apart");
+    write(&dir, "f.txt", &after.replace("line 15\n", "line fifteen\n"));
+    let g = isolated_git();
+
+    // Hunks: two separate changes, each with a little context. Full: one hunk, the whole file.
+    let hunks = g.commit_file_diff(&dir, &sha, "f.txt", None, false).await.unwrap();
+    assert_eq!(hunks.hunks.len(), 2);
+    let full = g.commit_file_diff(&dir, &sha, "f.txt", None, true).await.unwrap();
+    assert_eq!(full.hunks.len(), 1);
+    let new_side: Vec<u32> = full.hunks[0].lines.iter().filter_map(|l| l.new_no).collect();
+    assert_eq!(new_side, (1..=30).collect::<Vec<_>>());
+    assert_eq!(full.hunks[0].lines.iter().filter(|l| format!("{:?}", l.kind) != "Context").count(), 4);
+
+    let worktree = g.diff_file(&dir, "f.txt", false, false, true).await.unwrap();
+    assert_eq!((worktree.hunks.len(), worktree.hunks[0].lines.len()), (1, 31));
+    assert!(worktree.hunks[0].lines.iter().any(|l| l.text == "line fifteen"));
+    assert!(worktree.hunks[0].lines.iter().any(|l| l.text == "line twenty-eight"));
+    assert_eq!(g.diff_file(&dir, "f.txt", false, false, false).await.unwrap().hunks[0].lines.len(), 8);
+
+    let syntax = g.commit_file_diff_syntax(&dir, &sha, "f.txt", None, true).await.unwrap();
+    assert!(syntax.old.is_empty() && syntax.new.is_empty(), "plain text has no colours");
 }
 
 #[tokio::test]
@@ -204,7 +233,7 @@ async fn ids_that_are_not_commit_ids_never_reach_git() {
     let g = isolated_git();
     for bad in ["--output=/tmp/x", "HEAD", "HEAD~1", "a b"] {
         assert!(g.commit_details(&dir, bad).await.is_err(), "{bad}");
-        assert!(g.commit_file_diff(&dir, bad, "a.txt", None).await.is_err(), "{bad}");
+        assert!(g.commit_file_diff(&dir, bad, "a.txt", None, false).await.is_err(), "{bad}");
         assert!(g.reset(&dir, bad, ResetMode::Soft).await.is_err(), "{bad}");
     }
 }

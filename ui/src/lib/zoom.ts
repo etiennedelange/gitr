@@ -1,27 +1,6 @@
 export const ZOOM_PRESETS = [50, 67, 75, 80, 90, 100, 110, 125, 150, 175, 200] as const
 export const DEFAULT_ZOOM = 100
 
-const DIFF_ZOOM_KEY = 'diffZoom'
-
-/** The diff's own zoom in percent, kept per machine like the diff layout. */
-export function loadDiffZoom(): number {
-  try {
-    const z = Number(localStorage.getItem(DIFF_ZOOM_KEY))
-    return ZOOM_PRESETS.includes(z as (typeof ZOOM_PRESETS)[number]) ? z : DEFAULT_ZOOM
-  } catch {
-    return DEFAULT_ZOOM
-  }
-}
-
-export function saveDiffZoom(zoom: number) {
-  try {
-    if (zoom === DEFAULT_ZOOM) localStorage.removeItem(DIFF_ZOOM_KEY)
-    else localStorage.setItem(DIFF_ZOOM_KEY, String(zoom))
-  } catch {
-    // Storage can be unavailable; the zoom then lasts until the app closes.
-  }
-}
-
 /** Next preset in direction `dir`, clamped to the ends. Non-preset input snaps to the nearest preset first. */
 export function stepZoom(current: number, dir: 1 | -1): number {
   let idx = ZOOM_PRESETS.indexOf(current as (typeof ZOOM_PRESETS)[number])
