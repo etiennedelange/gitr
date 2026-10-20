@@ -5,6 +5,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+- **Zoom the diff on its own.** Ctrl + scroll over a diff now makes its text bigger or smaller without zooming the rest of Gitr; with the diff focused, Ctrl + and Ctrl − do the same and Ctrl 0 resets it. The size is remembered, and while it isn't 100% a small badge next to Hunks / Full file shows it (click it to reset). Ctrl + scroll elsewhere still zooms the whole window.
+
 ## [0.1.9] - 2026-10-20
 
 ### Added
