@@ -8,6 +8,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Added
 - **Full file diffs.** A new **Hunks / Full file** switch next to Unified and Split shows the whole file with its changes inline, instead of only the changed lines and a few around them. It works on the Changes and History tabs, in both layouts, and your choice is remembered.
 
+### Changed
+- **Softer dark theme.** The dark theme's backgrounds are lifted off near-black (the main background is now `#242428`, the sidebar `#1e1e22`), so it is easier on the eyes, especially on OLED screens, where near-black panels next to bright text are tiring to read. Borders, highlights and the diff's added and removed lines are lifted to match, and every text colour still meets WCAG AA contrast on the surfaces it sits on.
+
+### Fixed
+- **Faint text in the dark theme.** The dimmest text, such as diff line numbers, counts and placeholders, was below WCAG AA contrast on raised panels, menus, hunk headers and added or removed diff lines. It is now a step lighter.
+
 ## [0.1.8] - 2026-10-19
 
 ### Added
