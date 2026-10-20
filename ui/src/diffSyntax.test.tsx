@@ -60,7 +60,7 @@ describe('diff syntax colours', () => {
     await vi.waitFor(() => expect(tokens('string')).toEqual(['"x"']))
     expect(tokens('keyword')).toEqual(['int', 'var'])
     expect(tokens('comment')).toEqual(['// done'])
-    expect(api.fileDiffSyntax).toHaveBeenCalledWith(PATH, 'a.cs', true, false)
+    expect(api.fileDiffSyntax).toHaveBeenCalledWith(PATH, 'a.cs', true, false, false)
     // The text itself is unchanged, so copying a line copies what the file says.
     expect(screen.getByText('"x"').closest('td')?.textContent).toBe('+var total = "x";')
   })
@@ -76,8 +76,27 @@ describe('diff syntax colours', () => {
   it('drops colours that no longer fit the text', async () => {
     wrap(<DiffView repo={PATH} source={{ kind: 'commit', sha: 'a'.repeat(40), path: 'a.cs', origPath: null }} />)
     await vi.waitFor(() => expect(tokens('keyword')).toEqual(['var']))
-    expect(api.commitFileDiffSyntax).toHaveBeenCalledWith(PATH, 'a'.repeat(40), 'a.cs', null)
+    expect(api.commitFileDiffSyntax).toHaveBeenCalledWith(PATH, 'a'.repeat(40), 'a.cs', null, false)
     expect(tokens('comment')).toEqual([])
     expect(screen.getByText('// done')).toBeInTheDocument()
+  })
+})
+
+describe('diff loading', () => {
+  it('waits for the selection to rest when files are opened in quick succession', async () => {
+    vi.mocked(api.fileDiff).mockClear()
+    const client = new QueryClient({ defaultOptions: { queries: { retry: false } } })
+    const at = (path: string) => (
+      <QueryClientProvider client={client}>
+        <DiffView key={path} repo={PATH} source={{ kind: 'worktree', path, origPath: null, staged: false, untracked: false }} />
+      </QueryClientProvider>
+    )
+    // Arrowing from a.cs past b.cs to c.cs: b.cs is never asked for, c.cs once it rests.
+    const view = render(at('a.cs'))
+    view.rerender(at('b.cs'))
+    expect(screen.getByRole('status')).toHaveTextContent('Loading')
+    view.rerender(at('c.cs'))
+    await vi.waitFor(() => expect(api.fileDiff).toHaveBeenLastCalledWith(PATH, 'c.cs', false, false, false))
+    expect(vi.mocked(api.fileDiff).mock.calls.map((c) => c[1])).not.toContain('b.cs')
   })
 })

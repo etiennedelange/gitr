@@ -7,6 +7,7 @@ import { useApp } from './store'
 /**
  * Ctrl + wheel / trackpad pinch zooms the whole UI one preset per step.
  * The backend applies the zoom to the webview and persists it to config.toml.
+ * Inside a `data-own-zoom` element (the diff) the wheel is left to that element's own zoom.
  */
 export function useWheelZoom(initialZoom: number | undefined) {
   const seeded = useRef(false)
@@ -21,6 +22,7 @@ export function useWheelZoom(initialZoom: number | undefined) {
     const accumulate = createWheelZoomAccumulator()
     const onWheel = (e: WheelEvent) => {
       if (!e.ctrlKey) return
+      if (e.target instanceof Element && e.target.closest('[data-own-zoom]')) return
       e.preventDefault()
       const dir = accumulate(e.deltaY, e.deltaMode)
       if (!dir) return

@@ -37,7 +37,7 @@ Four claims, held together:
 ## Capabilities and Constraints
 
 - Surfaces: Dashboard (all repositories, status bar tally), repo view with Changes, History and Branches tabs, Settings, sidebar of groups and repositories, Go to repository (Ctrl+P), toasts, banners, dialogs, hook output panel.
-- Operations: fetch/pull all (fast-forward only), stage/unstage/discard, unified or split diff, commit/amend/push, undo last commit, revert, reset to a commit (soft/mixed only), checkout/create/delete branch, diverged-pull rebase or merge, continue/skip/abort in-progress operations, stop a running operation.
+- Operations: fetch/pull all (fast-forward only), stage/unstage/discard, unified or split diff of the changed hunks or the full file, commit/amend/push, undo last commit, revert, reset to a commit (soft/mixed only), checkout/create/delete branch, diverged-pull rebase or merge, continue/skip/abort in-progress operations, stop a running operation.
 - Requires Git 2.27+ on the machine; Gitr finds it or explains how to install it.
 - Must stay usable down to the 900×600 minimum window; below 1100px the sidebar collapses to a strip.
 - Light and dark themes, following Windows by default.

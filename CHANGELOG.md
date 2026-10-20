@@ -5,6 +5,20 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+- **Zoom the diff on its own.** Ctrl + scroll over a diff now makes its text bigger or smaller without zooming the rest of Gitr; with the diff focused, Ctrl + and Ctrl − do the same and Ctrl 0 resets it. The size is remembered, and while it isn't 100% a small badge next to Hunks / Full file shows it (click it to reset). Ctrl + scroll elsewhere still zooms the whole window.
+
+### Changed
+- **Fewer git processes when opening diffs.** Opening a diff ran git four times on the Changes tab (six for a staged file, nine for a commit in History); it now runs it two to four times. Clicking or arrowing quickly through files no longer runs git for the files you pass over: the diff loads once the selection rests.
+
+### Fixed
+- **Long diffs colour sooner and zoom smoothly.** In a long diff, especially a whole file, the code stayed plain for a noticeable moment after it showed, and each Ctrl + scroll zoom step stalled the window. The diff now draws only the lines on screen, so a 4,000-line file is coloured almost at once and zooms without a pause. Switching between Hunks and Full file, or coming back to a file, reuses its colours instead of working them out again.
+
+## [0.1.9] - 2026-10-20
+
+### Added
+- **Full file diffs.** A new **Hunks / Full file** switch next to Unified and Split shows the whole file with its changes inline, instead of only the changed lines and a few around them. It works on the Changes and History tabs, in both layouts, and your choice is remembered.
+
 ### Changed
 - **Softer dark theme.** The dark theme's backgrounds are lifted off near-black (the main background is now `#242428`, the sidebar `#1e1e22`), so it is easier on the eyes, especially on OLED screens, where near-black panels next to bright text are tiring to read. Borders, highlights and the diff's added and removed lines are lifted to match, and every text colour still meets WCAG AA contrast on the surfaces it sits on.
 
