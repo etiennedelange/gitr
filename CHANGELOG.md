@@ -5,6 +5,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Fixed
+- **Long diffs colour sooner and zoom smoothly.** In a long diff, especially a whole file, the code stayed plain for a noticeable moment after it showed, and each Ctrl + scroll zoom step stalled the window. The diff now draws only the lines on screen, so a 4,000-line file is coloured almost at once and zooms without a pause. Switching between Hunks and Full file, or coming back to a file, reuses its colours instead of working them out again.
+
 ## [0.1.9] - 2026-10-20
 
 ### Added
