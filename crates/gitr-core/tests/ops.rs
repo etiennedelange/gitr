@@ -43,7 +43,7 @@ async fn stage_unstage_commit_flow() {
     let st = g.status(&dir).await.unwrap();
     assert_eq!((st.staged_count(), st.unstaged_count()), (1, 1));
 
-    let d = g.diff_file(&dir, "a.txt", false, false).await.unwrap();
+    let d = g.diff_file(&dir, "a.txt", false, false, false).await.unwrap();
     assert_eq!(d.hunks.len(), 1);
     assert!(d.hunks[0].lines.iter().any(|l| l.text == "two"));
 
@@ -67,7 +67,7 @@ async fn untracked_diff_and_discard() {
     let g = isolated_git();
     write(&dir, "a.txt", "changed\n");
     write(&dir, "u.txt", "u\n");
-    let d = g.diff_file(&dir, "u.txt", false, true).await.unwrap();
+    let d = g.diff_file(&dir, "u.txt", false, true, false).await.unwrap();
     assert_eq!(d.hunks[0].lines[0].text, "u");
 
     g.discard(&dir, &["a.txt".into()], &["u.txt".into()], test_bin(&dir)).await.unwrap();

@@ -7,6 +7,8 @@ import { diffMenu } from '../lib/menus'
 import { copyText, showMenu } from '../nativeMenu'
 
 type Mode = 'unified' | 'split'
+/** Only the changed hunks, or the whole file with its changes inline. */
+type Extent = 'hunks' | 'full'
 
 const SPLIT_MIN_WIDTH = 560
 
@@ -20,6 +22,22 @@ function loadMode(): Mode {
   }
 }
 
+function loadExtent(): Extent {
+  try {
+    return localStorage.getItem('diffExtent') === 'full' ? 'full' : 'hunks'
+  } catch {
+    return 'hunks'
+  }
+}
+
+function remember(key: string, value: string) {
+  try {
+    localStorage.setItem(key, value)
+  } catch {
+    // Storage can be unavailable; the choice then lasts until the view closes.
+  }
+}
+
 /** Where the diff comes from: the working tree (Changes) or a commit (History). */
 export type DiffSource =
   | { kind: 'worktree'; path: string; origPath: string | null; staged: boolean; untracked: boolean }
@@ -27,17 +45,19 @@ export type DiffSource =
 
 export function DiffView({ repo, source, note, conflicted }: { repo: string; source: DiffSource; note?: string; conflicted?: boolean }) {
   const [mode, setMode] = useState<Mode>(loadMode)
+  const [extent, setExtent] = useState<Extent>(loadExtent)
+  const full = extent === 'full'
   // Commit diffs never change, so they stay cached; worktree diffs are invalidated on refresh.
   const diff = useQuery(
     source.kind === 'commit'
       ? {
-          queryKey: ['commitDiff', repo, source.sha, source.path],
-          queryFn: () => api.commitFileDiff(repo, source.sha, source.path, source.origPath),
+          queryKey: ['commitDiff', repo, source.sha, source.path, extent],
+          queryFn: () => api.commitFileDiff(repo, source.sha, source.path, source.origPath, full),
           staleTime: Infinity,
         }
       : {
-          queryKey: ['diff', repo, source.path, source.staged],
-          queryFn: () => api.fileDiff(repo, source.path, source.staged, source.untracked && !source.staged),
+          queryKey: ['diff', repo, source.path, source.staged, extent],
+          queryFn: () => api.fileDiff(repo, source.path, source.staged, source.untracked && !source.staged, full),
         },
   )
 
@@ -46,14 +66,14 @@ export function DiffView({ repo, source, note, conflicted }: { repo: string; sou
   const syntax = useQuery(
     source.kind === 'commit'
       ? {
-          queryKey: ['commitDiff', repo, source.sha, source.path, 'syntax'],
-          queryFn: () => api.commitFileDiffSyntax(repo, source.sha, source.path, source.origPath),
+          queryKey: ['commitDiff', repo, source.sha, source.path, extent, 'syntax'],
+          queryFn: () => api.commitFileDiffSyntax(repo, source.sha, source.path, source.origPath, full),
           staleTime: Infinity,
           enabled: hasLines,
         }
       : {
-          queryKey: ['diff', repo, source.path, source.staged, 'syntax'],
-          queryFn: () => api.fileDiffSyntax(repo, source.path, source.staged, source.untracked && !source.staged),
+          queryKey: ['diff', repo, source.path, source.staged, extent, 'syntax'],
+          queryFn: () => api.fileDiffSyntax(repo, source.path, source.staged, source.untracked && !source.staged, full),
           enabled: hasLines,
         },
   )
@@ -72,12 +92,12 @@ export function DiffView({ repo, source, note, conflicted }: { repo: string; sou
   const shown: Mode = narrow ? 'unified' : mode
 
   const changeMode = (m: Mode) => {
-    try {
-      localStorage.setItem('diffMode', m)
-    } catch {
-      // Storage can be unavailable; the choice then lasts until the view closes.
-    }
+    remember('diffMode', m)
     setMode(m)
+  }
+  const changeExtent = (e: Extent) => {
+    remember('diffExtent', e)
+    setExtent(e)
   }
 
   return (
@@ -90,6 +110,14 @@ export function DiffView({ repo, source, note, conflicted }: { repo: string; sou
         </span>
         {note && <span className="diff-note">{note}</span>}
         <div className="spacer" />
+        <div className="segmented" role="group" aria-label="Diff extent">
+          <button className={full ? '' : 'on'} aria-pressed={!full} onClick={() => changeExtent('hunks')}>
+            Hunks
+          </button>
+          <button className={full ? 'on' : ''} aria-pressed={full} onClick={() => changeExtent('full')}>
+            Full file
+          </button>
+        </div>
         <div className="segmented" role="group" aria-label="Diff layout">
           <button className={shown === 'unified' ? 'on' : ''} onClick={() => changeMode('unified')}>
             Unified
@@ -131,7 +159,11 @@ export function DiffView({ repo, source, note, conflicted }: { repo: string; sou
           </div>
         )}
         {diff.data?.hunks.map((h, i) =>
-          shown === 'unified' ? <Unified key={i} hunk={h} syntax={colours} /> : <Split key={i} hunk={h} syntax={colours} />,
+          shown === 'unified' ? (
+            <Unified key={i} hunk={h} syntax={colours} header={!full} />
+          ) : (
+            <Split key={i} hunk={h} syntax={colours} header={!full} />
+          ),
         )}
         {diff.data?.truncated && <div className="banner">Diff truncated: the file is too large to show completely.</div>}
       </div>
@@ -167,13 +199,16 @@ function Code({ text, spans }: { text: string; spans: Span[] | undefined }) {
   return <>{out}</>
 }
 
-function Unified({ hunk, syntax }: { hunk: Hunk; syntax: DiffSyntax | undefined }) {
+/** `header` is off for a full-file diff: its one hunk is the whole file, so the header says nothing. */
+function Unified({ hunk, syntax, header }: { hunk: Hunk; syntax: DiffSyntax | undefined; header: boolean }) {
   return (
     <table className="hunk unified">
       <tbody>
-        <tr className="hunk-header">
-          <td colSpan={3}>{hunk.header}</td>
-        </tr>
+        {header && (
+          <tr className="hunk-header">
+            <td colSpan={3}>{hunk.header}</td>
+          </tr>
+        )}
         {hunk.lines.map((l, i) => (
           <tr key={i} className={l.kind}>
             <td className="ln">{l.oldNo ?? ''}</td>
@@ -200,7 +235,7 @@ function Side({ line, no, syntax }: { line: DiffLine | null; no: number | null |
   )
 }
 
-function Split({ hunk, syntax }: { hunk: Hunk; syntax: DiffSyntax | undefined }) {
+function Split({ hunk, syntax, header }: { hunk: Hunk; syntax: DiffSyntax | undefined; header: boolean }) {
   return (
     // Fixed column widths, so both sides get half whatever their lines are, and every hunk's
     // divider lines up with the next one's.
@@ -212,9 +247,11 @@ function Split({ hunk, syntax }: { hunk: Hunk; syntax: DiffSyntax | undefined })
         <col />
       </colgroup>
       <tbody>
-        <tr className="hunk-header">
-          <td colSpan={4}>{hunk.header}</td>
-        </tr>
+        {header && (
+          <tr className="hunk-header">
+            <td colSpan={4}>{hunk.header}</td>
+          </tr>
+        )}
         {toSplitRows(hunk).map((r, i) => (
           <tr key={i}>
             <Side line={r.left} no={r.left?.oldNo} syntax={syntax} />

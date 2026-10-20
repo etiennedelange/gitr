@@ -60,7 +60,7 @@ describe('diff syntax colours', () => {
     await vi.waitFor(() => expect(tokens('string')).toEqual(['"x"']))
     expect(tokens('keyword')).toEqual(['int', 'var'])
     expect(tokens('comment')).toEqual(['// done'])
-    expect(api.fileDiffSyntax).toHaveBeenCalledWith(PATH, 'a.cs', true, false)
+    expect(api.fileDiffSyntax).toHaveBeenCalledWith(PATH, 'a.cs', true, false, false)
     // The text itself is unchanged, so copying a line copies what the file says.
     expect(screen.getByText('"x"').closest('td')?.textContent).toBe('+var total = "x";')
   })
@@ -76,7 +76,7 @@ describe('diff syntax colours', () => {
   it('drops colours that no longer fit the text', async () => {
     wrap(<DiffView repo={PATH} source={{ kind: 'commit', sha: 'a'.repeat(40), path: 'a.cs', origPath: null }} />)
     await vi.waitFor(() => expect(tokens('keyword')).toEqual(['var']))
-    expect(api.commitFileDiffSyntax).toHaveBeenCalledWith(PATH, 'a'.repeat(40), 'a.cs', null)
+    expect(api.commitFileDiffSyntax).toHaveBeenCalledWith(PATH, 'a'.repeat(40), 'a.cs', null, false)
     expect(tokens('comment')).toEqual([])
     expect(screen.getByText('// done')).toBeInTheDocument()
   })

@@ -66,11 +66,12 @@ export const api = {
     invoke<DiscardOutcome>('discard', { path, tracked, untracked, permanent }),
   lastCommitUndo: (path: string) => invoke<LastCommit | null>('last_commit_undo', { path }),
   undoLastCommit: (path: string) => invoke<string>('undo_last_commit', { path }),
-  fileDiff: (path: string, file: string, staged: boolean, untracked: boolean) =>
-    invoke<FileDiff>('file_diff', { path, file, staged, untracked }),
+  /** `full`: the whole file with its changes inline, instead of only the changed hunks. */
+  fileDiff: (path: string, file: string, staged: boolean, untracked: boolean, full = false) =>
+    invoke<FileDiff>('file_diff', { path, file, staged, untracked, full }),
   /** Syntax colours for `fileDiff`'s lines; slower, so the diff shows first. */
-  fileDiffSyntax: (path: string, file: string, staged: boolean, untracked: boolean) =>
-    invoke<DiffSyntax>('file_diff_syntax', { path, file, staged, untracked }),
+  fileDiffSyntax: (path: string, file: string, staged: boolean, untracked: boolean, full = false) =>
+    invoke<DiffSyntax>('file_diff_syntax', { path, file, staged, untracked, full }),
   commit: (path: string, message: string, amend: boolean, skipHooks = false) =>
     invoke<string>('commit', { path, message, amend, skipHooks }),
   lastCommitMessage: (path: string) => invoke<string>('last_commit_message', { path }),
@@ -105,10 +106,10 @@ export const api = {
   /** HEAD's history, newest first. */
   log: (path: string, skip: number, limit: number) => invoke<LogPage>('log', { path, skip, limit }),
   commitDetails: (path: string, sha: string) => invoke<CommitDetails>('commit_details', { path, sha }),
-  commitFileDiff: (path: string, sha: string, file: string, origPath: string | null) =>
-    invoke<FileDiff>('commit_file_diff', { path, sha, file, origPath }),
-  commitFileDiffSyntax: (path: string, sha: string, file: string, origPath: string | null) =>
-    invoke<DiffSyntax>('commit_file_diff_syntax', { path, sha, file, origPath }),
+  commitFileDiff: (path: string, sha: string, file: string, origPath: string | null, full = false) =>
+    invoke<FileDiff>('commit_file_diff', { path, sha, file, origPath, full }),
+  commitFileDiffSyntax: (path: string, sha: string, file: string, origPath: string | null, full = false) =>
+    invoke<DiffSyntax>('commit_file_diff_syntax', { path, sha, file, origPath, full }),
   resetPreview: (path: string, sha: string) => invoke<ResetPreview>('reset_preview', { path, sha }),
   /** A new commit that undoes `sha`; stops in the Reverting state on conflicts. */
   revertCommit: (path: string, sha: string) => invoke<IntegrateOutcome>('revert_commit', { path, sha }),

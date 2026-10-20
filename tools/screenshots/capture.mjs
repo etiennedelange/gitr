@@ -51,6 +51,8 @@ const SCENES = {
   history: { scenario: 'default', view: 'repo', repo: 'billing-service', tab: 'history' },
   // `diff` is not a preview parameter: it sets the remembered diff mode before the page loads.
   split: { scenario: 'default', view: 'repo', repo: 'billing-service', file: 'InvoiceExporter.cs', diff: 'split' },
+  // `extent` is not a preview parameter either: it sets the remembered Hunks / Full file choice.
+  'full-file': { scenario: 'default', view: 'repo', repo: 'billing-service', file: 'InvoiceExporter.cs', extent: 'full' },
   conflict: { scenario: 'default', view: 'repo', repo: 'identity-server' },
   'first-run': { scenario: 'empty' },
   // `wait` is not a preview parameter: the update check runs 5 s after startup.
@@ -66,9 +68,10 @@ const LOOK = {
   dark: { bar: '#202020', ink: '#ffffff', glows: ['#3d4a3c', '#3a4380'], base: '#101210' },
 }
 
-async function captureRaw(browser, url, theme, { diff, wait, ...params }, out) {
+async function captureRaw(browser, url, theme, { diff, extent, wait, ...params }, out) {
   const ctx = await browser.newContext({ viewport: { width: W, height: CLIENT_H }, deviceScaleFactor: 2 })
   if (diff) await ctx.addInitScript((mode) => localStorage.setItem('diffMode', mode), diff)
+  if (extent) await ctx.addInitScript((e) => localStorage.setItem('diffExtent', e), extent)
   const page = await ctx.newPage()
   const q = new URLSearchParams({ chrome: '0', theme, ...params })
   await page.goto(`${url}preview.html?${q}`)
