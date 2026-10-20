@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent, type ReactNode, type RefObject } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { api, errorMessage } from '../api'
@@ -6,6 +6,7 @@ import { dirName, fileName, toSplitRows } from '../lib/git'
 import type { DiffLine, DiffSyntax, FileDiff, Span } from '../types'
 import { diffMenu } from '../lib/menus'
 import { copyText, showMenu } from '../nativeMenu'
+import { createWheelZoomAccumulator, DEFAULT_ZOOM, stepZoom, ZOOM_PRESETS } from '../lib/zoom'
 
 type Mode = 'unified' | 'split'
 /** Only the changed hunks, or the whole file with its changes inline. */
@@ -42,6 +43,51 @@ function remember(key: string, value: string) {
   } catch {
     // Storage can be unavailable; the choice then lasts until the view closes.
   }
+}
+
+function loadTextZoom(): number {
+  try {
+    const z = Number(localStorage.getItem('diffZoom'))
+    return (ZOOM_PRESETS as readonly number[]).includes(z) ? z : DEFAULT_ZOOM
+  } catch {
+    return DEFAULT_ZOOM
+  }
+}
+
+/**
+ * Ctrl + wheel and Ctrl +/−/0 over the diff size its text alone, one zoom preset per step,
+ * remembered across diffs. The app-wide zoom leaves wheel events inside `data-own-zoom` to this.
+ */
+function useTextZoom(root: RefObject<HTMLDivElement | null>) {
+  const [zoom, setZoom] = useState(loadTextZoom)
+  const first = useRef(true)
+  useEffect(() => {
+    if (first.current) first.current = false
+    else remember('diffZoom', String(zoom))
+  }, [zoom])
+  useEffect(() => {
+    const el = root.current
+    if (!el) return
+    const accumulate = createWheelZoomAccumulator()
+    const onWheel = (e: WheelEvent) => {
+      if (!e.ctrlKey) return
+      e.preventDefault()
+      const dir = accumulate(e.deltaY, e.deltaMode)
+      if (dir) setZoom((z) => stepZoom(z, dir))
+    }
+    el.addEventListener('wheel', onWheel, { passive: false })
+    return () => el.removeEventListener('wheel', onWheel)
+  }, [root])
+  const onKeyDown = (e: KeyboardEvent) => {
+    if (!e.ctrlKey || e.altKey) return
+    const k = e.key
+    if (k === '=' || k === '+') setZoom(stepZoom(zoom, 1))
+    else if (k === '-' || k === '_') setZoom(stepZoom(zoom, -1))
+    else if (k === '0') setZoom(DEFAULT_ZOOM)
+    else return
+    e.preventDefault()
+  }
+  return { zoom, reset: () => setZoom(DEFAULT_ZOOM), onKeyDown }
 }
 
 /** Where the diff comes from: the working tree (Changes) or a commit (History). */
@@ -96,6 +142,7 @@ export function DiffView({ repo, source, note, conflicted }: { repo: string; sou
     return () => ro.disconnect()
   }, [])
   const shown: Mode = narrow ? 'unified' : mode
+  const text = useTextZoom(root)
   const body = useRef<HTMLDivElement>(null)
 
   const changeMode = (m: Mode) => {
@@ -108,7 +155,13 @@ export function DiffView({ repo, source, note, conflicted }: { repo: string; sou
   }
 
   return (
-    <div className="diff" ref={root}>
+    <div
+      className="diff"
+      ref={root}
+      data-own-zoom
+      style={text.zoom === DEFAULT_ZOOM ? undefined : ({ '--diff-zoom': text.zoom / 100 } as CSSProperties)}
+      onKeyDown={text.onKeyDown}
+    >
       <div className="diff-head">
         <span className="diff-path ellipsis selectable" title={source.origPath ? `${source.origPath} → ${source.path}` : source.path}>
           {source.origPath ? <span className="diff-dir">{source.origPath} → </span> : null}
@@ -117,6 +170,11 @@ export function DiffView({ repo, source, note, conflicted }: { repo: string; sou
         </span>
         {note && <span className="diff-note">{note}</span>}
         <div className="spacer" />
+        {text.zoom !== DEFAULT_ZOOM && (
+          <button className="diff-zoom-level" title="Diff text size (Ctrl + scroll). Click to reset." onClick={text.reset}>
+            {text.zoom}%
+          </button>
+        )}
         <div className="segmented" role="group" aria-label="Diff extent">
           <button className={full ? '' : 'on'} aria-pressed={!full} onClick={() => changeExtent('hunks')}>
             Hunks
@@ -166,7 +224,7 @@ export function DiffView({ repo, source, note, conflicted }: { repo: string; sou
               : 'No textual changes'}
           </div>
         )}
-        {hasLines && <Rows key={shown} diff={diff.data} mode={shown} syntax={colours} header={!full} body={body} />}
+        {hasLines && <Rows key={shown} diff={diff.data} mode={shown} syntax={colours} header={!full} body={body} zoom={text.zoom} />}
         {diff.data?.truncated && <div className="banner">Diff truncated: the file is too large to show completely.</div>}
       </div>
     </div>
@@ -247,26 +305,34 @@ function Rows({
   syntax,
   header,
   body,
+  zoom,
 }: {
   diff: FileDiff
   mode: Mode
   syntax: DiffSyntax | undefined
   header: boolean
-  body: React.RefObject<HTMLDivElement | null>
+  body: RefObject<HTMLDivElement | null>
+  /** The diff's text zoom in percent: rows not yet drawn are estimated at that size. */
+  zoom: number
 }) {
   const items = useMemo(() => diffItems(diff, mode, header), [diff, mode, header])
   const virtual = items.length > VIRTUAL_MIN_ROWS
+  const rowH = (ROW_H * zoom) / 100
   const rows = useVirtualizer({
     count: items.length,
     getScrollElement: () => body.current,
-    estimateSize: (i) => (items[i].kind === 'gap' ? 12 : ROW_H),
+    estimateSize: (i) => (items[i].kind === 'gap' ? 13 : rowH),
     // A hidden pane measures every row as 0 high, which would draw all of them.
-    measureElement: (el) => el.getBoundingClientRect().height || ROW_H,
+    measureElement: (el) => el.getBoundingClientRect().height || rowH,
     overscan: 30,
     // The first screen of rows is drawn at once, before the pane has been measured.
     initialRect: { width: 0, height: 1200 },
     enabled: virtual,
   })
+  // A new text size makes every row taller or shorter: drop the old measurements.
+  useEffect(() => {
+    rows.measure?.()
+  }, [rows, zoom])
   const cols = mode === 'unified' ? 3 : 4
   const draw = (item: Item, key: number, measure?: boolean) => {
     const ref = measure ? rows.measureElement : undefined
