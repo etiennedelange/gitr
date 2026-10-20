@@ -121,7 +121,10 @@ async fn cancel_kills_hooks_too() {
 #[tokio::test]
 async fn cancel_kills_what_the_hook_started() {
     let (_t, dir) = repo_with_commit();
-    let hook = "#!/bin/sh\necho started > .git/hook-started\nsh -c 'sleep 2; echo survived > .git/hook-child-survived'\n";
+    // The child writes the start marker itself, so it exists before the test cancels. When the
+    // hook wrote it, the test could cancel while the shell was still forking the child, and the
+    // child could start after the kill had reached the group.
+    let hook = "#!/bin/sh\nsh -c 'echo started > .git/hook-started; sleep 2; echo survived > .git/hook-child-survived'\n";
     write_hook(&dir, "pre-commit", hook);
     write(&dir, "a.txt", "two\n");
     git(&dir, &["add", "a.txt"]);
