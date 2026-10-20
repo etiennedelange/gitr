@@ -22,7 +22,7 @@ const wheel = (target: EventTarget, init: WheelEventInit) => {
 describe('useWheelZoom', () => {
   beforeEach(() => {
     vi.mocked(api.setZoom).mockClear()
-    useApp.setState({ zoom: 100, toasts: [] })
+    useApp.setState({ zoom: 100, diffZoom: 100, toasts: [] })
   })
   afterEach(cleanup)
 
@@ -83,5 +83,29 @@ describe('useWheelZoom', () => {
     await act(async () => {})
     expect(useApp.getState().zoom).toBe(100)
     expect(useApp.getState().toasts.at(-1)?.kind).toBe('error')
+  })
+
+  it('over a diff, zooms only the diff and remembers it', () => {
+    renderHook(() => useWheelZoom(100))
+    const { container } = render(
+      <div data-zoom="diff">
+        <table>
+          <tbody>
+            <tr>
+              <td>code</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>,
+    )
+    const cell = container.querySelector('td')!
+    expect(wheel(cell, { ctrlKey: true, deltaY: -100 }).defaultPrevented).toBe(true)
+    expect(useApp.getState().diffZoom).toBe(110)
+    expect(useApp.getState().zoom).toBe(100)
+    expect(api.setZoom).not.toHaveBeenCalled()
+    expect(localStorage.getItem('diffZoom')).toBe('110')
+    wheel(cell, { ctrlKey: true, deltaY: 100 })
+    expect(useApp.getState().diffZoom).toBe(100)
+    expect(localStorage.getItem('diffZoom')).toBeNull()
   })
 })

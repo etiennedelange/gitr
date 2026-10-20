@@ -1,10 +1,12 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { api, errorMessage } from '../api'
 import { dirName, fileName, toSplitRows } from '../lib/git'
 import type { DiffLine, DiffSyntax, Hunk, Span } from '../types'
 import { diffMenu } from '../lib/menus'
 import { copyText, showMenu } from '../nativeMenu'
+import { DEFAULT_ZOOM } from '../lib/zoom'
+import { useApp } from '../store'
 
 type Mode = 'unified' | 'split'
 
@@ -20,6 +22,26 @@ function loadMode(): Mode {
   }
 }
 
+/**
+ * Clicking or arrowing quickly through files: a diff opened within this long of the previous one
+ * waits until the selection rests, so the files passed over run no git.
+ */
+const SETTLE_MS = 150
+let lastOpened = 0
+
+function useSettled(): boolean {
+  const [settled, setSettled] = useState(() => Date.now() - lastOpened >= SETTLE_MS)
+  useEffect(() => {
+    lastOpened = Date.now()
+  }, [])
+  useEffect(() => {
+    if (settled) return
+    const t = setTimeout(() => setSettled(true), SETTLE_MS)
+    return () => clearTimeout(t)
+  }, [settled])
+  return settled
+}
+
 /** Where the diff comes from: the working tree (Changes) or a commit (History). */
 export type DiffSource =
   | { kind: 'worktree'; path: string; origPath: string | null; staged: boolean; untracked: boolean }
@@ -27,6 +49,9 @@ export type DiffSource =
 
 export function DiffView({ repo, source, note, conflicted }: { repo: string; source: DiffSource; note?: string; conflicted?: boolean }) {
   const [mode, setMode] = useState<Mode>(loadMode)
+  const settled = useSettled()
+  const diffZoom = useApp((s) => s.diffZoom)
+  const setDiffZoom = useApp((s) => s.setDiffZoom)
   // Commit diffs never change, so they stay cached; worktree diffs are invalidated on refresh.
   const diff = useQuery(
     source.kind === 'commit'
@@ -34,10 +59,12 @@ export function DiffView({ repo, source, note, conflicted }: { repo: string; sou
           queryKey: ['commitDiff', repo, source.sha, source.path],
           queryFn: () => api.commitFileDiff(repo, source.sha, source.path, source.origPath),
           staleTime: Infinity,
+          enabled: settled,
         }
       : {
           queryKey: ['diff', repo, source.path, source.staged],
           queryFn: () => api.fileDiff(repo, source.path, source.staged, source.untracked && !source.staged),
+          enabled: settled,
         },
   )
 
@@ -81,7 +108,7 @@ export function DiffView({ repo, source, note, conflicted }: { repo: string; sou
   }
 
   return (
-    <div className="diff" ref={root}>
+    <div className="diff" ref={root} data-zoom="diff">
       <div className="diff-head">
         <span className="diff-path ellipsis selectable" title={source.origPath ? `${source.origPath} → ${source.path}` : source.path}>
           {source.origPath ? <span className="diff-dir">{source.origPath} → </span> : null}
@@ -90,6 +117,11 @@ export function DiffView({ repo, source, note, conflicted }: { repo: string; sou
         </span>
         {note && <span className="diff-note">{note}</span>}
         <div className="spacer" />
+        {diffZoom !== DEFAULT_ZOOM && (
+          <button className="small diff-zoom" title="Diff zoom (Ctrl + scroll over the diff). Click to reset." onClick={() => setDiffZoom(DEFAULT_ZOOM)}>
+            {diffZoom}%
+          </button>
+        )}
         <div className="segmented" role="group" aria-label="Diff layout">
           <button className={shown === 'unified' ? 'on' : ''} onClick={() => changeMode('unified')}>
             Unified
@@ -110,13 +142,14 @@ export function DiffView({ repo, source, note, conflicted }: { repo: string; sou
         tabIndex={0}
         data-pane
         aria-label={`Diff of ${source.path}`}
+        style={diffZoom !== DEFAULT_ZOOM ? ({ '--diff-zoom': diffZoom / 100 } as CSSProperties) : undefined}
         onContextMenu={(e) => {
           e.preventDefault()
           const text = window.getSelection()?.toString() ?? ''
           void showMenu(diffMenu({ hasSelection: !!text }, { copy: () => void copyText(text) }))
         }}
       >
-        {diff.isLoading && (
+        {(diff.isLoading || (!settled && !diff.data)) && (
           <div className="empty loading" role="status">
             Loading…
           </div>

@@ -5,6 +5,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+- **Zoom just the diff.** Ctrl + scroll over a diff now makes its code larger or smaller without zooming the rest of the window; elsewhere Ctrl + scroll still zooms everything. The diff's zoom is remembered, and while it isn't 100% its size shows above the diff; click it to go back to 100%.
+
+### Changed
+- **Fewer git processes when opening diffs.** Opening a diff ran git four times on the Changes tab (six for a staged file, nine for a commit in History); it now runs it two to four times. Clicking or arrowing quickly through files no longer runs git for the files you pass over: the diff loads once the selection rests.
+
 ## [0.1.8] - 2026-10-19
 
 ### Added

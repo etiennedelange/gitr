@@ -2140,6 +2140,10 @@ button.ai.generating .ico {
   flex: 1;
   overflow: auto;
 }
+.diff-zoom {
+  flex: none;
+  font-variant-numeric: tabular-nums;
+}
 .diff-empty {
   display: flex;
   align-items: center;
@@ -2152,7 +2156,7 @@ button.ai.generating .ico {
   margin-bottom: var(--s5);
   border-collapse: collapse;
   font-family: var(--font-mono);
-  font-size: var(--fs-mono);
+  font-size: calc(var(--fs-mono) * var(--diff-zoom, 1));
   line-height: 1.6;
   font-variant-ligatures: none;
 }
@@ -2162,7 +2166,7 @@ button.ai.generating .ico {
 }
 .hunk .ln {
   width: 1%;
-  min-width: 44px;
+  min-width: calc(44px * var(--diff-zoom, 1));
   color: var(--ink-3);
   text-align: right;
   white-space: nowrap;
@@ -2196,7 +2200,7 @@ button.ai.generating .ico {
 }
 .hunk .sign {
   display: inline-block;
-  width: 14px;
+  width: calc(14px * var(--diff-zoom, 1));
   color: var(--ink-3);
   user-select: none;
 }
@@ -2246,7 +2250,7 @@ button.ai.generating .ico {
   table-layout: fixed;
 }
 .hunk.split col.ln-col {
-  width: 52px;
+  width: calc(52px * var(--diff-zoom, 1));
 }
 .hunk.split .ln {
   width: auto;

@@ -168,6 +168,18 @@ impl GitRunner {
         args: &[&str],
         opts: RunOpts<'_>,
     ) -> Result<String, GitError> {
+        self.run_bytes(cwd, kind, args, opts).await.map(|out| crate::pathbytes::decode(&out))
+    }
+
+    /// Like [`Self::run_with`], but stdout as git printed it, for output measured in bytes
+    /// (`cat-file --batch`).
+    pub async fn run_bytes(
+        &self,
+        cwd: &Path,
+        kind: Kind,
+        args: &[&str],
+        opts: RunOpts<'_>,
+    ) -> Result<Vec<u8>, GitError> {
         let op = args.first().copied().unwrap_or("git");
         let started = Instant::now();
         let result = self.exec(cwd, kind, args, &opts).await;
@@ -181,7 +193,7 @@ impl GitRunner {
             Err(GitError::failed(op, &cwd.to_string_lossy(), out.code, &stderr, &stdout))
         });
         log_call(op, kind, args, cwd, elapsed, &result);
-        result.map(|out| crate::pathbytes::decode(&out.stdout))
+        result.map(|out| out.stdout)
     }
 
     async fn exec(&self, cwd: &Path, kind: Kind, args: &[&str], opts: &RunOpts<'_>) -> Result<Outcome, GitError> {

@@ -441,7 +441,7 @@ function SettingsForm({ saved }: { saved: Config }) {
               </select>
             </label>
             <p className="zoom-level">
-              Zoom: {zoom}% <span className="muted">— Ctrl + scroll to change</span>
+              Zoom: {zoom}% <span className="muted">— Ctrl + scroll to change; over a diff, it zooms only the diff</span>
             </p>
           </section>
 
@@ -479,6 +479,7 @@ function SettingsForm({ saved }: { saved: Config }) {
                   ['Ctrl+Shift+Enter', 'Commit & push'],
                   ['Ctrl+O', 'Open branch in browser'],
                   ['Ctrl+Scroll', 'Zoom in / out'],
+                  ['Ctrl+Scroll over a diff', 'Zoom only the diff'],
                 ].map(([k, v]) => (
                   <tr key={k}>
                     <td>

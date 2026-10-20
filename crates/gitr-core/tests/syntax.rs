@@ -68,3 +68,75 @@ async fn commit_diffs_are_coloured_from_the_parent_and_the_commit_across_a_renam
     assert_eq!(line(&s, true, 4), comment("count"), "{s:?}");
     assert_eq!(line(&s, false, 4), comment("total"), "{s:?}");
 }
+
+#[tokio::test]
+async fn colouring_reuses_the_diff_just_shown_and_reads_both_files_with_two_processes() {
+    let (_t, dir) = repo_with_commit();
+    write(&dir, "Orders.cs", &source("count"));
+    git(&dir, &["add", "Orders.cs"]);
+    git(&dir, &["commit", "-q", "-m", "orders"]);
+    write(&dir, "Orders.cs", &source("total"));
+    git(&dir, &["add", "Orders.cs"]);
+    let sha = git_out(&dir, &["rev-parse", "HEAD"]).trim().to_string();
+    let g = isolated_git();
+
+    // Staged: HEAD and the index are both blobs.
+    let log = LogCapture::start();
+    g.diff_file(&dir, "Orders.cs", true, false).await.unwrap();
+    let s = g.diff_file_syntax(&dir, "Orders.cs", true, false).await.unwrap();
+    assert_eq!(line(&s, true, 4), comment("count"), "{s:?}");
+    assert_eq!(line(&s, false, 4), comment("total"), "{s:?}");
+    assert_eq!(log.git_lines("diff").len(), 1, "{}", log.text());
+    assert_eq!(log.git_lines("cat-file").len(), 2, "{}", log.text());
+    drop(log);
+
+    // A commit: its parent is remembered with the diff.
+    let log = LogCapture::start();
+    g.commit_file_diff(&dir, &sha, "Orders.cs", None).await.unwrap();
+    let s = g.commit_file_diff_syntax(&dir, &sha, "Orders.cs", None).await.unwrap();
+    assert_eq!(line(&s, false, 4), comment("count"), "{s:?}");
+    assert_eq!(log.git_lines("rev-list").len(), 1, "{}", log.text());
+    assert_eq!(log.git_lines("diff-tree").len(), 1, "{}", log.text());
+    assert_eq!(log.git_lines("cat-file").len(), 2, "{}", log.text());
+    drop(log);
+
+    // Taken once: a second colouring runs the diff itself.
+    let log = LogCapture::start();
+    g.diff_file_syntax(&dir, "Orders.cs", true, false).await.unwrap();
+    assert_eq!(log.git_lines("diff").len(), 1, "{}", log.text());
+}
+
+#[tokio::test]
+async fn a_new_file_is_coloured_when_one_side_is_missing() {
+    let (_t, dir) = repo_with_commit();
+    write(&dir, "New.cs", &source("n"));
+    git(&dir, &["add", "New.cs"]);
+    // HEAD:New.cs is missing and :0:New.cs is not, in the same cat-file call.
+    let s = isolated_git().diff_file_syntax(&dir, "New.cs", true, false).await.unwrap();
+    assert_eq!(line(&s, false, 4), comment("n"), "{s:?}");
+    assert!(s.old.is_empty());
+}
+
+#[tokio::test]
+async fn colours_follow_the_diff_shown_until_the_repository_changes() {
+    let (_t, dir) = repo_with_commit();
+    write(&dir, "Orders.cs", &source("count"));
+    git(&dir, &["add", "Orders.cs"]);
+    git(&dir, &["commit", "-q", "-m", "orders"]);
+    let g = isolated_git();
+
+    // The file changes after its diff was shown, but before the change is noticed: the colours
+    // are still for the diff on screen (line 4 changed, not line 5).
+    write(&dir, "Orders.cs", &source("total"));
+    g.diff_file(&dir, "Orders.cs", false, false).await.unwrap();
+    write(&dir, "Orders.cs", &format!("// moved\n{}", source("total")));
+    let s = g.diff_file_syntax(&dir, "Orders.cs", false, false).await.unwrap();
+    assert_eq!(line(&s, true, 4), comment("count"), "{s:?}");
+
+    // Once noticed, the remembered diff is dropped and the new one is coloured.
+    g.diff_file(&dir, "Orders.cs", false, false).await.unwrap();
+    g.forget_diffs(&dir);
+    let s = g.diff_file_syntax(&dir, "Orders.cs", false, false).await.unwrap();
+    assert_eq!(line(&s, false, 5), comment("total"), "{s:?}");
+    assert_eq!(line(&s, false, 1), vec![Span(0, 8, Token::Comment)], "{s:?}");
+}

@@ -1,7 +1,7 @@
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet, VecDeque};
 use std::ffi::OsString;
 use std::path::{Component, Path, PathBuf};
-use std::sync::Arc;
+use std::sync::{Arc, Mutex};
 
 use serde::Serialize;
 
@@ -55,11 +55,75 @@ pub struct StagedChanges {
 #[derive(Debug, Clone, Default)]
 pub struct Git {
     runner: GitRunner,
+    /// Shared by every clone, like the runner.
+    diffs: Arc<Mutex<DiffCache>>,
+}
+
+/// The diffs the UI was just sent, so the syntax request that follows each one colours that
+/// same diff instead of running git for it again. Each is taken once.
+#[derive(Debug, Default)]
+struct DiffCache {
+    entries: VecDeque<(PathBuf, String, CachedDiff)>,
+    /// Per repository, bumped by [`Git::forget_diffs`]: a diff git made before the repository
+    /// changed is not kept, so colours are never worked out for a diff the UI has replaced.
+    generations: HashMap<PathBuf, u64>,
+}
+
+#[derive(Debug, Clone)]
+struct CachedDiff {
+    diff: FileDiff,
+    /// A commit diff's first parent (None for a root commit or a working-tree diff).
+    base: Option<String>,
+}
+
+/// Enough for the diffs whose syntax requests are still on their way.
+const CACHED_DIFFS: usize = 8;
+
+fn worktree_diff_key(path: &str, staged: bool, untracked: bool) -> String {
+    format!("w\0{staged}\0{untracked}\0{path}")
+}
+
+fn commit_diff_key(sha: &str, path: &str, orig_path: Option<&str>) -> String {
+    format!("c\0{sha}\0{}\0{path}", orig_path.unwrap_or(""))
 }
 
 impl Git {
     pub fn new(runner: GitRunner) -> Self {
-        Self { runner }
+        Self { runner, diffs: Default::default() }
+    }
+
+    fn diff_cache(&self) -> std::sync::MutexGuard<'_, DiffCache> {
+        self.diffs.lock().unwrap_or_else(|e| e.into_inner())
+    }
+
+    fn diff_generation(&self, repo: &Path) -> u64 {
+        self.diff_cache().generations.get(repo).copied().unwrap_or(0)
+    }
+
+    fn keep_diff(&self, repo: &Path, key: String, generation: u64, diff: CachedDiff) {
+        let mut cache = self.diff_cache();
+        if cache.generations.get(repo).copied().unwrap_or(0) != generation {
+            return;
+        }
+        cache.entries.retain(|(r, k, _)| !(r == repo && *k == key));
+        if cache.entries.len() == CACHED_DIFFS {
+            cache.entries.pop_front();
+        }
+        cache.entries.push_back((repo.to_path_buf(), key, diff));
+    }
+
+    fn take_diff(&self, repo: &Path, key: &str) -> Option<CachedDiff> {
+        let mut cache = self.diff_cache();
+        let i = cache.entries.iter().position(|(r, k, _)| r == repo && k == key)?;
+        cache.entries.remove(i).map(|(_, _, d)| d)
+    }
+
+    /// Drops what is remembered of `repo`'s diffs. Call it when the repository changes, before
+    /// the UI asks for its diffs again.
+    pub fn forget_diffs(&self, repo: &Path) {
+        let mut cache = self.diff_cache();
+        cache.entries.retain(|(r, _, _)| r != repo);
+        *cache.generations.entry(repo.to_path_buf()).or_default() += 1;
     }
 
     pub fn runner(&self) -> &GitRunner {
@@ -383,6 +447,14 @@ impl Git {
         staged: bool,
         untracked: bool,
     ) -> Result<FileDiff, GitError> {
+        let generation = self.diff_generation(repo);
+        let diff = self.read_diff_file(repo, path, staged, untracked).await?;
+        let key = worktree_diff_key(path, staged, untracked);
+        self.keep_diff(repo, key, generation, CachedDiff { diff: diff.clone(), base: None });
+        Ok(diff)
+    }
+
+    async fn read_diff_file(&self, repo: &Path, path: &str, staged: bool, untracked: bool) -> Result<FileDiff, GitError> {
         let out = if untracked {
             self.runner
                 .run_with(
@@ -468,6 +540,14 @@ impl Git {
     /// The diff of one file in a commit, against the commit's first parent (or the empty tree).
     /// `orig_path` is the old name of a renamed file, so the rename is shown as one diff.
     pub async fn commit_file_diff(&self, repo: &Path, sha: &str, path: &str, orig_path: Option<&str>) -> Result<FileDiff, GitError> {
+        let generation = self.diff_generation(repo);
+        let cached = self.read_commit_file_diff(repo, sha, path, orig_path).await?;
+        let diff = cached.diff.clone();
+        self.keep_diff(repo, commit_diff_key(sha, path, orig_path), generation, cached);
+        Ok(diff)
+    }
+
+    async fn read_commit_file_diff(&self, repo: &Path, sha: &str, path: &str, orig_path: Option<&str>) -> Result<CachedDiff, GitError> {
         check_object_id(sha)?;
         let parents = self.parents_of(repo, sha).await?;
         let mut args = vec!["diff-tree", "-p", "-M", "--no-ext-diff", "--no-commit-id"];
@@ -481,13 +561,17 @@ impl Git {
         }
         args.push(path);
         let out = self.runner.run(repo, Kind::Read, &args).await?;
-        Ok(diff::parse_unified(&out))
+        Ok(CachedDiff { diff: diff::parse_unified(&out), base: parents.into_iter().next() })
     }
 
     /// Syntax colours for [`Self::diff_file`]'s lines, from the files on both sides: the index
-    /// against the working tree, or HEAD against the index when `staged`.
+    /// against the working tree, or HEAD against the index when `staged`. Colours the diff
+    /// `diff_file` just returned when it is remembered.
     pub async fn diff_file_syntax(&self, repo: &Path, path: &str, staged: bool, untracked: bool) -> Result<DiffSyntax, GitError> {
-        let diff = self.diff_file(repo, path, staged, untracked).await?;
+        let diff = match self.take_diff(repo, &worktree_diff_key(path, staged, untracked)) {
+            Some(cached) => cached.diff,
+            None => self.read_diff_file(repo, path, staged, untracked).await?,
+        };
         let index = Text::Blob(format!(":0:{path}"));
         let (old, new) = match (untracked, staged) {
             (true, _) => (Text::None, Text::Disk),
@@ -499,8 +583,11 @@ impl Git {
 
     /// Syntax colours for [`Self::commit_file_diff`]'s lines.
     pub async fn commit_file_diff_syntax(&self, repo: &Path, sha: &str, path: &str, orig_path: Option<&str>) -> Result<DiffSyntax, GitError> {
-        let diff = self.commit_file_diff(repo, sha, path, orig_path).await?;
-        let old = match self.parents_of(repo, sha).await?.first() {
+        let CachedDiff { diff, base } = match self.take_diff(repo, &commit_diff_key(sha, path, orig_path)) {
+            Some(cached) => cached,
+            None => self.read_commit_file_diff(repo, sha, path, orig_path).await?,
+        };
+        let old = match base {
             Some(parent) => Text::Blob(format!("{parent}:{}", orig_path.unwrap_or(path))),
             None => Text::None,
         };
@@ -509,8 +596,9 @@ impl Git {
 
     async fn syntax_of(&self, repo: &Path, path: &str, diff: FileDiff, old: Text, new: Text) -> DiffSyntax {
         let (old_needed, new_needed) = highlight::sides_needed(&diff);
-        let old = if old_needed { self.text_of(repo, path, &old).await } else { None };
-        let new = if new_needed { self.text_of(repo, path, &new).await } else { None };
+        let old = if old_needed { old } else { Text::None };
+        let new = if new_needed { new } else { Text::None };
+        let [old, new] = self.texts_of(repo, path, [old, new]).await;
         // Colouring is CPU work, at most HIGHLIGHT_BUDGET of it; lines it didn't reach stay plain.
         let deadline = std::time::Instant::now() + HIGHLIGHT_BUDGET;
         let path = path.to_string();
@@ -519,32 +607,72 @@ impl Git {
             .unwrap_or_default()
     }
 
-    /// A file's text for colouring, as the diff shows it. None when it is missing or too large.
-    async fn text_of(&self, repo: &Path, path: &str, text: &Text) -> Option<String> {
-        let bytes = match text {
-            Text::None => return None,
-            Text::Disk => {
-                if !is_safe_relative(path) {
-                    return None;
-                }
-                let file = repo.join(crate::pathbytes::to_os(path));
-                let meta = tokio::fs::metadata(&file).await.ok()?;
-                if !meta.is_file() || meta.len() > highlight::MAX_SOURCE_BYTES {
-                    return None;
-                }
-                crate::pathbytes::decode(&tokio::fs::read(&file).await.ok()?)
-            }
-            Text::Blob(spec) => {
-                // 128: no such object (a new file, an unborn HEAD, a conflict with no stage 0).
-                let missing = RunOpts { ok_codes: &[128], ..Default::default() };
-                let size = self.runner.run_with(repo, Kind::Read, &["cat-file", "-s", spec], missing).await.ok()?;
-                if size.trim().parse::<u64>().ok()? > highlight::MAX_SOURCE_BYTES {
-                    return None;
-                }
-                self.runner.run(repo, Kind::Read, &["cat-file", "blob", spec]).await.ok()?
-            }
+    /// Files' text for colouring, as the diff shows them. None when missing or too large. Every
+    /// blob among them is read by the same two git processes.
+    async fn texts_of<const N: usize>(&self, repo: &Path, path: &str, texts: [Text; N]) -> [Option<String>; N] {
+        let specs: Vec<&str> = texts.iter().filter_map(|t| if let Text::Blob(spec) = t { Some(spec.as_str()) } else { None }).collect();
+        let mut blobs = self.read_blobs(repo, &specs).await.into_iter();
+        let mut out = [const { None }; N];
+        for (text, slot) in texts.iter().zip(&mut out) {
+            *slot = match text {
+                Text::None => None,
+                Text::Disk => disk_text(repo, path).await,
+                Text::Blob(_) => blobs.next().flatten().map(|bytes| crate::pathbytes::display(&crate::pathbytes::decode(&bytes))),
+            };
+        }
+        out
+    }
+
+    /// Blobs by `<rev>:<path>` spec: their sizes first, so nothing larger than
+    /// [`highlight::MAX_SOURCE_BYTES`] is read, then their contents. Two git processes however
+    /// many specs. None for a spec that is missing (a new file, an unborn HEAD, a conflict with
+    /// no stage 0) or too large.
+    async fn read_blobs(&self, repo: &Path, specs: &[&str]) -> Vec<Option<Vec<u8>>> {
+        let mut out = vec![None; specs.len()];
+        // cat-file takes one spec per line, so a name with a line break can't be asked for.
+        let askable: Vec<usize> = (0..specs.len()).filter(|&i| !specs[i].contains(['\n', '\r'])).collect();
+        let lines = |which: &[usize]| -> Vec<u8> {
+            which.iter().flat_map(|&i| [crate::pathbytes::to_bytes(specs[i]), vec![b'\n']].concat()).collect()
         };
-        Some(crate::pathbytes::display(&bytes))
+        if askable.is_empty() {
+            return out;
+        }
+        let input = lines(&askable);
+        let opts = RunOpts { stdin: Some(&input), ..Default::default() };
+        // One line per spec: `blob <size>`, or `<spec> missing`.
+        let Ok(sizes) = self.runner.run_with(repo, Kind::Read, &["cat-file", "--batch-check=%(objecttype) %(objectsize)"], opts).await else {
+            return out;
+        };
+        let wanted: Vec<usize> = askable
+            .iter()
+            .zip(sizes.lines())
+            .filter(|(_, line)| line.strip_prefix("blob ").and_then(|n| n.parse::<u64>().ok()).is_some_and(|n| n <= highlight::MAX_SOURCE_BYTES))
+            .map(|(&i, _)| i)
+            .collect();
+        if wanted.is_empty() {
+            return out;
+        }
+        let input = lines(&wanted);
+        let opts = RunOpts { stdin: Some(&input), ..Default::default() };
+        let Ok(raw) = self.runner.run_bytes(repo, Kind::Read, &["cat-file", "--batch"], opts).await else {
+            return out;
+        };
+        // Each: `<oid> blob <size>\n<content>\n`, or `<spec> missing\n` if it went in between.
+        let mut rest = raw.as_slice();
+        for i in wanted {
+            let Some(end) = rest.iter().position(|&b| b == b'\n') else { break };
+            let header = String::from_utf8_lossy(&rest[..end]).into_owned();
+            rest = &rest[end + 1..];
+            let Some(size) = header.rsplit(' ').next().and_then(|n| n.parse::<usize>().ok()) else { continue };
+            if rest.len() <= size {
+                break;
+            }
+            if size as u64 <= highlight::MAX_SOURCE_BYTES {
+                out[i] = Some(rest[..size].to_vec());
+            }
+            rest = &rest[size + 1..];
+        }
+        out
     }
 
     async fn parents_of(&self, repo: &Path, sha: &str) -> Result<Vec<String>, GitError> {
@@ -1029,6 +1157,20 @@ enum Text {
 }
 
 /// Refuses anything but an object id before it reaches git (see [`log::is_object_id`]).
+/// The working-tree file's text, as [`Git::texts_of`] gives it.
+async fn disk_text(repo: &Path, path: &str) -> Option<String> {
+    if !is_safe_relative(path) {
+        return None;
+    }
+    let file = repo.join(crate::pathbytes::to_os(path));
+    let meta = tokio::fs::metadata(&file).await.ok()?;
+    if !meta.is_file() || meta.len() > highlight::MAX_SOURCE_BYTES {
+        return None;
+    }
+    let bytes = crate::pathbytes::decode(&tokio::fs::read(&file).await.ok()?);
+    Some(crate::pathbytes::display(&bytes))
+}
+
 fn check_object_id(sha: &str) -> Result<(), GitError> {
     if log::is_object_id(sha) { Ok(()) } else { Err(GitError::invalid(format!("Not a commit id: {sha:?}"))) }
 }

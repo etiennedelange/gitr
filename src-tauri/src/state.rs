@@ -266,6 +266,9 @@ pub async fn summarize(git: &Git, path: &Path) -> RepoSummary {
 }
 
 pub async fn emit_summary(app: &AppHandle, git: &Git, path: &Path) {
+    // The UI asks for the open diff again on this event; it must not be coloured from a diff
+    // made before the change.
+    git.forget_diffs(path);
     let summary = summarize(git, path).await;
     let _ = app.emit("repo-summary", summary);
 }

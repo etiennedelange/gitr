@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import type { BatchProgress, CmdError, Config, RepoSummary } from './types'
 import type { Filter, SortKey } from './lib/git'
+import { loadDiffZoom, saveDiffZoom } from './lib/zoom'
 
 export type View = { kind: 'dashboard' } | { kind: 'settings' } | { kind: 'repo'; path: string }
 
@@ -67,6 +68,9 @@ interface AppStore {
   setDashboard: (patch: Partial<DashboardState>) => void
   /** UI zoom in percent (mirrors config.zoom, owned by the backend). */
   zoom: number
+  /** Zoom of the code in diffs, in percent, on top of the UI zoom (Ctrl + scroll over a diff). */
+  diffZoom: number
+  setDiffZoom: (zoom: number) => void
   /** Whether dev tools can be opened (debug build or Settings flag). */
   devtools: boolean
   /** Where closing Settings goes back to. */
@@ -116,6 +120,11 @@ export const useApp = create<AppStore>((set) => ({
   setSettingsDraft: (settingsDraft) => set({ settingsDraft }),
   setDashboard: (patch) => set((st) => ({ dashboard: { ...st.dashboard, ...patch } })),
   zoom: 100,
+  diffZoom: loadDiffZoom(),
+  setDiffZoom: (diffZoom) => {
+    saveDiffZoom(diffZoom)
+    set({ diffZoom })
+  },
   devtools: false,
   setView: (view) => set((st) => ({ view, returnView: view.kind === 'settings' && st.view.kind !== 'settings' ? st.view : st.returnView })),
   closeSettings: () => set((st) => (st.view.kind === 'settings' ? { view: st.returnView } : {})),

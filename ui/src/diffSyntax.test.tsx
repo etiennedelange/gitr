@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vite-plus/test'
-import { cleanup, render, screen } from '@testing-library/react'
+import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import type { DiffSyntax, FileDiff } from './types'
 
@@ -44,6 +44,7 @@ vi.mock('./api', () => ({
 }))
 const { api } = await import('./api')
 const { DiffView } = await import('./components/DiffView')
+const { useApp } = await import('./store')
 
 const wrap = (ui: React.ReactNode) =>
   render(<QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}>{ui}</QueryClientProvider>)
@@ -79,5 +80,38 @@ describe('diff syntax colours', () => {
     expect(api.commitFileDiffSyntax).toHaveBeenCalledWith(PATH, 'a'.repeat(40), 'a.cs', null)
     expect(tokens('comment')).toEqual([])
     expect(screen.getByText('// done')).toBeInTheDocument()
+  })
+})
+
+describe('diff loading', () => {
+  it('waits for the selection to rest when files are opened in quick succession', async () => {
+    vi.mocked(api.fileDiff).mockClear()
+    const client = new QueryClient({ defaultOptions: { queries: { retry: false } } })
+    const at = (path: string) => (
+      <QueryClientProvider client={client}>
+        <DiffView key={path} repo={PATH} source={{ kind: 'worktree', path, origPath: null, staged: false, untracked: false }} />
+      </QueryClientProvider>
+    )
+    // Arrowing from a.cs past b.cs to c.cs: b.cs is never asked for, c.cs once it rests.
+    const view = render(at('a.cs'))
+    view.rerender(at('b.cs'))
+    expect(screen.getByRole('status')).toHaveTextContent('Loading')
+    view.rerender(at('c.cs'))
+    await vi.waitFor(() => expect(api.fileDiff).toHaveBeenLastCalledWith(PATH, 'c.cs', false, false))
+    expect(vi.mocked(api.fileDiff).mock.calls.map((c) => c[1])).not.toContain('b.cs')
+  })
+})
+
+describe('diff zoom', () => {
+  it('scales the code only and resets from the badge', async () => {
+    act(() => useApp.getState().setDiffZoom(125))
+    wrap(<DiffView repo={PATH} source={{ kind: 'worktree', path: 'a.cs', origPath: null, staged: false, untracked: false }} />)
+    const body = screen.getByRole('region', { name: 'Diff of a.cs' })
+    expect(body.style.getPropertyValue('--diff-zoom')).toBe('1.25')
+    expect(body.closest('[data-zoom="diff"]')).not.toBeNull()
+    fireEvent.click(screen.getByRole('button', { name: '125%' }))
+    expect(useApp.getState().diffZoom).toBe(100)
+    expect(body.style.getPropertyValue('--diff-zoom')).toBe('')
+    expect(screen.queryByRole('button', { name: '125%' })).toBeNull()
   })
 })
