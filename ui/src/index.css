@@ -2220,8 +2220,25 @@ button.ai.generating .ico {
   background: var(--hunk-bg);
   color: var(--hunk-ink);
 }
-.hunk:first-child .hunk-header td {
+.hunk .hunk-header.first td {
   border-top: 0;
+}
+/* The space between one hunk and the next header (the 1px is the header's top border, which
+   the collapsed borders share with this row). */
+.hunk tr.hunk-gap td {
+  height: calc(var(--s5) + 1px);
+  padding: 0;
+}
+/* Long diffs draw only the rows in view: spacers stand in for the rest, and the sizer (the
+   widest line, at no height) keeps the columns as wide as if every row were drawn. */
+.hunk tr.spacer td {
+  padding: 0;
+}
+.hunk tr.sizer td {
+  height: 0;
+  padding-block: 0;
+  line-height: 0;
+  visibility: hidden;
 }
 .hunk tr.add,
 .hunk td.add {
