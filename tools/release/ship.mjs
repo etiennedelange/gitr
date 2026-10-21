@@ -5,6 +5,7 @@
 //   pnpm release minor|major    the next minor (0.2.0) or major (1.0.0) version instead
 //   pnpm release 0.2.0          exactly this version
 //   … --yes                     without asking
+//   … --no-follow               stop once the tag is pushed (the Cut release workflow does this)
 //
 // Asks once, then does everything below.
 //
@@ -110,8 +111,12 @@ function findPr(branch) {
   return prs.find((p) => p.state === 'MERGED') ?? prs.find((p) => p.state === 'OPEN') ?? null;
 }
 
+// Watching the Release run is only for the terminal; a workflow leaves it to its own run.
+let follow = true;
+
 async function main(argv) {
   const yes = argv.includes('--yes');
+  follow = !argv.includes('--no-follow');
   const arg = argv.find((a) => !a.startsWith('--')) ?? 'patch';
   // The next version comes from the tags on origin, so a rerun after a stop picks the same one.
   if (BUMPS.includes(arg)) git('fetch', '--quiet', '--tags', 'origin');
@@ -212,6 +217,10 @@ async function main(argv) {
 }
 
 async function followRelease(tag) {
+  if (!follow) {
+    console.log(`\n${tag} is pushed. The Release workflow builds and publishes it: https://github.com/${REPO}/actions/workflows/release.yml`);
+    return;
+  }
   step('Following the Release workflow');
   let id = '';
   for (let i = 0; i < 20 && !id; i++) {
