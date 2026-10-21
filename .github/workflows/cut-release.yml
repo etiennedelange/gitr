@@ -1,0 +1,72 @@
+name: Cut release
+
+# `pnpm release` without your machine: Actions → Cut release → Run workflow. It runs
+# tools/release/ship.mjs: the release PR, auto-merge once CI is green, then the tag, which starts
+# release.yml. See docs/releasing.md.
+#
+# Everything is pushed and opened with RELEASE_TOKEN, a fine-grained token of the repo owner
+# (Contents, Pull requests and Issues: read and write). The job's own GITHUB_TOKEN wouldn't do:
+# a PR or tag it creates starts no workflows, so CI would never report and release.yml never run.
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: patch, minor, major or an exact version such as 1.2.0. Empty for the next patch.
+        required: false
+
+permissions:
+  contents: read
+
+# One release at a time; a second run waits instead of racing for the same tag.
+concurrency:
+  group: cut-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    # CI on a release PR takes about a minute; ship.mjs gives up on the merge after an hour.
+    timeout-minutes: 75
+    steps:
+      - name: Check the token
+        env:
+          RELEASE_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+        run: |
+          if [ -z "$RELEASE_TOKEN" ]; then
+            echo "::error::The RELEASE_TOKEN secret is not set (docs/releasing.md, From GitHub instead)"
+            exit 1
+          fi
+
+      - uses: actions/checkout@v7
+        with:
+          # ship.mjs reads the tags and branches from origin/main.
+          fetch-depth: 0
+          # git push uses it, so the branch and tag start CI and release.yml.
+          token: ${{ secrets.RELEASE_TOKEN }}
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: lts/*
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      # `release.mjs version` updates Cargo.lock with `cargo update --workspace --offline`, which
+      # needs the crates.io index cached. This is a no-op on the lockfile that fetches it.
+      - name: Fetch the crates.io index
+        run: cargo update --workspace
+
+      # The release commit is yours, as from `pnpm release`; it's squashed into main anyway.
+      - name: Configure git
+        run: |
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+
+      - name: Release
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          VERSION: ${{ inputs.version }}
+        run: |
+          args=(--yes --no-follow)
+          if [ -n "$VERSION" ]; then args=("$VERSION" "${args[@]}"); fi
+          node tools/release/ship.mjs "${args[@]}"

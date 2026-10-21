@@ -32,6 +32,12 @@ It checks first: no uncommitted changes to tracked files, `gh` signed in, `v1.2.
 
 Ctrl+C is safe at any point. Run the same command again and it carries on from where it stopped (branch pushed, PR open, PR merged, tag pushed). `--yes` skips the question. If CI fails, fix it on the release branch and run it again.
 
+### From GitHub instead
+
+**Actions → Cut release → Run workflow** (`cut-release.yml`) does the same without your machine, so it also works from a phone or a Claude session. Give `patch` (or leave it empty), `minor`, `major` or an exact version. It runs `ship.mjs --yes --no-follow` on `main`, so the checks, the resuming and the PR are identical; it stops once the tag is pushed, and the Release run takes over from there. The release commit is authored by whoever started the run (unsigned, but it's squashed into `main` anyway).
+
+It pushes and opens the PR with the `RELEASE_TOKEN` secret, a fine-grained personal access token with access to this repo and **Contents**, **Pull requests** and **Issues** set to read and write (Issues for the `skip-changelog` label). The job's own `GITHUB_TOKEN` can't do this: a PR or tag it creates starts no workflows, so CI would never report on the PR and `release.yml` would never run. The token expires after a year; renew it under **Settings → Developer settings → Fine-grained tokens** and `gh secret set RELEASE_TOKEN` again. Until then the run fails at its first step.
+
 `.github/workflows/release.yml` then:
 
 - checks that the tag is on `main` and matches the version in `Cargo.toml`;
