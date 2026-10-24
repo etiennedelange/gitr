@@ -1,0 +1,27 @@
+# cargo-audit configuration (audit.yml runs `cargo audit --deny warnings` from the repo root).
+# Every entry needs an upstream release to clear. Re-check on each Tauri, syntect or
+# github-copilot-sdk upgrade and drop entries that no longer fire.
+
+[advisories]
+ignore = [
+    # zip <9: archive extraction can follow symlinks, mis-handle Unix modes and keep SUID bits.
+    # No release of tauri-plugin-updater (zip ^4, up to 3.0.0-alpha.3) or github-copilot-sdk
+    # (zip 7, a build-dependency) has moved to zip 9 yet. Exposure is small: Gitr's updater gets
+    # an NSIS .exe, not a zip (release.yml), and checks its signature before installing; the SDK
+    # only unpacks its own download at build time. Drop these once both depend on zip >= 9.
+    "RUSTSEC-2026-0367",
+    "RUSTSEC-2026-0368",
+    "RUSTSEC-2026-0369",
+
+    # Unmaintained or unsound warnings, not vulnerabilities.
+    "RUSTSEC-2025-0141", # bincode 1.3: unmaintained, pulled in by syntect
+
+    # zbus 5 helper crates: unmaintained, pulled in by Tauri's Linux D-Bus support.
+    "RUSTSEC-2026-0370", # zvariant
+    "RUSTSEC-2026-0371", # zbus_names
+    "RUSTSEC-2026-0372", # zvariant_derive
+
+    # Tauri's GTK 0.18 stack (Linux only; not in the Windows build).
+    "RUSTSEC-2024-0370", # proc-macro-error 1.0.4: unmaintained
+    "RUSTSEC-2024-0429", # glib 0.18.5: unsound VariantStrIter iterator impls
+]

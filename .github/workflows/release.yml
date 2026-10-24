@@ -35,9 +35,10 @@ jobs:
       run:
         shell: bash
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: refs/tags/${{ env.TAG }}
+          persist-credentials: false
 
       # Only squash-merged, CI-checked commits get released. GitHub compares the commits, so the
       # checkout needs no history: "behind" or "identical" means the tag is on main.
@@ -67,23 +68,27 @@ jobs:
           fi
 
       # Same version as devEngines.packageManager in package.json.
-      - uses: pnpm/action-setup@v6
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
         with:
           version: 12.8.1
-      - uses: actions/setup-node@v7
+      # zizmor flags caches in a release build. Only workflows on main can write the caches a tag
+      # reads (no PR or pull_request_target job here saves one), so they hold main's own builds.
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0 # zizmor: ignore[cache-poisoning]
         with:
           node-version: lts/*
           cache: pnpm
       - run: pnpm install --frozen-lockfile
 
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8 # master
+        with:
+          toolchain: stable
       # Caches made under a tag can't be read by later tags, so only restore here:
       # release-cache.yml saves both caches on main, where every tag can read them.
-      - uses: Swatinem/rust-cache@v2
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2 # zizmor: ignore[cache-poisoning]
         with:
           shared-key: release-windows
           save-if: false
-      - uses: actions/cache/restore@v6
+      - uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           # NSIS and its plugins, which tauri build downloads.
           path: ~/AppData/Local/tauri
@@ -135,7 +140,7 @@ jobs:
           sha256sum -- *.exe > SHA256SUMS.txt
           cat SHA256SUMS.txt
 
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: gitr-${{ steps.version.outputs.version }}-windows
           path: dist/

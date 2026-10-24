@@ -5,6 +5,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Security
+- **Safer connections.** Updated the TLS library Gitr uses for updates and AI requests (rustls 0.23.46, rustls-webpki 0.103.16, webpki-root-certs 1.0.10). The fixes stop a forged server reply from weakening later connections, close a way for certificates from distrusted authorities to be accepted, and remove distrusted root certificates.
+
 ## [0.1.10] - 2026-10-20
 
 ### Added
