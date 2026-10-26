@@ -148,7 +148,9 @@ export const useApp = create<AppStore>((set) => ({
       const kind = freshKind(st.summaries[s.path], s)
       const old = st.fresh[s.path]
       let fresh = st.fresh
-      if (kind) fresh = { ...fresh, [s.path]: { kind, at: Date.now(), seen: false } }
+      // What happens while its repo is open (a commit made there, a fetch run there) is seen as it happens.
+      const open = st.view.kind === 'repo' && st.view.path === s.path
+      if (kind) fresh = { ...fresh, [s.path]: { kind, at: Date.now(), seen: open } }
       else if (old && !stillFresh(old.kind, s)) {
         fresh = { ...fresh }
         delete fresh[s.path]

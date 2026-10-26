@@ -336,6 +336,22 @@ describe('new changes on the cards', () => {
     expect(useApp.getState().fresh['D:/w/alpha']?.seen).toBe(true)
   })
 
+  it('does not mark as new what happened while the repo was open', async () => {
+    useApp.setState({ summaries: { 'D:/w/alpha': summary('D:/w/alpha', {}) } })
+    mount()
+    await screen.findByText('alpha')
+    // A commit made in the repo view: the user saw it happen.
+    act(() => useApp.getState().setView({ kind: 'repo', path: 'D:/w/alpha' }))
+    act(() => useApp.getState().setSummary(summary('D:/w/alpha', { ahead: 1 })))
+    act(() => useApp.getState().setView({ kind: 'dashboard' }))
+    expect(card('alpha').querySelector('.fresh-dot')).toBeNull()
+    // Another repo's news while alpha is open is still news.
+    act(() => useApp.getState().setView({ kind: 'repo', path: 'D:/w/alpha' }))
+    act(() => useApp.getState().setSummary(summary('D:/w/beta', {})))
+    act(() => useApp.getState().setSummary(summary('D:/w/beta', { behind: 1 })))
+    expect(useApp.getState().fresh['D:/w/beta']?.seen).toBe(false)
+  })
+
   it('drops the mark once what it pointed at is gone', async () => {
     useApp.setState({ summaries: { 'D:/w/alpha': summary('D:/w/alpha', {}) } })
     mount()
