@@ -1,7 +1,7 @@
 import { useMemo, useRef, useState, type KeyboardEvent } from 'react'
 import { useConfig, useRepos } from '../hooks'
 import { useApp } from '../store'
-import { ChevronDown, ChevronRight, FolderPlus, LayoutGrid, Moon, Settings as SettingsIcon, Sun } from 'lucide-react'
+import { ChevronDown, ChevronRight, FolderPlus, GitPullRequest, LayoutGrid, Moon, Settings as SettingsIcon, Sun } from 'lucide-react'
 import { useRepoMenu } from '../repoMenu'
 import { plainInput } from '../lib/inputProps'
 import { BusyDot } from './Busy'
@@ -9,7 +9,6 @@ import { CountChips, StatusMark } from './Marks'
 import { needsAttention } from '../lib/git'
 import { useAddFolder } from '../lib/addFolder'
 import { groupMenu } from '../lib/menus'
-import { groupColors, groupStyle } from '../lib/groupColor'
 import { showMenu } from '../nativeMenu'
 import { saveThemePref, useTheme } from '../theme'
 
@@ -46,11 +45,6 @@ export function Sidebar() {
       }))
       .filter((g) => !q || g.repos.length > 0)
   }, [config.data, repos.data, filter])
-  // With more than one group, each carries its colour: a swatch on its heading and a stripe down
-  // its repos, matching the stripes on the dashboard.
-  const colors = useMemo(() => groupColors(config.data?.groups ?? []), [config.data])
-  const colored = (config.data?.groups.length ?? 0) > 1
-
   // The tree is one Tab stop; arrow keys move within it (like a Windows tree view). The stop is the
   // item last focused, else the open repo, else the first group.
   const treeRef = useRef<HTMLDivElement>(null)
@@ -88,13 +82,7 @@ export function Sidebar() {
   return (
     <nav className="sidebar" aria-label="Repositories">
       <div className="brand">
-        {/* Two commits on a line; the newest in accent. */}
-        <svg className="brand-mark" viewBox="0 0 18 18" aria-hidden>
-          <rect width="18" height="18" rx="4" className="bm-ground" />
-          <path d="M5 9h8" className="bm-line" />
-          <circle cx="5" cy="9" r="2.2" className="bm-old" />
-          <circle cx="13" cy="9" r="2.6" className="bm-new" />
-        </svg>
+        <GitPullRequest className="brand-mark" aria-hidden />
         <span className="nav-label">Gitr</span>
       </div>
       <button
@@ -114,7 +102,7 @@ export function Sidebar() {
         <input
           {...plainInput}
           className="search"
-          placeholder="Filter repositories"
+          placeholder="Filter repositories…"
           aria-label="Filter repositories in the sidebar"
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
@@ -148,7 +136,7 @@ export function Sidebar() {
           </div>
         )}
         {groups.map((g) => (
-          <div key={g.id} className="group" style={colored ? groupStyle(colors.get(g.id)) : undefined}>
+          <div key={g.id} className="group">
             <button
               className="group-head"
               data-key={'g:' + g.id}
@@ -169,7 +157,6 @@ export function Sidebar() {
               ) : (
                 <ChevronDown className="chevron" aria-hidden />
               )}
-              {colored && <span className="group-swatch" aria-hidden />}
               <span className="group-name">{g.name}</span>
               <span className="count">{g.repos.length}</span>
             </button>
@@ -189,7 +176,6 @@ export function Sidebar() {
                     onContextMenu={repoMenu(r.path)}
                     title={`${r.name}\n${r.path}`}
                   >
-                    {colored && <span className="group-stripe" aria-hidden />}
                     <StatusMark summary={s} />
                     <span className="repo-name">{r.name}</span>
                     <BusyDot path={r.path} />

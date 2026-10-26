@@ -10,7 +10,7 @@ Built with Tauri 2 (Rust) and a React + TypeScript UI.
 
 ## Screenshots
 
-**Dashboard**: every repository with branch, ahead/behind, changes and status.
+**Dashboard**: every repository with branch, ahead/behind, changes and status, as cards or a table.
 
 ![Dashboard](docs/screenshots/dashboard-light.webp)
 
@@ -31,7 +31,7 @@ The installer isn't code-signed yet, so the first time Windows SmartScreen says 
 ## Features
 
 - Workspace groups: point at root folders, repositories are discovered automatically
-- Dashboard of every repo: branch, ahead/behind, changes, errors; filter and sort
+- Dashboard of every repo as compact cards, detailed cards or a table: branch, ahead/behind, changes, errors, last commit; filter and sort; new changes flash once
 - Fetch all / pull all (fast-forward only) in parallel with per-repo progress
 - Stage, unstage and discard files; unified or split diff view of the changed hunks or the whole file, with syntax colours for about 200 languages
 - Commit, amend, push (sets upstream automatically)
@@ -110,9 +110,13 @@ Configuration lives in `%APPDATA%\gitr\config.toml`.
 
 | Keys | Action |
 |---|---|
+| Ctrl+P | Go to a repository by name |
 | Ctrl+D | Dashboard |
 | Ctrl+Shift+F / Ctrl+Shift+P | Fetch all / pull all |
 | Ctrl+, | Settings |
+| F6 / Shift+F6 | Next / previous pane |
+| Ctrl+scroll | Zoom the window, or only the diff when over it |
+| ↑ ↓, ← → | Sidebar: move through the repositories, fold or unfold a group |
 | ↑ ↓, Space, Delete | Select, stage/unstage, discard file |
 | Ctrl+G | Generate commit message |
 | Ctrl+Enter / Ctrl+Shift+Enter | Commit / commit and push |

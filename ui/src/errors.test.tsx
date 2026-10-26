@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test'
+import { useLayout } from './layout'
 import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import type React from 'react'
@@ -122,6 +123,8 @@ beforeEach(() => {
 })
 afterEach(cleanup)
 
+// These tests read the ledger table; the cards have their own tests.
+beforeEach(() => useLayout.setState({ dashboardView: 'table' }))
 describe('error actions by kind', () => {
   const labels = (e: CmdError, busy = false) => errorActions(e, () => busy).map((a) => a.label)
   it('offers the right fix per kind (facts 5–8)', () => {
@@ -181,6 +184,7 @@ describe('error toasts', () => {
     showError(err('dubious-ownership'))
     await act(async () => fireEvent.click(screen.getByRole('button', { name: 'Trust this folder' })))
     expect(ask.mock.calls[0][0]).toMatch(/safe\.directory in your global git config/)
+    expect(ask.mock.calls[0][1]).toMatchObject({ okLabel: 'Trust folder', cancelLabel: 'Cancel' })
     expect(api.trustFolder).toHaveBeenCalledWith(PATH)
   })
 
@@ -257,9 +261,9 @@ describe('in-progress merge / rebase', () => {
 describe('finding git', () => {
   it('Settings shows the git in use and saving a new path re-reads it (facts 11, 14)', async () => {
     wrap(<Settings />)
-    expect(await screen.findByText('Using C:/Program Files/Git/cmd/git.exe · git 2.55.0.windows.1')).toBeInTheDocument()
+    expect(await screen.findByText('Using C:/Program Files/Git/cmd/git.exe, git 2.55.0.windows.1.')).toBeInTheDocument()
     const field = screen.getByLabelText('Git path') as HTMLInputElement
-    expect(field.placeholder).toBe('Automatic (C:/Program Files/Git/cmd/git.exe)')
+    expect(field.placeholder).toBe('Automatic')
     openDialog.mockResolvedValueOnce('D:/tools/git/cmd/git.exe')
     await act(async () => fireEvent.click(screen.getByRole('button', { name: 'Browse…' })))
     expect(field.value).toBe('D:/tools/git/cmd/git.exe')

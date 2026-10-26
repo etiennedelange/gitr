@@ -34,11 +34,7 @@ const PAIRS: [string[], string[], number][] = [
   [['red-ink'], ['red-soft'], 4.5],
   [['accent-ink'], ['accent'], 4.5],
   [['red-on'], ['red'], 4.5],
-  [
-    ['accent', 'focus', 'amber', 'blue', 'green', 'red', 'g-teal', 'g-rose', 'g-ochre', 'g-slate', 'g-olive', 'g-plum'],
-    ['bg', 'rail', 'panel', 'raised'],
-    3,
-  ],
+  [['accent', 'focus', 'amber', 'blue', 'green', 'red'], ['bg', 'rail', 'panel', 'raised'], 3],
 ]
 
 describe('dark theme', () => {

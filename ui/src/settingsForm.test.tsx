@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test'
-import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
+import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useApp } from './store'
 import type { Config } from './types'
@@ -64,6 +64,14 @@ describe('settings form', () => {
     expect(screen.getByRole('button', { name: 'Save' })).toBeEnabled()
   })
 
+  it("names each group's buttons after the group", async () => {
+    useApp.getState().setSettingsDraft(null)
+    mount(newClient())
+    const group = await screen.findByRole('group', { name: 'Work' })
+    expect(within(group).getByRole('button', { name: 'Add folder to Work' })).toBeInTheDocument()
+    expect(within(group).getByRole('button', { name: 'Remove group Work' })).toBeInTheDocument()
+  })
+
   it('forgets the kept edits after Revert', async () => {
     const client = newClient()
     const first = mount(client)
@@ -113,15 +121,11 @@ describe('settings form', () => {
     expect(screen.getByText('Name every group before saving.')).toBeInTheDocument()
   })
 
-  it("shows a group's colour and saves the one you pick", async () => {
+  it('offers no group colour, since groups are told apart by name', async () => {
     useApp.setState({ settingsDraft: null })
     mount(newClient())
-    const teal = await screen.findByRole('radio', { name: 'teal' })
-    expect(teal).toBeChecked()
-    fireEvent.click(screen.getByRole('radio', { name: 'plum' }))
-    expect(screen.getByRole('radio', { name: 'plum' })).toBeChecked()
-    expect(screen.getByRole('button', { name: 'Save' })).toBeEnabled()
-    await act(async () => fireEvent.click(screen.getByRole('button', { name: 'Save' })))
-    expect(vi.mocked(api.saveConfig).mock.calls[0][0].groups[0].color).toBe('plum')
+    await screen.findByLabelText('Group name')
+    expect(screen.queryByRole('radiogroup')).toBeNull()
+    expect(screen.queryByRole('radio', { name: 'teal' })).toBeNull()
   })
 })

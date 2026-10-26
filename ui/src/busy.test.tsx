@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test'
+import { useLayout } from './layout'
 import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import type React from 'react'
@@ -99,6 +100,8 @@ const setBusy = (op: string | null) => act(() => useApp.getState().setRepoBusy(P
 const sleep = (ms: number) => act(() => new Promise((r) => setTimeout(r, ms)))
 const button = (name: RegExp | string) => screen.getByRole('button', { name })
 
+// These tests read the ledger table; the cards have their own tests.
+beforeEach(() => useLayout.setState({ dashboardView: 'table' }))
 describe('busy repositories', () => {
   beforeEach(() => {
     useApp.setState({ busy: {}, batch: {}, summaries: { [PATH]: summary }, toasts: [] })

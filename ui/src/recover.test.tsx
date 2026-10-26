@@ -95,7 +95,16 @@ describe('recoverable discard', () => {
     expect(ask.mock.calls[1][0]).toBe(
       "Couldn't move 1 file to the Recycle Bin: Z: is a network drive, which has no Recycle Bin. Discard it permanently?",
     )
+    expect(ask.mock.calls[1][1]).toMatchObject({ okLabel: 'Discard', cancelLabel: 'Keep changes' })
     expect(api.discard).toHaveBeenLastCalledWith(PATH, [], ['notes.txt'], true)
+  })
+
+  it('names each row action after its file', async () => {
+    wrap(<Changes path={PATH} />)
+    await screen.findByText('a.ts')
+    expect(screen.getByRole('button', { name: 'Discard src/a.ts' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Stage src/a.ts' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Discard notes.txt' })).toBeInTheDocument()
   })
 
   it('No leaves refused files untouched (facts 7, 8)', async () => {

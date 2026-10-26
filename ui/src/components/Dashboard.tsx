@@ -1,5 +1,19 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { ArrowDownToLine, Code, Ellipsis, FolderGit2, FolderPlus, RefreshCw, RotateCw, ScanSearch, Search, X } from 'lucide-react'
+import {
+  ArrowDownToLine,
+  Code,
+  Ellipsis,
+  FolderGit2,
+  FolderPlus,
+  LayoutGrid,
+  LayoutList,
+  RefreshCw,
+  RotateCw,
+  Rows3,
+  ScanSearch,
+  Search,
+  X,
+} from 'lucide-react'
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { api } from '../api'
 import { notifyError, useBatch, useBatchRunning, useConfig, useRepos, useRescan } from '../hooks'
@@ -8,48 +22,26 @@ import { useApp } from '../store'
 import { useRepoMenu } from '../repoMenu'
 import { plainInput } from '../lib/inputProps'
 import { useAddFolder } from '../lib/addFolder'
-import { BusyOr } from './Busy'
 import { SignInBanner } from './SignInBanner'
-import { operationNoun } from '../lib/operation'
 import { CountChips, Divergence, StatusMark } from './Marks'
-import { groupColors, groupStyle, type GroupColor } from '../lib/groupColor'
+import { useLayout, type DashboardView } from '../layout'
+import { DashboardCards, cardAbove, type CardSection } from './DashboardCards'
+import { RepoStatusText } from './RepoStatusText'
 import type { BatchProgress, RepoSummary } from '../types'
 
 const FILTERS: Filter[] = ['all', 'attention', 'dirty', 'behind', 'ahead']
 const FILTER_LABEL: Record<Filter, string> = { all: 'All', attention: 'Attention', dirty: 'Changes', behind: 'Behind', ahead: 'Ahead' }
-const ROW_H = 30
-const BAND_H = 28
+const ROW_H = 34
+const BAND_H = 40
+const VIEWS: { view: DashboardView; label: string; title: string; Icon: typeof Rows3 }[] = [
+  { view: 'table', label: 'Table', title: 'Table: one row per repository', Icon: Rows3 },
+  { view: 'compact', label: 'Cards', title: 'Compact cards', Icon: LayoutGrid },
+  { view: 'detailed', label: 'Details', title: 'Detailed cards, with the last commit', Icon: LayoutList },
+]
 
 /** A virtual list item: a repo row, or the heading of the band of rows below it. */
-type Item = { kind: 'band'; key: string; label: string; count: number; color?: GroupColor } | { kind: 'row'; row: Row }
+type Item = { kind: 'band'; key: string; label: string; count: number; group?: boolean } | { kind: 'row'; row: Row }
 
-/** What the last Fetch all / Pull all did for a repo, in words: "Up to date", "Pull failed · …". */
-function batchText(p: BatchProgress): string {
-  const verb = p.op === 'fetch' ? 'Fetch' : 'Pull'
-  const msg = p.message ? ` · ${p.message}` : ''
-  switch (p.state) {
-    case 'running':
-      return p.op === 'fetch' ? 'Fetching…' : 'Pulling…'
-    case 'ok':
-      return p.message ?? (p.op === 'fetch' ? 'Fetched' : 'Pulled')
-    case 'skipped':
-      return `Skipped${msg}`
-    case 'error':
-      return p.signIn ? 'Sign-in needed' : `${verb} failed${msg}`
-  }
-}
-
-/** The operation in progress, short: "merging · 2 conflicts". */
-function OperationPill({ s }: { s: RepoSummary }) {
-  const op = s.operation!
-  const n = s.conflicted
-  return (
-    <span className={`pill operation ${n ? 'conflicted' : ''}`} title={`A ${operationNoun(op)} is in progress`}>
-      <span>{op === 'applying-patches' ? 'Applying patches' : op.charAt(0).toUpperCase() + op.slice(1)}</span>
-      {n > 0 && <span>{` · ${n} conflict${n === 1 ? '' : 's'}`}</span>}
-    </span>
-  )
-}
 export function Dashboard() {
   const config = useConfig()
   const repos = useRepos()
@@ -67,6 +59,9 @@ export function Dashboard() {
   const sort = useApp((s) => s.dashboard.sort)
   const group = useApp((s) => s.dashboard.group)
   const setDashboard = useApp((s) => s.setDashboard)
+  const view = useLayout((s) => s.dashboardView)
+  const setDashboardView = useLayout((s) => s.setDashboardView)
+  const cards = view !== 'table'
   const [refreshing, setRefreshing] = useState(false)
   const [cursor, setCursor] = useState<string | null>(null)
 
@@ -92,10 +87,9 @@ export function Dashboard() {
 
   const attention = (r: Row) => needsAttention(r.summary, progress[r.repo.path]?.state === 'error')
 
-  // With more than one group, each repo carries its group's colour as a stripe down its left edge.
+  // With more than one group, the rest are banded by group (told apart by their headings).
   const groups = useMemo(() => config.data?.groups ?? [], [config.data])
-  const colors = useMemo(() => groupColors(groups), [groups])
-  const colored = groups.length > 1
+  const grouped = groups.length > 1
 
   // Sorted by status, the repos that need you get their own band above the rest, and with all
   // groups showing the rest are banded by group. Held rows keep their places, so the bands only
@@ -105,23 +99,37 @@ export function Dashboard() {
     if (sort !== 'status' || holdOrder) return flat()
     const urgent = filter !== 'attention' ? rows.filter(attention) : []
     const rest = rows.filter((r) => !urgent.includes(r))
-    const bands: { key: string; label: string; color?: GroupColor; rows: Row[] }[] = []
+    const bands: { key: string; label: string; group?: boolean; rows: Row[] }[] = []
     if (urgent.length) bands.push({ key: 'attention', label: 'Needs attention', rows: urgent })
-    if (colored && !group) {
+    if (grouped && !group) {
       for (const g of groups) {
         const mine = rest.filter((r) => r.repo.groupId === g.id)
-        if (mine.length) bands.push({ key: 'group:' + g.id, label: g.name, color: colors.get(g.id), rows: mine })
+        if (mine.length) bands.push({ key: 'group:' + g.id, label: g.name, group: true, rows: mine })
       }
-      const other = rest.filter((r) => !colors.has(r.repo.groupId))
+      const other = rest.filter((r) => !groups.some((g) => g.id === r.repo.groupId))
       if (other.length) bands.push({ key: 'rest', label: 'Everything else', rows: other })
     } else if (rest.length) bands.push({ key: 'rest', label: 'Everything else', rows: rest })
     if (bands.length < 2) return flat()
     return bands.flatMap((b): Item[] => [
-      { kind: 'band', key: b.key, label: b.label, count: b.rows.length, color: b.color },
+      { kind: 'band', key: b.key, label: b.label, count: b.rows.length, group: b.group },
       ...b.rows.map((row): Item => ({ kind: 'row', row })),
     ])
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rows, sort, filter, holdOrder, group, groups, colors, colored])
+  }, [rows, sort, filter, holdOrder, group, groups, grouped])
+
+  // The same bands as the ledger, each a grid of cards.
+  const sections = useMemo((): CardSection[] => {
+    const out: CardSection[] = []
+    for (const it of items) {
+      if (it.kind === 'band') out.push({ key: it.key, label: it.label, count: it.count, group: it.group, rows: [] })
+      else {
+        if (!out.length) out.push({ key: 'all', rows: [] })
+        out[out.length - 1].rows.push(it.row)
+      }
+    }
+    return out
+  }, [items])
+  const groupNames = useMemo(() => new Map(groups.map((g) => [g.id, g.name])), [groups])
 
   // How many repos each filter tab would show, within the chosen group and search.
   const counts = useMemo(() => {
@@ -172,11 +180,30 @@ export function Dashboard() {
       const row = ordered[k]
       if (!row) return
       setCursor(row.repo.path)
-      virtual.scrollToIndex?.(items.findIndex((it) => it.kind === 'row' && it.row === row))
+      useApp.getState().markSeen(row.repo.path)
+      if (cards) {
+        const el = [...(scrollRef.current?.querySelectorAll<HTMLElement>('[data-path]') ?? [])].find(
+          (c) => c.dataset.path === row.repo.path,
+        )
+        el?.scrollIntoView?.({ block: 'nearest' })
+      } else virtual.scrollToIndex?.(items.findIndex((it) => it.kind === 'row' && it.row === row))
     }
-    const page = Math.max(1, Math.floor((scrollRef.current?.clientHeight ?? ROW_H) / ROW_H) - 1)
-    if (e.key === 'ArrowDown') go(i + 1)
-    else if (e.key === 'ArrowUp') go(i < 0 ? 0 : i - 1)
+    // Cards move a row of the grid up and down, and one card left and right.
+    const across = cards ? columns(scrollRef.current) : 1
+    const page = cards ? across * 3 : Math.max(1, Math.floor((scrollRef.current?.clientHeight ?? ROW_H) / ROW_H) - 1)
+    const vertical = (dir: 1 | -1) =>
+      cards
+        ? cardAbove(
+            sections.map((s) => s.rows.length),
+            i,
+            across,
+            dir,
+          )
+        : i + dir
+    if (e.key === 'ArrowDown') go(i < 0 ? 0 : vertical(1))
+    else if (e.key === 'ArrowUp') go(i < 0 ? 0 : vertical(-1))
+    else if (cards && e.key === 'ArrowRight') go(i + 1)
+    else if (cards && e.key === 'ArrowLeft') go(i < 0 ? 0 : i - 1)
     else if (e.key === 'PageDown') go(i + page)
     else if (e.key === 'PageUp') go(i - page)
     else if (e.key === 'Home') go(0)
@@ -321,6 +348,20 @@ export function Dashboard() {
             ))}
           </div>
           <div className="spacer" />
+          <div className="segmented layout-switch" role="group" aria-label="Layout">
+            {VIEWS.map(({ view: v, label, title, Icon }) => (
+              <button
+                key={v}
+                className={view === v ? 'on' : ''}
+                aria-pressed={view === v}
+                title={title}
+                onClick={() => setDashboardView(v)}
+              >
+                <Icon className="ico" aria-hidden />
+                <span className="layout-label">{label}</span>
+              </button>
+            ))}
+          </div>
           {(config.data?.groups.length ?? 0) > 1 && (
             <select aria-label="Group" value={group} onChange={(e) => setDashboard({ group: e.target.value })}>
               <option value="">All groups</option>
@@ -339,7 +380,7 @@ export function Dashboard() {
         </div>
       )}
 
-      {!noRepos && (
+      {!noRepos && !cards && (
         <div className="table-head row" aria-hidden>
           <span />
           <span>Repository</span>
@@ -354,7 +395,7 @@ export function Dashboard() {
         </div>
       )}
       <div
-        className="table-body"
+        className={cards ? 'card-list' : 'table-body'}
         ref={scrollRef}
         tabIndex={noRepos ? -1 : 0}
         aria-label="Repositories"
@@ -383,114 +424,104 @@ export function Dashboard() {
               )}
             </div>
           ) : null)}
-        <div style={{ height: virtual.getTotalSize(), position: 'relative' }}>
-          {virtual.getVirtualItems().map((v) => {
-            const it = items[v.index]
-            if (!it) return null
-            const place = {
-              position: 'absolute' as const,
-              top: 0,
-              left: 0,
-              right: 0,
-              height: v.size,
-              transform: `translateY(${v.start}px)`,
-            }
-            if (it.kind === 'band') {
+        {cards && (
+          <DashboardCards view={view} sections={sections} cursor={cursor} setCursor={setCursor} grouped={grouped} groupNames={groupNames} />
+        )}
+        <div style={{ height: cards ? 0 : virtual.getTotalSize(), position: 'relative' }}>
+          {!cards &&
+            virtual.getVirtualItems().map((v) => {
+              const it = items[v.index]
+              if (!it) return null
+              const place = {
+                position: 'absolute' as const,
+                top: 0,
+                left: 0,
+                right: 0,
+                height: v.size,
+                transform: `translateY(${v.start}px)`,
+              }
+              if (it.kind === 'band') {
+                return (
+                  <div key={'band:' + it.key} className={`band ${v.index === 0 ? 'first' : ''}`} style={place}>
+                    {it.label}
+                    <span className="band-count">{it.count}</span>
+                  </div>
+                )
+              }
+              const { repo, summary: s } = it.row
+              const p = progress[repo.path]
+              const changes = s ? s.staged + s.unstaged + s.conflicted : 0
+              const open = () => setView({ kind: 'repo', path: repo.path })
               return (
                 <div
-                  key={'band:' + it.key}
-                  className={`band ${v.index === 0 ? 'first' : ''}`}
-                  style={{ ...place, ...groupStyle(it.color) }}
+                  key={repo.path}
+                  className={`row ${repo.path === cursor ? 'cursor' : ''} ${attention(it.row) ? 'urgent' : ''}`}
+                  aria-current={repo.path === cursor ? 'true' : undefined}
+                  onClick={() => setCursor(repo.path)}
+                  style={place}
+                  onDoubleClick={open}
+                  onContextMenu={repoMenu(repo.path)}
                 >
-                  {it.color && <span className="group-swatch" aria-hidden />}
-                  {it.label}
-                  <span className="band-count">{it.count}</span>
+                  <StatusMark summary={s} />
+                  <button className="link repo-link" tabIndex={-1} onClick={open} title={repo.path}>
+                    {repo.name}
+                  </button>
+                  <span
+                    className="mono branch-cell ellipsis"
+                    title={s?.branch ? (s.upstream ? `${s.branch} → ${s.upstream}` : s.branch) : undefined}
+                  >
+                    {s?.detached ? '(detached)' : (s?.branch ?? '…')}
+                  </span>
+                  <Divergence summary={s} />
+                  <span className="num counts">
+                    {changes ? <CountChips summary={s} only="changes" /> : <span className="none">–</span>}
+                  </span>
+                  <span className="ellipsis status-cell" title={p?.message ?? s?.error ?? undefined}>
+                    <RepoStatusText path={repo.path} summary={s} />
+                  </span>
+                  <span className="row-tools">
+                    <button
+                      className="icon"
+                      tabIndex={-1}
+                      title="Pull"
+                      aria-label={`Pull ${repo.name}`}
+                      disabled={running || !s?.behind}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        batch.mutate({ op: 'pull', paths: [repo.path], interactive: true })
+                      }}
+                    >
+                      <ArrowDownToLine className="ico" aria-hidden />
+                    </button>
+                    <button
+                      className="icon"
+                      tabIndex={-1}
+                      title="Open in VS Code"
+                      aria-label={`Open ${repo.name} in VS Code`}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        api.openWith(repo.path, 'vsCode').catch(notifyError)
+                      }}
+                    >
+                      <Code className="ico" aria-hidden />
+                    </button>
+                    <button
+                      className="icon"
+                      tabIndex={-1}
+                      title="More (Shift+F10)"
+                      aria-label={`More actions for ${repo.name}`}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setCursor(repo.path)
+                        repoMenu(repo.path)(e)
+                      }}
+                    >
+                      <Ellipsis className="ico" aria-hidden />
+                    </button>
+                  </span>
                 </div>
               )
-            }
-            const { repo, summary: s } = it.row
-            const p = progress[repo.path]
-            const changes = s ? s.staged + s.unstaged + s.conflicted : 0
-            const open = () => setView({ kind: 'repo', path: repo.path })
-            return (
-              <div
-                key={repo.path}
-                className={`row ${repo.path === cursor ? 'cursor' : ''} ${attention(it.row) ? 'urgent' : ''}`}
-                aria-current={repo.path === cursor ? 'true' : undefined}
-                onClick={() => setCursor(repo.path)}
-                style={colored ? { ...place, ...groupStyle(colors.get(repo.groupId)) } : place}
-                onDoubleClick={open}
-                onContextMenu={repoMenu(repo.path)}
-              >
-                {colored && <span className="group-stripe" aria-hidden />}
-                <StatusMark summary={s} />
-                <button className="link repo-link" tabIndex={-1} onClick={open} title={repo.path}>
-                  {repo.name}
-                </button>
-                <span
-                  className="mono branch-cell ellipsis"
-                  title={s?.branch ? (s.upstream ? `${s.branch} → ${s.upstream}` : s.branch) : undefined}
-                >
-                  {s?.detached ? '(detached)' : (s?.branch ?? '…')}
-                </span>
-                <Divergence summary={s} />
-                <span className="num counts">{changes ? <CountChips summary={s} only="changes" /> : <span className="none">–</span>}</span>
-                <span className="ellipsis status-cell" title={p?.message ?? s?.error ?? undefined}>
-                  <BusyOr path={repo.path}>
-                    {s?.operation ? (
-                      <OperationPill s={s} />
-                    ) : p ? (
-                      <span className={`pill ${p.state} ${p.signIn ? 'signin' : ''}`}>{batchText(p)}</span>
-                    ) : s?.error ? (
-                      <span className="pill error">{s.error}</span>
-                    ) : !s?.upstream && s ? (
-                      <span className="muted">No upstream</span>
-                    ) : null}
-                  </BusyOr>
-                </span>
-                <span className="row-tools">
-                  <button
-                    className="icon"
-                    tabIndex={-1}
-                    title="Pull"
-                    aria-label={`Pull ${repo.name}`}
-                    disabled={running || !s?.behind}
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      batch.mutate({ op: 'pull', paths: [repo.path], interactive: true })
-                    }}
-                  >
-                    <ArrowDownToLine className="ico" aria-hidden />
-                  </button>
-                  <button
-                    className="icon"
-                    tabIndex={-1}
-                    title="Open in VS Code"
-                    aria-label={`Open ${repo.name} in VS Code`}
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      api.openWith(repo.path, 'vsCode').catch(notifyError)
-                    }}
-                  >
-                    <Code className="ico" aria-hidden />
-                  </button>
-                  <button
-                    className="icon"
-                    tabIndex={-1}
-                    title="More (Shift+F10)"
-                    aria-label={`More actions for ${repo.name}`}
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      setCursor(repo.path)
-                      repoMenu(repo.path)(e)
-                    }}
-                  >
-                    <Ellipsis className="ico" aria-hidden />
-                  </button>
-                </span>
-              </div>
-            )
-          })}
+            })}
         </div>
       </div>
       <footer className="table-foot status-bar" aria-label="Status">
@@ -499,6 +530,13 @@ export function Dashboard() {
       </footer>
     </div>
   )
+}
+
+/** How many cards a row of the grid holds, read from the first grid's columns. */
+function columns(list: HTMLElement | null): number {
+  const grid = list?.querySelector('.card-grid')
+  const tracks = grid ? getComputedStyle(grid).gridTemplateColumns.split(' ').filter(Boolean).length : 0
+  return Math.max(1, tracks)
 }
 
 /** "Fetching" or "Pulling", for the running batch's progress. */

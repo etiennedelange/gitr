@@ -110,6 +110,7 @@ describe('operation banner', () => {
     ask.mockResolvedValueOnce(false)
     await act(async () => fireEvent.click(button('End bisect')!))
     expect(ask.mock.calls[0][0]).toMatch(/^End the bisect\?/)
+    expect(ask.mock.calls[0][1]).toMatchObject({ okLabel: 'End bisect', cancelLabel: 'Cancel' })
     expect(api.abortOperation).not.toHaveBeenCalled()
 
     ask.mockResolvedValueOnce(true)

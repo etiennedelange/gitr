@@ -56,7 +56,7 @@ export function Changes({ path }: { path: string }) {
     const question =
       `Couldn't move ${n} file${n === 1 ? '' : 's'} to the Recycle Bin: ${failed[0].reason}. ` +
       `Discard ${n === 1 ? 'it' : 'them'} permanently?`
-    if (!(await ask(question, { title: 'Discard permanently?', kind: 'warning' }))) return
+    if (!(await ask(question, { title: 'Discard permanently?', kind: 'warning', okLabel: 'Discard', cancelLabel: 'Keep changes' }))) return
     await api.discard(
       path,
       failed.filter((f) => !f.untracked).map((f) => f.path),
@@ -230,7 +230,14 @@ export function Changes({ path }: { path: string }) {
                 </button>
                 <span className="row-actions">
                   {!isStaged && (
-                    <button className="icon" title="Discard folder" tabIndex={-1} disabled={busy} onClick={() => confirmDiscard(r.files)}>
+                    <button
+                      className="icon"
+                      title="Discard folder"
+                      aria-label={`Discard folder ${r.name}`}
+                      tabIndex={-1}
+                      disabled={busy}
+                      onClick={() => confirmDiscard(r.files)}
+                    >
                       <Undo2 className="ico" aria-hidden />
                     </button>
                   )}
@@ -239,6 +246,7 @@ export function Changes({ path }: { path: string }) {
                     tabIndex={-1}
                     disabled={busy}
                     title={isStaged ? 'Unstage folder' : 'Stage folder'}
+                    aria-label={`${isStaged ? 'Unstage' : 'Stage'} folder ${r.name}`}
                     onClick={() => toggleFolderFiles(r.files, isStaged)}
                   >
                     {isStaged ? <Minus className="ico" aria-hidden /> : <Plus className="ico" aria-hidden />}
@@ -291,6 +299,7 @@ export function Changes({ path }: { path: string }) {
                   <button
                     className="icon"
                     title="Discard"
+                    aria-label={`Discard ${f.path}`}
                     tabIndex={active ? 0 : -1}
                     disabled={busy}
                     onClick={(e) => (e.stopPropagation(), confirmDiscard([f]))}
@@ -303,6 +312,7 @@ export function Changes({ path }: { path: string }) {
                   tabIndex={active ? 0 : -1}
                   disabled={busy}
                   title={isStaged ? 'Unstage' : 'Stage'}
+                  aria-label={`${isStaged ? 'Unstage' : 'Stage'} ${f.path}`}
                   onClick={(e) => (e.stopPropagation(), toggle(f, isStaged))}
                 >
                   {isStaged ? <Minus className="ico" aria-hidden /> : <Plus className="ico" aria-hidden />}

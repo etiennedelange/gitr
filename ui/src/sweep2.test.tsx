@@ -111,7 +111,7 @@ describe('sidebar filter', () => {
     await screen.findByText('alpha')
     fireEvent.click(screen.getByRole('button', { name: /Work/ })) // collapse Work
     expect(screen.queryByText('alpha')).toBeNull()
-    fireEvent.change(screen.getByPlaceholderText('Filter repositories'), { target: { value: 'alp' } })
+    fireEvent.change(screen.getByPlaceholderText('Filter repositories…'), { target: { value: 'alp' } })
     expect(screen.getByText('alpha')).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /Play/ })).toBeNull()
   })
@@ -119,7 +119,7 @@ describe('sidebar filter', () => {
   it('says when nothing matches', async () => {
     wrap(<Sidebar />)
     await screen.findByText('alpha')
-    fireEvent.change(screen.getByPlaceholderText('Filter repositories'), { target: { value: 'nope' } })
+    fireEvent.change(screen.getByPlaceholderText('Filter repositories…'), { target: { value: 'nope' } })
     expect(screen.getByText('No repositories match.')).toBeInTheDocument()
   })
 })

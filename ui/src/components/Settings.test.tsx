@@ -73,7 +73,7 @@ describe('Settings zoom display', () => {
 
   it('shows the current zoom and updates live without touching unsaved edits', async () => {
     renderSettings()
-    expect(await screen.findByText(/Zoom: 100%/)).toBeInTheDocument()
+    expect(await screen.findByText('100%')).toBeInTheDocument()
 
     const save = screen.getByRole('button', { name: 'Save' })
     expect(save).toBeDisabled()
@@ -82,7 +82,7 @@ describe('Settings zoom display', () => {
     expect(save).toBeEnabled()
 
     act(() => useApp.getState().setZoom(125))
-    expect(screen.getByText(/Zoom: 125%/)).toBeInTheDocument()
+    expect(screen.getByText('125%')).toBeInTheDocument()
     expect(save).toBeEnabled()
     expect(depth.value).toBe('5')
 
@@ -92,7 +92,7 @@ describe('Settings zoom display', () => {
 
   it('zoom changes alone never make the form dirty', async () => {
     renderSettings()
-    await screen.findByText(/Zoom: 100%/)
+    await screen.findByText('100%')
     act(() => useApp.getState().setZoom(150))
     expect(screen.getByRole('button', { name: 'Save' })).toBeDisabled()
     expect(screen.getByRole('button', { name: 'Revert' })).toBeDisabled()
@@ -109,6 +109,13 @@ describe('Settings zoom display', () => {
     await act(async () => fireEvent.click(save))
     expect(api.saveConfig).toHaveBeenCalledWith(expect.objectContaining({ devtools: true }))
     expect(useApp.getState().devtools).toBe(true)
+  })
+
+  it('reads each setting with its explanation, and the zoom level with its name', async () => {
+    renderSettings()
+    expect(await screen.findByLabelText('Scan depth')).toHaveAccessibleDescription(/from 1 to 8/)
+    expect(screen.getByLabelText('Parallel operations')).toHaveAccessibleDescription(/from 1 to 32/)
+    expect(screen.getByRole('status', { name: 'Zoom' })).toHaveTextContent('100%')
   })
 
   it('has an Open logs folder button that asks the backend to open the folder', async () => {
