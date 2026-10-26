@@ -3,7 +3,7 @@ import { api } from '../api'
 import { notifyError, useBatch, useBatchRunning } from '../hooks'
 import { useApp, type Fresh } from '../store'
 import { useRepoMenu } from '../repoMenu'
-import { groupStyle, type GroupColor } from '../lib/groupColor'
+import { type GroupColor } from '../lib/groupColor'
 import { absoluteTime, relativeTime } from '../lib/time'
 import { needsAttention, type Row } from '../lib/git'
 import { runPush } from '../lib/send'
@@ -78,8 +78,7 @@ export function DashboardCards({ view, sections, cursor, setCursor, colors, grou
       {sections.map((sec, i) => (
         <section key={sec.key} className="card-section" aria-label={sec.label}>
           {sec.label && (
-            <div className={`card-band ${i === 0 ? 'first' : ''}`} style={groupStyle(sec.color)}>
-              {sec.color && <span className="group-swatch" aria-hidden />}
+            <div className={`card-band ${i === 0 ? 'first' : ''}`}>
               {sec.label}
               <span className="band-count">{sec.count}</span>
             </div>
@@ -93,7 +92,6 @@ export function DashboardCards({ view, sections, cursor, setCursor, colors, grou
                 cursor={row.repo.path === cursor}
                 setCursor={setCursor}
                 // Under its group's own heading a card doesn't repeat the group.
-                color={sec.color ? undefined : colors?.get(row.repo.groupId)}
                 groupName={colors && !sec.color ? groupNames.get(row.repo.groupId) : undefined}
               />
             ))}
@@ -109,14 +107,12 @@ function RepoCard({
   row,
   cursor,
   setCursor,
-  color,
   groupName,
 }: {
   view: Props['view']
   row: Row
   cursor: boolean
   setCursor: (path: string) => void
-  color: GroupColor | undefined
   groupName: string | undefined
 }) {
   const { repo, summary: s } = row
@@ -219,7 +215,6 @@ function RepoCard({
       data-path={repo.path}
       aria-label={repo.name}
       aria-current={cursor ? 'true' : undefined}
-      style={color ? groupStyle(color) : undefined}
       onClick={() => {
         setCursor(repo.path)
         markSeen(repo.path)
@@ -235,13 +230,7 @@ function RepoCard({
           <button className="link repo-link card-name" tabIndex={-1} onClick={open} title={repo.path}>
             {repo.name}
           </button>
-          {view === 'detailed' && groupName && (
-            <span className="card-group">
-              <span className="group-swatch" aria-hidden />
-              {groupName}
-            </span>
-          )}
-          {view === 'compact' && color && <span className="group-swatch" title={groupName} aria-hidden />}
+          {groupName && <span className="card-group">{groupName}</span>}
           <span className="card-counts">
             {view === 'compact' && <CountChips summary={s} />}
             {fresh && !fresh.seen && (

@@ -24,7 +24,7 @@ import { plainInput } from '../lib/inputProps'
 import { useAddFolder } from '../lib/addFolder'
 import { SignInBanner } from './SignInBanner'
 import { CountChips, Divergence, StatusMark } from './Marks'
-import { groupColors, groupStyle, type GroupColor } from '../lib/groupColor'
+import { groupColors, type GroupColor } from '../lib/groupColor'
 import { useLayout, type DashboardView } from '../layout'
 import { DashboardCards, cardAbove, type CardSection } from './DashboardCards'
 import { RepoStatusText } from './RepoStatusText'
@@ -88,7 +88,7 @@ export function Dashboard() {
 
   const attention = (r: Row) => needsAttention(r.summary, progress[r.repo.path]?.state === 'error')
 
-  // With more than one group, each repo carries its group's colour as a stripe down its left edge.
+  // With more than one group, the rest are banded by group (told apart by their headings).
   const groups = useMemo(() => config.data?.groups ?? [], [config.data])
   const colors = useMemo(() => groupColors(groups), [groups])
   const colored = groups.length > 1
@@ -451,12 +451,7 @@ export function Dashboard() {
               }
               if (it.kind === 'band') {
                 return (
-                  <div
-                    key={'band:' + it.key}
-                    className={`band ${v.index === 0 ? 'first' : ''}`}
-                    style={{ ...place, ...groupStyle(it.color) }}
-                  >
-                    {it.color && <span className="group-swatch" aria-hidden />}
+                  <div key={'band:' + it.key} className={`band ${v.index === 0 ? 'first' : ''}`} style={place}>
                     {it.label}
                     <span className="band-count">{it.count}</span>
                   </div>
@@ -472,11 +467,10 @@ export function Dashboard() {
                   className={`row ${repo.path === cursor ? 'cursor' : ''} ${attention(it.row) ? 'urgent' : ''}`}
                   aria-current={repo.path === cursor ? 'true' : undefined}
                   onClick={() => setCursor(repo.path)}
-                  style={colored ? { ...place, ...groupStyle(colors.get(repo.groupId)) } : place}
+                  style={place}
                   onDoubleClick={open}
                   onContextMenu={repoMenu(repo.path)}
                 >
-                  {colored && <span className="group-stripe" aria-hidden />}
                   <StatusMark summary={s} />
                   <button className="link repo-link" tabIndex={-1} onClick={open} title={repo.path}>
                     {repo.name}

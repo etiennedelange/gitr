@@ -110,7 +110,7 @@ describe('dashboard', () => {
     expect(order).toEqual(['Needs attention1', 'beta', 'Everything else2', 'gamma', 'alpha'])
   })
 
-  it('bands the rest by group, with each repo striped in its group colour, when all groups show', async () => {
+  it('bands the rest by group, told apart by their headings and never by colour, when all groups show', async () => {
     config.groups.push({ id: 'p', name: 'Personal', roots: ['D:/p'] })
     repos.push({ path: 'D:/p/delta', name: 'delta', groupId: 'p' })
     try {
@@ -127,8 +127,8 @@ describe('dashboard', () => {
       const order = () => [...body().querySelectorAll('.band, .row .repo-link')].map((el) => el.textContent)
       expect(order()).toEqual(['Needs attention1', 'beta', 'Work2', 'gamma', 'alpha', 'Personal1', 'delta'])
       const stripe = (name: string) => screen.getByText(name).closest<HTMLElement>('.row')!.style.getPropertyValue('--group')
-      expect([stripe('beta'), stripe('gamma'), stripe('delta')]).toEqual(['var(--g-teal)', 'var(--g-teal)', 'var(--g-rose)'])
-      expect(body().querySelectorAll('.row .group-stripe')).toHaveLength(4)
+      expect([stripe('beta'), stripe('gamma'), stripe('delta')]).toEqual(['', '', ''])
+      expect(body().querySelectorAll('.group-stripe, .group-swatch')).toHaveLength(0)
 
       // One group chosen: back to attention, then everything else.
       act(() => useApp.getState().setDashboard({ group: 'g' }))

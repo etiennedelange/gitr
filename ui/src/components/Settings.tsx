@@ -9,7 +9,7 @@ import type { Config, Group } from '../types'
 import { plainInput } from '../lib/inputProps'
 import { saveThemePref, useTheme, type ThemePref } from '../theme'
 import { folderName, pickFolder } from '../lib/addFolder'
-import { GROUP_COLORS, groupColors, groupStyle, nextGroupColor } from '../lib/groupColor'
+import { nextGroupColor } from '../lib/groupColor'
 
 const SECTIONS = [
   { id: 'workspaces', label: 'Workspaces' },
@@ -199,7 +199,6 @@ function SettingsForm({ saved }: { saved: Config }) {
     if (dir && !g.roots.includes(dir)) updateGroup(g.id, { roots: [...g.roots, dir] })
   }
 
-  const colors = groupColors(draft.groups)
   const dirty = JSON.stringify({ ...draft, zoom: 0 }) !== JSON.stringify({ ...saved, zoom: 0 })
   const unnamed = draft.groups.some((g) => !g.name.trim())
 
@@ -282,21 +281,6 @@ function SettingsForm({ saved }: { saved: Config }) {
                     value={g.name}
                     onChange={(e) => updateGroup(g.id, { name: e.target.value })}
                   />
-                  <div className="swatches" role="radiogroup" aria-label={`Colour of ${g.name || 'this group'}`}>
-                    {GROUP_COLORS.map((c) => (
-                      <label key={c} className="swatch-pick" title={c.charAt(0).toUpperCase() + c.slice(1)}>
-                        <input
-                          type="radio"
-                          name={`color-${g.id}`}
-                          value={c}
-                          aria-label={c}
-                          checked={colors.get(g.id) === c}
-                          onChange={() => updateGroup(g.id, { color: c })}
-                        />
-                        <span className="swatch" style={groupStyle(c)} aria-hidden />
-                      </label>
-                    ))}
-                  </div>
                   <div className="spacer" />
                   <button className="small" onClick={() => addRoot(g)}>
                     <FolderPlus className="ico" aria-hidden />

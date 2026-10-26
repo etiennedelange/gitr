@@ -262,10 +262,11 @@ describe('dashboard cards', () => {
       expect(card('alpha').querySelector('.card-group')).toHaveTextContent('Work')
       expect(card('beta').querySelector('.card-group')).toBeNull()
       expect(card('delta').querySelector('.card-group')).toBeNull()
-      // Compact cards show only the swatch, on the same terms.
+      // Compact cards name it on the same terms (groups are told apart by name, not colour).
       fireEvent.click(screen.getByRole('button', { name: 'Cards' }))
-      expect(card('alpha').querySelector('.group-swatch')).not.toBeNull()
-      expect(card('beta').querySelector('.group-swatch')).toBeNull()
+      expect(card('alpha').querySelector('.card-group')).toHaveTextContent('Work')
+      expect(card('beta').querySelector('.card-group')).toBeNull()
+      expect(card('alpha').querySelector('.group-swatch')).toBeNull()
     } finally {
       config.groups.pop()
       repos.pop()

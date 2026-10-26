@@ -113,15 +113,11 @@ describe('settings form', () => {
     expect(screen.getByText('Name every group before saving.')).toBeInTheDocument()
   })
 
-  it("shows a group's colour and saves the one you pick", async () => {
+  it('offers no group colour, since groups are told apart by name', async () => {
     useApp.setState({ settingsDraft: null })
     mount(newClient())
-    const teal = await screen.findByRole('radio', { name: 'teal' })
-    expect(teal).toBeChecked()
-    fireEvent.click(screen.getByRole('radio', { name: 'plum' }))
-    expect(screen.getByRole('radio', { name: 'plum' })).toBeChecked()
-    expect(screen.getByRole('button', { name: 'Save' })).toBeEnabled()
-    await act(async () => fireEvent.click(screen.getByRole('button', { name: 'Save' })))
-    expect(vi.mocked(api.saveConfig).mock.calls[0][0].groups[0].color).toBe('plum')
+    await screen.findByLabelText('Group name')
+    expect(screen.queryByRole('radiogroup')).toBeNull()
+    expect(screen.queryByRole('radio', { name: 'teal' })).toBeNull()
   })
 })

@@ -9,6 +9,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - **Dashboard cards.** The dashboard now shows each repository as a card by default. The table is still there: a **Table / Cards / Details** switch next to the group and sort menus changes between the table, compact cards and detailed cards, and Gitr remembers your choice. Cards show the branch, counts, behind and ahead, and the status, with **Pull** when commits are waiting and **Push** when you have commits to send. If a hook rejects a push, the message offers to show the hook's output. Detailed cards also show the remote, the upstream branch, staged and unstaged files, and the last commit's subject and age.
 - **New changes stand out.** When a repository gets new changes, incoming or outgoing commits, or an error, its card briefly lights up in that colour and a small dot stays beside its counts until you hover over or open it. With animations turned off in Windows, only the dot shows.
 
+### Changed
+- **Groups no longer have colours.** The coloured stripes and squares beside workspace groups in the sidebar, the dashboard table and the cards are gone, and so is the colour choice in **Settings → Workspaces**. Groups are told apart by their headings and the space between them; a card outside its group's heading names the group instead.
+
 ### Security
 - **Safer connections.** Updated the TLS library Gitr uses for updates and AI requests (rustls 0.23.46, rustls-webpki 0.103.16, webpki-root-certs 1.0.10). The fixes stop a forged server reply from weakening later connections, close a way for certificates from distrusted authorities to be accepted, and remove distrusted root certificates.
 

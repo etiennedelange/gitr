@@ -119,7 +119,7 @@
   --red-soft: #fdece9;
   --red-on: #ffffff;
 
-  /* Group colours: hues no state uses, for the group stripe and swatch. */
+  /* Group colours: kept for a group's saved choice; nothing draws them since groups read by name. */
   --g-teal: #13858a;
   --g-rose: #c23f7d;
   --g-ochre: #9a6a2c;
@@ -1411,37 +1411,6 @@ body.resizing-y * {
 .branch-cell {
   color: var(--ink-2);
 }
-/*
- * Group colour: a square swatch on a group's heading and a 3px stripe down the left edge of its
- * rows, in the sidebar and the ledger. Square, so it never reads as a round status mark.
- */
-.group-swatch {
-  flex: none;
-  width: 8px;
-  height: 8px;
-  border-radius: 2px;
-  background: var(--group);
-}
-.group-head .group-swatch {
-  align-self: center;
-}
-.band .group-swatch {
-  margin-bottom: 4px;
-}
-.group-stripe {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  width: 3px;
-  background: var(--group);
-  pointer-events: none;
-}
-/* In the sidebar the stripe runs along the rail's edge, unbroken down the group. */
-.repo-item .group-stripe {
-  left: calc(-1 * var(--s4));
-}
-
 /* Band headings: what needs you, then each group or everything else. */
 .band {
   display: flex;
@@ -3226,44 +3195,6 @@ button.sha-chip .ico {
   max-width: 260px;
   font-weight: 600;
 }
-/* A group's colour: six swatches, a radio group. */
-.swatches {
-  display: flex;
-  gap: var(--s1);
-  border: 0;
-}
-.swatch-pick {
-  position: relative;
-  display: grid;
-  place-items: center;
-  width: 22px;
-  height: 22px;
-  border-radius: var(--r-sm);
-}
-.swatch-pick:hover {
-  background: var(--hover);
-}
-.swatch-pick input {
-  position: absolute;
-  inset: 0;
-  margin: 0;
-  opacity: 0;
-}
-.swatch-pick .swatch {
-  width: 12px;
-  height: 12px;
-  border-radius: 3px;
-  background: var(--group);
-}
-.swatch-pick input:checked + .swatch {
-  box-shadow:
-    0 0 0 2px var(--panel),
-    0 0 0 3.5px var(--group);
-}
-.swatch-pick:has(input:focus-visible) {
-  outline: 2px solid var(--focus);
-  outline-offset: 1px;
-}
 .roots {
   margin: var(--s3) 0 0;
   padding: 0;
@@ -3880,12 +3811,6 @@ dialog::backdrop {
   .repo-item {
     justify-content: center;
     padding: 0;
-  }
-  .repo-item .group-stripe {
-    left: calc(-1 * var(--s3));
-  }
-  .group-head .group-swatch {
-    display: none;
   }
   .repo-item .busy-dot {
     position: absolute;
