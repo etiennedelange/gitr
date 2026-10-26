@@ -52,6 +52,14 @@ describe('toasts', () => {
     act(() => void vi.advanceTimersByTime(60000))
     expect(screen.getByText('Push rejected')).toBeInTheDocument()
   })
+
+  it('shows the follow-up an error toast was given', () => {
+    const run = vi.fn(() => Promise.resolve())
+    show()
+    act(() => useApp.getState().toast('error', 'The pre-push hook rejected the push.', null, null, { label: 'Show hook output', run }))
+    fireEvent.click(screen.getByRole('button', { name: 'Show hook output' }))
+    expect(run).toHaveBeenCalled()
+  })
 })
 
 describe('toast limit', () => {

@@ -34,10 +34,10 @@ const FILTERS: Filter[] = ['all', 'attention', 'dirty', 'behind', 'ahead']
 const FILTER_LABEL: Record<Filter, string> = { all: 'All', attention: 'Attention', dirty: 'Changes', behind: 'Behind', ahead: 'Ahead' }
 const ROW_H = 30
 const BAND_H = 28
-const VIEWS: { view: DashboardView; label: string; Icon: typeof Rows3 }[] = [
-  { view: 'table', label: 'Table', Icon: Rows3 },
-  { view: 'compact', label: 'Compact cards', Icon: LayoutGrid },
-  { view: 'detailed', label: 'Detailed cards', Icon: LayoutList },
+const VIEWS: { view: DashboardView; label: string; title: string; Icon: typeof Rows3 }[] = [
+  { view: 'table', label: 'Table', title: 'Table: one row per repository', Icon: Rows3 },
+  { view: 'compact', label: 'Cards', title: 'Compact cards', Icon: LayoutGrid },
+  { view: 'detailed', label: 'Details', title: 'Detailed cards, with the last commit', Icon: LayoutList },
 ]
 
 /** A virtual list item: a repo row, or the heading of the band of rows below it. */
@@ -341,17 +341,17 @@ export function Dashboard() {
             ))}
           </div>
           <div className="spacer" />
-          <div className="segmented icons" role="group" aria-label="Layout">
-            {VIEWS.map(({ view: v, label, Icon }) => (
+          <div className="segmented layout-switch" role="group" aria-label="Layout">
+            {VIEWS.map(({ view: v, label, title, Icon }) => (
               <button
                 key={v}
                 className={view === v ? 'on' : ''}
                 aria-pressed={view === v}
-                title={label}
+                title={title}
                 onClick={() => setDashboardView(v)}
               >
                 <Icon className="ico" aria-hidden />
-                <span className="sr-only">{label}</span>
+                <span className="layout-label">{label}</span>
               </button>
             ))}
           </div>

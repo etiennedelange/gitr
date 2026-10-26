@@ -558,6 +558,16 @@ ul:focus-visible,
   box-shadow: 0 0 0 1px var(--line-strong);
 }
 
+/* The dashboard's layout switch: an icon and a word per choice; narrow, only the icons. */
+.layout-switch button {
+  gap: 5px;
+  padding: 0 var(--s4) 0 var(--s3);
+}
+.layout-switch .ico {
+  width: 14px;
+  height: 14px;
+}
+
 /* Utility text. */
 .spacer {
   flex: 1;
@@ -1732,7 +1742,9 @@ body.resizing-y * {
   width: 14px;
   height: 14px;
 }
-.card-foot .next {
+.card-next {
+  display: flex;
+  gap: var(--s1);
   margin-left: auto;
 }
 .card-word {
@@ -3657,6 +3669,17 @@ dialog::backdrop {
 /* ---------------------------------------------------------------- narrow and short windows */
 /* Narrow dashboard: drop the row tools, then tighten the columns. */
 @container (max-width: 980px) {
+  .layout-switch .layout-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .layout-switch button {
+    padding: 0 var(--s3);
+  }
   .row {
     grid-template-columns: 16px minmax(120px, 1.2fr) minmax(100px, 1fr) 100px 52px minmax(110px, 1.3fr);
     gap: var(--s4);

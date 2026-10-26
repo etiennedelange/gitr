@@ -29,11 +29,13 @@ vi.mock('./api', () => ({
     runBatch: vi.fn(() => Promise.resolve([])),
     openWith: vi.fn(() => Promise.resolve()),
     openRemote: vi.fn(() => Promise.resolve('')),
+    push: vi.fn(() => Promise.resolve()),
   },
   errorMessage: (e: unknown) => String(e),
   errorDetail: () => null,
-  asCmdError: () => null,
+  asCmdError: (e: unknown) => (e && typeof e === 'object' && 'kind' in e ? e : null),
 }))
+const { api } = await import('./api')
 const { Dashboard } = await import('./components/Dashboard')
 const { FLASH_MS } = await import('./components/DashboardCards')
 
@@ -67,6 +69,7 @@ beforeEach(() => {
   useApp.setState({
     summaries: {},
     fresh: {},
+    hookRuns: {},
     batch: {},
     busy: {},
     toasts: [],
@@ -91,7 +94,7 @@ describe('dashboard cards', () => {
     expect(card('alpha')).toBeNull()
     expect(screen.getByRole('button', { name: 'Table' })).toHaveAttribute('aria-pressed', 'true')
 
-    fireEvent.click(screen.getByRole('button', { name: 'Detailed cards' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Details' }))
     expect(card('alpha')).toHaveClass('detailed')
     expect(JSON.parse(localStorage.getItem('layout')!).dashboardView).toBe('detailed')
     reloadLayout()
@@ -141,6 +144,43 @@ describe('dashboard cards', () => {
     expect(c).toHaveTextContent('2 min ago')
     expect(c.querySelector('.card-mix')).toHaveAttribute('aria-label', '1 staged, 2 unstaged')
     expect(screen.getByRole('button', { name: /Pull ↓3/ })).toBeEnabled()
+  })
+
+  it('pushes what is ahead from the card', async () => {
+    useApp.setState({ summaries: { 'D:/w/alpha': summary('D:/w/alpha', { ahead: 2 }) } })
+    mount()
+    await screen.findByText('alpha')
+    await act(async () => fireEvent.click(screen.getByRole('button', { name: /Push ↑2/ })))
+    expect(api.push).toHaveBeenCalledWith('D:/w/alpha', false)
+    expect(useApp.getState().toasts.at(-1)?.message).toBe('Pushed')
+  })
+
+  it('offers no Push without an upstream, and Pull and Push when the branches diverged', async () => {
+    useApp.setState({
+      summaries: {
+        'D:/w/alpha': summary('D:/w/alpha', { ahead: 1, upstream: null }),
+        'D:/w/beta': summary('D:/w/beta', { ahead: 1, behind: 2 }),
+      },
+    })
+    mount()
+    await screen.findByText('alpha')
+    expect(card('alpha').querySelector('.next')).toBeNull()
+    expect([...card('beta').querySelectorAll('.next')].map((b) => b.textContent)).toEqual(['Pull ↓2', 'Push ↑1'])
+  })
+
+  it('points to the hook output when a hook rejects the push', async () => {
+    const err = { kind: 'hook', message: 'The pre-push hook rejected the push.', detail: 'lint failed', repo: 'D:/w/alpha' }
+    vi.mocked(api.push).mockRejectedValueOnce(err)
+    useApp.setState({ summaries: { 'D:/w/alpha': summary('D:/w/alpha', { ahead: 1 }) } })
+    mount()
+    await screen.findByText('alpha')
+    await act(async () => fireEvent.click(screen.getByRole('button', { name: /Push ↑1/ })))
+    const toast = useApp.getState().toasts.at(-1)!
+    expect(toast.kind).toBe('error')
+    expect(toast.message).toBe('alpha: The pre-push hook rejected the push.')
+    expect(useApp.getState().hookRuns['D:/w/alpha']?.failed?.retry).toEqual({ kind: 'push' })
+    await act(async () => void (await toast.action!.run()))
+    expect(useApp.getState().view).toEqual({ kind: 'repo', path: 'D:/w/alpha' })
   })
 
   it('moves across the cards with the arrow keys and opens one with Enter', async () => {

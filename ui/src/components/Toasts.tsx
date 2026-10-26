@@ -47,7 +47,8 @@ export function Toasts() {
   return (
     <div className="toasts">
       {toasts.map((t) => {
-        const actions = t.kind === 'error' ? errorActions(t.error, (repo) => !!busy[repo], strategyOf) : t.action ? [t.action] : []
+        const own = t.action ? [t.action] : []
+        const actions = t.kind === 'error' ? [...errorActions(t.error, (repo) => !!busy[repo], strategyOf), ...own] : own
         return (
           <ToastShell key={t.id} id={t.id} kind={t.kind}>
             <div className="toast-row">

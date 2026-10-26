@@ -1,4 +1,4 @@
-import { ArrowDownToLine, Code, Ellipsis, GitBranch, SquareTerminal } from 'lucide-react'
+import { ArrowDownToLine, ArrowUpFromLine, Code, Ellipsis, GitBranch, SquareTerminal } from 'lucide-react'
 import { api } from '../api'
 import { notifyError, useBatch, useBatchRunning } from '../hooks'
 import { useApp, type Fresh } from '../store'
@@ -6,6 +6,7 @@ import { useRepoMenu } from '../repoMenu'
 import { groupStyle, type GroupColor } from '../lib/groupColor'
 import { absoluteTime, relativeTime } from '../lib/time'
 import { needsAttention, type Row } from '../lib/git'
+import { runPush } from '../lib/send'
 import { CountChips, Divergence, StatusMark } from './Marks'
 import { RepoStatusText } from './RepoStatusText'
 import type { DashboardView } from '../layout'
@@ -95,6 +96,7 @@ function RepoCard({
   const failed = useApp((st) => st.batch[repo.path]?.state === 'error')
   const fresh = useApp((st) => st.fresh[repo.path])
   const markSeen = useApp((st) => st.markSeen)
+  const busy = useApp((st) => !!st.busy[repo.path])
   const batch = useBatch()
   const running = useBatchRunning()
   const repoMenu = useRepoMenu()
@@ -105,6 +107,7 @@ function RepoCard({
   // Played once per arrival: the key is its time, and once it is old a re-render draws no flash.
   const flashing = !!fresh && Date.now() - fresh.at < FLASH_MS
   const behind = s?.behind ?? 0
+  const ahead = s?.ahead ?? 0
 
   const tools = (
     <span className="card-tools">
@@ -147,8 +150,11 @@ function RepoCard({
       </button>
     </span>
   )
-  // What the repo is waiting for: a pull when it is behind. It never competes with a primary button.
-  const next = behind > 0 && !s?.operation && (
+  // What the repo is waiting for: a pull when it is behind, a push when it is ahead (both when
+  // the branches diverged: the rejected push's toast offers to rebase or merge). Quiet buttons in
+  // the state's ink, so they never compete with a primary button.
+  const waiting = !s?.operation && !s?.error
+  const pull = waiting && behind > 0 && (
     <button
       className="quiet small next next-behind"
       tabIndex={-1}
@@ -161,6 +167,21 @@ function RepoCard({
     >
       <ArrowDownToLine className="ico" aria-hidden />
       Pull ↓{behind}
+    </button>
+  )
+  const push = waiting && ahead > 0 && !!s?.upstream && (
+    <button
+      className="quiet small next next-ahead"
+      tabIndex={-1}
+      disabled={running || busy}
+      title={`Push ${ahead} outgoing commit${ahead === 1 ? '' : 's'} to ${s.upstream}`}
+      onClick={(e) => {
+        e.stopPropagation()
+        void pushFromCard(repo.path, repo.name, ahead)
+      }}
+    >
+      <ArrowUpFromLine className="ico" aria-hidden />
+      Push ↑{ahead}
     </button>
   )
 
@@ -242,10 +263,29 @@ function RepoCard({
           </span>
         )}
         {tools}
-        {next}
+        {(pull || push) && (
+          <span className="card-next">
+            {pull}
+            {push}
+          </span>
+        )}
       </div>
     </article>
   )
+}
+
+/**
+ * Pushes as the repo view does. A hook that rejects the push is recorded for the repo's hook
+ * panel, which the dashboard doesn't show, so the failure also gets a toast that opens it.
+ */
+async function pushFromCard(path: string, name: string, ahead: number) {
+  if (await runPush(path, ahead)) return
+  const failed = useApp.getState().hookRuns[path]?.failed
+  if (!failed) return
+  useApp.getState().toast('error', `${name}: ${failed.error.message}`, failed.error.detail ?? null, null, {
+    label: 'Show hook output',
+    run: async () => useApp.getState().setView({ kind: 'repo', path }),
+  })
 }
 
 const changesOf = (s: RepoSummary) => s.staged + s.unstaged + s.conflicted
