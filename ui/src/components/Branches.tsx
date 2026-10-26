@@ -47,13 +47,29 @@ export function Branches({ path, remote }: { path: string; remote: RemoteInfo | 
   const remove = async (b: Branch) => {
     if (busy) return
     const unpushed = b.ahead ? ` It has ${b.ahead} commit${b.ahead === 1 ? '' : 's'} not pushed.` : ''
-    if (!(await ask(`Delete local branch ${b.name}?${unpushed}`, { title: 'Delete branch', kind: 'warning', okLabel: 'Delete branch', cancelLabel: 'Cancel' }))) return
+    if (
+      !(await ask(`Delete local branch ${b.name}?${unpushed}`, {
+        title: 'Delete branch',
+        kind: 'warning',
+        okLabel: 'Delete branch',
+        cancelLabel: 'Cancel',
+      }))
+    )
+      return
     try {
       await api.deleteBranch(path, b.name, false)
     } catch (e) {
       const msg = errorMessage(e)
       if (!/not fully merged/i.test(msg)) return notifyError(e)
-      if (!(await ask(`${b.name} is not fully merged. Delete anyway?`, { title: 'Force delete', kind: 'warning', okLabel: 'Force delete', cancelLabel: 'Cancel' }))) return
+      if (
+        !(await ask(`${b.name} is not fully merged. Delete anyway?`, {
+          title: 'Force delete',
+          kind: 'warning',
+          okLabel: 'Force delete',
+          cancelLabel: 'Cancel',
+        }))
+      )
+        return
       try {
         await api.deleteBranch(path, b.name, true)
       } catch (e2) {

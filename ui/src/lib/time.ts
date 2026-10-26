@@ -22,5 +22,11 @@ export function relativeTime(unix: number, now = Date.now(), locale?: string): s
 
 /** The date and time in the user's locale, "3 Oct 2026, 14:02" or "Oct 3, 2026, 2:02 PM", for tooltips and the commit header. */
 export function absoluteTime(unix: number, locale?: string): string {
-  return new Date(unix * 1000).toLocaleString(locale, { day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit' })
+  return new Date(unix * 1000).toLocaleString(locale, {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+  })
 }
