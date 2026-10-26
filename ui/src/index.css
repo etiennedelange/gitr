@@ -1574,6 +1574,317 @@ body.resizing-y * {
   height: 14px;
 }
 
+/*
+ * Cards: the dashboard's default layout. Flat faces on a hairline like the settings card, under the
+ * ledger's band headings; state still reads from marks, counts and words, never filled chips.
+ */
+.card-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
+  padding: 0 var(--s4) var(--s6) var(--s6);
+}
+.card-list:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: -2px;
+}
+.card-band {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  height: 28px;
+  margin-top: var(--s4);
+  color: var(--ink-2);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+.card-band.first {
+  margin-top: var(--s2);
+}
+.card-section:first-child > .card-grid:first-child {
+  margin-top: var(--s5);
+}
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--s5);
+}
+.card-grid.detailed {
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+}
+.repo-card {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  background: var(--raised);
+  transition: border-color var(--t-fast) var(--ease);
+}
+.repo-card:hover {
+  border-color: var(--line-strong);
+}
+.repo-card.cursor,
+.repo-card.cursor:hover {
+  border-color: color-mix(in oklab, var(--accent) 55%, var(--line));
+  background: var(--sel);
+}
+.card-list:focus-visible .repo-card.cursor {
+  box-shadow: 0 0 0 1px var(--accent);
+}
+.repo-card.cursor .repo-link {
+  color: var(--sel-ink);
+}
+.card-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+  padding: 10px var(--s5) var(--s4);
+  min-width: 0;
+}
+.card-top {
+  display: flex;
+  align-items: center;
+  gap: var(--s4);
+  min-height: 22px;
+}
+.card-name {
+  min-width: 0;
+  font-size: var(--fs-md);
+  white-space: nowrap;
+}
+.card-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--ink-3);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.card-counts {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s4);
+  flex: none;
+}
+.card-remote {
+  flex: none;
+  color: var(--ink-3);
+  font-size: var(--fs-xs);
+}
+.card-branch {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  min-width: 0;
+  color: var(--ink-2);
+  font-size: var(--fs-mono);
+}
+.card-branch .ico {
+  flex: none;
+  width: 13px;
+  height: 13px;
+  color: var(--ink-3);
+}
+.card-upstream {
+  color: var(--ink-3);
+}
+.card-mid {
+  display: flex;
+  align-items: center;
+  gap: var(--s5);
+  min-height: 22px;
+}
+.card-mid .divergence {
+  flex: none;
+  width: 104px;
+  height: 16px;
+}
+.card-mid .status-cell {
+  flex: 1;
+}
+.card-foot {
+  display: flex;
+  align-items: center;
+  gap: var(--s1);
+  min-height: 32px;
+  margin-top: auto;
+  padding: var(--s1) var(--s3) var(--s1) var(--s4);
+  border-top: 1px solid var(--line-soft);
+}
+.card-tools {
+  display: flex;
+  gap: var(--s1);
+}
+.card-tools button.icon {
+  width: 26px;
+  height: 24px;
+  color: var(--ink-3);
+}
+.card-tools button.icon .ico {
+  width: 14px;
+  height: 14px;
+}
+.card-foot .next {
+  margin-left: auto;
+}
+.card-word {
+  flex: 1;
+  min-width: 0;
+  margin-left: var(--s1);
+}
+.repo-card.detailed .card-body {
+  gap: var(--s3);
+  padding: var(--s5) 14px 10px;
+}
+.card-detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s4);
+}
+.card-alert {
+  margin: 0;
+  padding: var(--s4) 10px;
+  border-radius: var(--r);
+  background: var(--red-soft);
+  color: var(--red-ink);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+}
+.card-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border: 1px solid var(--line-soft);
+  border-radius: var(--r);
+}
+.card-stat {
+  display: flex;
+  flex-direction: column;
+  padding: var(--s3) 10px;
+  color: var(--ink-3);
+  font-size: var(--fs-xs);
+}
+.card-stat + .card-stat {
+  border-left: 1px solid var(--line-soft);
+}
+.card-stat b {
+  font-size: var(--fs-lg);
+  font-weight: 600;
+  line-height: 1.25;
+}
+.card-stat.dirty b {
+  color: var(--amber-ink);
+}
+.card-stat.behind b {
+  color: var(--blue-ink);
+}
+.card-stat.ahead b {
+  color: var(--green-ink);
+}
+.card-mix {
+  display: flex;
+  height: 4px;
+  margin-top: -2px;
+  overflow: hidden;
+  border-radius: 2px;
+  background: var(--line-soft);
+}
+.mix-conflict {
+  background: var(--red);
+}
+.mix-staged {
+  background: var(--amber);
+}
+.mix-unstaged {
+  background: color-mix(in oklab, var(--amber) 45%, var(--raised));
+}
+.card-commit {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s4);
+  min-width: 0;
+  color: var(--ink-2);
+  font-size: var(--fs-sm);
+}
+.card-commit .sha {
+  flex: none;
+  color: var(--ink-3);
+  font-size: var(--fs-xs);
+}
+.card-commit .subject {
+  flex: 1;
+  min-width: 0;
+}
+.card-commit .when {
+  flex: none;
+  color: var(--ink-3);
+  font-size: var(--fs-xs);
+}
+
+/*
+ * Something new in a repo: the card washes in the hue of what changed and fades back over 1.6s,
+ * once per arrival (FLASH_MS in DashboardCards). A dot beside the counts stays until the card is
+ * hovered, focused or opened, so the news survives reduced motion and a glance away.
+ */
+.card-flash {
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  border: 1px solid var(--flash-line);
+  border-radius: inherit;
+  background: var(--flash);
+  pointer-events: none;
+  opacity: 0;
+  animation: card-flash 1600ms var(--ease);
+}
+.card-flash.dirty {
+  --flash: var(--amber-soft);
+  --flash-line: var(--amber);
+}
+.card-flash.behind {
+  --flash: var(--blue-soft);
+  --flash-line: var(--blue);
+}
+.card-flash.ahead {
+  --flash: var(--green-soft);
+  --flash-line: var(--green);
+}
+.card-flash.trouble {
+  --flash: var(--red-soft);
+  --flash-line: var(--red);
+}
+@keyframes card-flash {
+  0%,
+  35% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+.fresh-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--amber);
+}
+.fresh-dot.behind {
+  background: var(--blue);
+}
+.fresh-dot.ahead {
+  background: var(--green);
+}
+.fresh-dot.trouble {
+  background: var(--red);
+}
+
 /* First run on the dashboard. */
 .first-run-empty {
   display: flex;

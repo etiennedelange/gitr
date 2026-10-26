@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test'
+import { useLayout } from './layout'
 import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import type React from 'react'
@@ -122,6 +123,8 @@ beforeEach(() => {
 })
 afterEach(cleanup)
 
+// These tests read the ledger table; the cards have their own tests.
+beforeEach(() => useLayout.setState({ dashboardView: 'table' }))
 describe('error actions by kind', () => {
   const labels = (e: CmdError, busy = false) => errorActions(e, () => busy).map((a) => a.label)
   it('offers the right fix per kind (facts 5–8)', () => {

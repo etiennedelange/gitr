@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test'
+import { useLayout } from './layout'
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
@@ -63,6 +64,8 @@ beforeEach(() => {
 })
 afterEach(cleanup)
 
+// These tests read the ledger table; the cards have their own tests.
+beforeEach(() => useLayout.setState({ dashboardView: 'table' }))
 describe('dashboard', () => {
   it('shows Refresh as busy until the refresh finishes', async () => {
     mount()

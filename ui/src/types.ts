@@ -54,6 +54,14 @@ export interface RepoSummary {
   operation: Operation | null
   /** The commit HEAD points at (null on an unborn branch); History reloads when it moves. */
   head?: string | null
+  /** The HEAD commit's subject and time, for the detailed cards (absent from older backends). */
+  lastCommit?: HeadCommit | null
+}
+
+export interface HeadCommit {
+  subject: string
+  /** Committer time, seconds since the Unix epoch. */
+  time: number
 }
 
 export interface FileEntry {

@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import type { BatchProgress, CmdError, Config, RepoSummary } from './types'
-import type { Filter, SortKey } from './lib/git'
+import { freshKind, stillFresh, type FreshKind, type Filter, type SortKey } from './lib/git'
 
 export type View = { kind: 'dashboard' } | { kind: 'settings' } | { kind: 'repo'; path: string }
 
@@ -15,6 +15,15 @@ export interface DashboardState {
 export const initialDashboard: DashboardState = { filter: 'all', text: '', sort: 'status', group: '', scroll: 0 }
 
 const MAX_TOASTS = 5
+
+/** Something new in a repo since the dashboard last showed it: the cards flash once and mark it until seen. */
+export interface Fresh {
+  kind: FreshKind
+  /** When it arrived (ms), so the flash plays once, while it is new. */
+  at: number
+  /** Hovered, focused or opened since. */
+  seen: boolean
+}
 
 export interface Toast {
   id: number
@@ -76,6 +85,9 @@ interface AppStore {
   setZoom: (zoom: number) => void
   setDevtools: (devtools: boolean) => void
   setSummary: (s: RepoSummary) => void
+  /** Per repo path: what a summary brought that the one before didn't. */
+  fresh: Record<string, Fresh>
+  markSeen: (path: string) => void
   setBatch: (p: BatchProgress) => void
   clearBatch: () => void
   /** The sign-in banner was closed; it comes back with the next Fetch all / Pull all. Rows keep their results. */
@@ -121,7 +133,24 @@ export const useApp = create<AppStore>((set) => ({
   closeSettings: () => set((st) => (st.view.kind === 'settings' ? { view: st.returnView } : {})),
   setZoom: (zoom) => set({ zoom }),
   setDevtools: (devtools) => set({ devtools }),
-  setSummary: (s) => set((st) => ({ summaries: { ...st.summaries, [s.path]: s } })),
+  setSummary: (s) =>
+    set((st) => {
+      const kind = freshKind(st.summaries[s.path], s)
+      const old = st.fresh[s.path]
+      let fresh = st.fresh
+      if (kind) fresh = { ...fresh, [s.path]: { kind, at: Date.now(), seen: false } }
+      else if (old && !stillFresh(old.kind, s)) {
+        fresh = { ...fresh }
+        delete fresh[s.path]
+      }
+      return { summaries: { ...st.summaries, [s.path]: s }, fresh }
+    }),
+  fresh: {},
+  markSeen: (path) =>
+    set((st) => {
+      const f = st.fresh[path]
+      return f && !f.seen ? { fresh: { ...st.fresh, [path]: { ...f, seen: true } } } : {}
+    }),
   setBatch: (p) => set((st) => ({ batch: { ...st.batch, [p.path]: p } })),
   clearBatch: () => set({ batch: {}, signInDismissed: false }),
   signInDismissed: false,

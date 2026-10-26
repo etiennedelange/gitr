@@ -47,6 +47,9 @@ const WEBP_QUALITY = 0.95
 // Preview URL parameters per scene; see the table in ui/src/preview/README.md.
 const SCENES = {
   dashboard: { scenario: 'default' },
+  // `layout` is not a preview parameter: it sets the remembered dashboard layout (compact cards by default).
+  'dashboard-detailed': { scenario: 'default', layout: 'detailed' },
+  'dashboard-table': { scenario: 'default', layout: 'table' },
   repo: { scenario: 'default', view: 'repo', repo: 'billing-service', file: 'InvoiceExporter.cs', message: 'Export invoices as CSV and PDF' },
   history: { scenario: 'default', view: 'repo', repo: 'billing-service', tab: 'history' },
   // `diff` is not a preview parameter: it sets the remembered diff mode before the page loads.
@@ -68,10 +71,11 @@ const LOOK = {
   dark: { bar: '#202020', ink: '#ffffff', glows: ['#3d4a3c', '#3a4380'], base: '#101210' },
 }
 
-async function captureRaw(browser, url, theme, { diff, extent, wait, ...params }, out) {
+async function captureRaw(browser, url, theme, { diff, extent, layout, wait, ...params }, out) {
   const ctx = await browser.newContext({ viewport: { width: W, height: CLIENT_H }, deviceScaleFactor: 2 })
   if (diff) await ctx.addInitScript((mode) => localStorage.setItem('diffMode', mode), diff)
   if (extent) await ctx.addInitScript((e) => localStorage.setItem('diffExtent', e), extent)
+  if (layout) await ctx.addInitScript((v) => localStorage.setItem('layout', JSON.stringify({ dashboardView: v })), layout)
   const page = await ctx.newPage()
   const q = new URLSearchParams({ chrome: '0', theme, ...params })
   await page.goto(`${url}preview.html?${q}`)

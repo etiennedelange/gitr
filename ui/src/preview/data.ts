@@ -28,6 +28,26 @@ const gh = (repo: string) => ({
   repo,
 })
 
+// The HEAD commit each repo shows on a detailed card, `mins` minutes ago.
+const LAST: Record<string, [string, string, number]> = {
+  'billing-service': ['9f03b11', 'Export invoices as CSV', 12],
+  'fleet-api': ['e2a9f70', 'Bump the vehicle schema to v3', 26 * 60],
+  'mobile-app': ['a43f6d9', 'Set the version to 4.2.0', 40],
+  reporting: ['4be19a0', 'Add the quarterly revenue export', 3 * 24 * 60],
+  'design-tokens': ['3e5c9d1', 'Darken ink-3 for contrast', 8 * 24 * 60],
+  'data-pipeline': ['58e0c4a', 'Batch blob reads', 2 * 60],
+  'identity-server': ['c71d2e8', 'Refresh tokens before they expire', 25],
+  notifications: ['7716af3', 'Try signed webhooks', 5 * 24 * 60],
+  gitr: ['1aac6cc', 'Point the ledger at main', 60],
+  dotfiles: ['f80b2a7', 'Alias gs to git status -sb', 21 * 24 * 60],
+  notes: ['0c4d8b2', 'Weekly review', 2 * 24 * 60],
+  stravadash: ['bd172e5', 'Chart weekly distance', 3 * 60],
+}
+const last = (path: string) => {
+  const [sha, subject, mins] = LAST[path.slice(path.lastIndexOf('/') + 1)] ?? ['0000000', 'Initial commit', 60]
+  return { head: sha + '0'.repeat(33), lastCommit: { subject, time: Math.floor(Date.now() / 1000) - mins * 60 } }
+}
+
 const sum = (path: string, s: Partial<RepoSummary>): RepoSummary => ({
   path,
   branch: 'main',
@@ -41,6 +61,7 @@ const sum = (path: string, s: Partial<RepoSummary>): RepoSummary => ({
   remote: path.startsWith(W) ? ado(path.slice(W.length)) : gh(path.slice(P.length)),
   error: null,
   operation: null,
+  ...last(path),
   ...s,
 })
 

@@ -5,6 +5,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+- **Dashboard cards.** The dashboard now shows each repository as a card by default. A three-way switch next to the group and sort menus changes between the table, compact cards and detailed cards, and Gitr remembers your choice. Compact cards show the branch, counts, behind and ahead, the status and a Pull button when commits are waiting. Detailed cards also show the remote, the upstream branch, staged and unstaged files, and the last commit's subject and age.
+- **New changes stand out.** When a repository gets new changes, incoming or outgoing commits, or an error, its card briefly lights up in that colour and a small dot stays beside its counts until you hover over or open it. With animations turned off in Windows, only the dot shows.
+
 ### Security
 - **Safer connections.** Updated the TLS library Gitr uses for updates and AI requests (rustls 0.23.46, rustls-webpki 0.103.16, webpki-root-certs 1.0.10). The fixes stop a forged server reply from weakening later connections, close a way for certificates from distrusted authorities to be accepted, and remove distrusted root certificates.
 

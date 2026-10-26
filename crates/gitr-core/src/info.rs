@@ -64,6 +64,17 @@ pub struct RepoInfo {
     pub head_branch: Option<String>,
     pub remote_url: Option<String>,
     pub operation: Option<Operation>,
+    /// The commit HEAD points at, for the dashboard's detailed cards (None on an unborn branch).
+    pub last_commit: Option<LastCommit>,
+}
+
+/// The subject and committer time of the HEAD commit.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct LastCommit {
+    pub subject: String,
+    /// Seconds since the Unix epoch.
+    pub time: i64,
 }
 
 pub fn read_info(path: &Path) -> RepoInfo {
@@ -79,12 +90,20 @@ pub fn read_info(path: &Path) -> RepoInfo {
         .find_default_remote(gix::remote::Direction::Fetch)
         .and_then(Result::ok)
         .and_then(|r| r.url(gix::remote::Direction::Fetch).map(|u| u.to_bstring().to_string()));
-    RepoInfo { head_branch, remote_url, operation: operation_of(&repo) }
+    RepoInfo { head_branch, remote_url, operation: operation_of(&repo), last_commit: last_commit_of(&repo) }
 }
 
 /// The in-progress operation of the repo at `path`, if any (reads `.git` state files only).
 pub fn read_operation(path: &Path) -> Option<Operation> {
     gix::open(path).ok().as_ref().and_then(operation_of)
+}
+
+/// Reads one object from the repository's database; no git process.
+fn last_commit_of(repo: &gix::Repository) -> Option<LastCommit> {
+    let commit = repo.head_commit().ok()?;
+    let subject = commit.message().ok()?.summary().to_string();
+    let time = commit.time().ok()?.seconds;
+    Some(LastCommit { subject, time })
 }
 
 fn operation_of(repo: &gix::Repository) -> Option<Operation> {

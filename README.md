@@ -10,7 +10,7 @@ Built with Tauri 2 (Rust) and a React + TypeScript UI.
 
 ## Screenshots
 
-**Dashboard**: every repository with branch, ahead/behind, changes and status.
+**Dashboard**: every repository with branch, ahead/behind, changes and status, as cards or a table.
 
 ![Dashboard](docs/screenshots/dashboard-light.webp)
 
@@ -31,7 +31,7 @@ The installer isn't code-signed yet, so the first time Windows SmartScreen says 
 ## Features
 
 - Workspace groups: point at root folders, repositories are discovered automatically
-- Dashboard of every repo: branch, ahead/behind, changes, errors; filter and sort
+- Dashboard of every repo as compact cards, detailed cards or a table: branch, ahead/behind, changes, errors, last commit; filter and sort; new changes flash once
 - Fetch all / pull all (fast-forward only) in parallel with per-repo progress
 - Stage, unstage and discard files; unified or split diff view of the changed hunks or the whole file, with syntax colours for about 200 languages
 - Commit, amend, push (sets upstream automatically)
