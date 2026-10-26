@@ -110,9 +110,13 @@ Configuration lives in `%APPDATA%\gitr\config.toml`.
 
 | Keys | Action |
 |---|---|
+| Ctrl+P | Go to a repository by name |
 | Ctrl+D | Dashboard |
 | Ctrl+Shift+F / Ctrl+Shift+P | Fetch all / pull all |
 | Ctrl+, | Settings |
+| F6 / Shift+F6 | Next / previous pane |
+| Ctrl+scroll | Zoom the window, or only the diff when over it |
+| ↑ ↓, ← → | Sidebar: move through the repositories, fold or unfold a group |
 | ↑ ↓, Space, Delete | Select, stage/unstage, discard file |
 | Ctrl+G | Generate commit message |
 | Ctrl+Enter / Ctrl+Shift+Enter | Commit / commit and push |
