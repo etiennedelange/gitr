@@ -1,9 +1,18 @@
+/* Hallmark · shape: app screen · genre: modern-minimal · theme: Cobalt (deal 3/3, seed windows-desktop-git-client-096c·653ba38b·2026-10-26·r0) · redesign: full
+ * nav: kept (sidebar of groups, title bar per view) · signature: the ledger of repositories, its divergence axis · states: loading, empty, error, full, first run
+ * axes: light/grotesk-sans/cool · posture: restrained · contrast: pass · v2.0.0 */
+/* Hallmark · pre-emit critique: P4 H4 E4 S4 R4 V3 · weakest: V, one face for everything (IBM Plex Sans, the brand's), so hierarchy rides on weight, size and the sheet's depth */
+/* Hallmark · waive 39b · standard controls are 32px (--ctl), small ones 24 to 28px · a Windows desktop app driven by mouse and keyboard, sized like WinUI; small controls sit in rows that are the larger hit area */
+/* Hallmark · answered F3 · heads are one-line view and section titles in a desktop window; nothing wraps to balance */
+
 /*
- * Gitr: the ledger. One flat window on cool graphite neutrals, split by hairlines. State is
- * read down aligned columns of numerals and small marks, never from filled chips. One violet
- * accent carries selection, focus and the single primary action of a view; amber, sky, green and
- * red only ever mean changes, behind, ahead and trouble. Type is IBM Plex Sans, code is JetBrains
- * Mono, both bundled. Shadows belong to things that float (menus, dialogs, toasts) and nothing else.
+ * Gitr: a ruled sheet on a cool base. The sidebar sits on the window's base; every view is one
+ * sheet laid over it with a hairline and a soft edge, like a Windows 11 content layer. Inside the
+ * sheet, state is read down aligned columns of numerals and small marks, never from filled
+ * chips. One cobalt signal carries selection, focus and the single primary action of a view;
+ * amber, cyan, green and red only ever mean changes, behind, ahead and trouble. Type is IBM Plex
+ * Sans, code is JetBrains Mono, both bundled. Buttons are keys with a faint lower edge; cards
+ * and anything that floats cast a soft shadow, the rest of the window is flat and ruled.
  */
 
 /* ---------------------------------------------------------------- tokens */
@@ -29,15 +38,15 @@
   --font-ui: 'IBM Plex Sans Variable', 'IBM Plex Sans Fallback', 'Segoe UI', sans-serif;
   --font-mono: 'JetBrains Mono Variable', 'JetBrains Mono Fallback', Consolas, monospace;
 
-  /* Type scale: 12 / 13 / 14 / 15 / 17. Body is 14. */
+  /* Type scale, about 1.13: 12 / 13 / 14 / 15 / 18. Body is 14. */
   --fs-xs: 12px;
   --fs-sm: 13px;
   --fs: 14px;
   --fs-md: 15px;
-  --fs-lg: 17px;
+  --fs-lg: 18px;
   --fs-mono: 13px;
 
-  /* Spacing steps: 2 4 6 8 12 16 24. */
+  /* Spacing steps: 2 4 6 8 12 16 24 32. */
   --s1: 2px;
   --s2: 4px;
   --s3: 6px;
@@ -45,78 +54,85 @@
   --s5: 12px;
   --s6: 16px;
   --s7: 24px;
+  --s8: 32px;
 
-  /* Dimensions: controls, rows, bars. */
-  --ctl: 28px;
-  --ctl-sm: 24px;
-  --row: 26px;
-  --bar: 44px;
-  --strip: 40px;
-  --status-h: 26px;
-  --rail-w: 240px;
-  --icon: 15px;
+  /* Dimensions: controls, rows, bars. Standard controls are 32px, as in WinUI. */
+  --ctl: 32px;
+  --ctl-sm: 28px;
+  --ctl-xs: 24px;
+  --row: 28px;
+  --bar: 52px;
+  --strip: 48px;
+  --status-h: 28px;
+  --rail-w: 248px;
+  --icon: 16px;
   --icon-stroke: 1.75;
+  /* The gap around the sheet, where the window's base shows. */
+  --gap: 8px;
 
   /* Shape and depth. */
-  --r: 5px;
+  --r: 6px;
   --r-sm: 4px;
   --r-lg: 8px;
-  --shadow-float: 0 1px 2px rgb(0 0 0 / 0.06), 0 10px 28px -6px rgb(0 0 0 / 0.22);
+  --r-sheet: 10px;
 
   /* Motion: quick, ease-out, never in the way. */
-  --t-fast: 90ms;
-  --t: 140ms;
-  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --t-fast: 100ms;
+  --t: 160ms;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
 
   font: 400 var(--fs) / 1.45 var(--font-ui);
   font-variant-numeric: tabular-nums;
   font-kerning: normal;
   font-synthesis: none;
   color: var(--ink);
-  background: var(--bg);
+  background: var(--rail);
   accent-color: var(--accent);
   -webkit-font-smoothing: antialiased;
 }
 
+/* Light: cool near-white paper on a blue-grey base, ink and hairlines tilted to hue 255. */
 :root[data-theme='light'] {
   color-scheme: light;
-  --bg: #fcfcfd;
-  --rail: #f3f3f6;
-  --panel: #f6f6f8;
+  --bg: #f9fbfe;
+  --rail: #ebeff4;
+  --panel: #f0f4f8;
   --raised: #ffffff;
   --field: #ffffff;
   --overlay: #ffffff;
-  --line: #e3e3e8;
-  --line-soft: #ececf0;
-  --line-strong: #cfcfd7;
-  --ink: #1b1b20;
-  --ink-2: #5a5a66;
-  --ink-3: #6b6b77;
-  --hover: rgb(27 27 40 / 0.045);
-  --press: rgb(27 27 40 / 0.08);
-  --rail-hover: rgb(27 27 40 / 0.055);
+  --line: #dbe0e6;
+  --line-soft: #e6eaee;
+  --line-strong: #c5cbd2;
+  /* A field's lower edge and a key's: the one line that reads at 3:1. */
+  --line-edge: #7f8793;
+  --ink: #111825;
+  --ink-2: #414853;
+  --ink-3: #5d646e;
+  --hover: rgb(17 24 37 / 0.045);
+  --press: rgb(17 24 37 / 0.085);
+  --rail-hover: rgb(17 24 37 / 0.055);
 
-  --accent: #6145d4;
-  --accent-hover: #5236c4;
+  --accent: #1961d4;
+  --accent-hover: #0d50c3;
   --accent-ink: #ffffff;
-  --accent-text: #5236c4;
-  --sel: #ebe7fc;
-  --sel-ink: #2b1d74;
-  --text-sel: #d5cdfa;
-  --focus: #6145d4;
+  --accent-text: #0d4cb7;
+  --sel: #e0eeff;
+  --sel-ink: #072c73;
+  --text-sel: #bfd9ff;
+  --focus: #1961d4;
 
-  --amber: #d48a1c;
-  --amber-ink: #8b4f00;
-  --amber-soft: #fbf0dc;
-  --blue: #2f84d6;
-  --blue-ink: #1b60a6;
-  --blue-soft: #e3effb;
-  --green: #2c9a5e;
-  --green-ink: #1c7244;
-  --green-soft: #def2e6;
-  --red: #d2402f;
-  --red-ink: #ab2a1c;
-  --red-soft: #fdece9;
+  --amber: #df911a;
+  --amber-ink: #905211;
+  --amber-soft: #fef0d8;
+  --blue: #1794b5;
+  --blue-ink: #006581;
+  --blue-soft: #dff5fc;
+  --green: #359658;
+  --green-ink: #22683b;
+  --green-soft: #e0f7e5;
+  --red: #cc3430;
+  --red-ink: #a92321;
+  --red-soft: #ffece9;
   --red-on: #ffffff;
 
   /* Group colours: kept for a group's saved choice; nothing draws them since groups read by name. */
@@ -127,65 +143,77 @@
   --g-olive: #6f7d1c;
   --g-plum: #8a4fa0;
 
-  --add-bg: #ebf7ef;
-  --add-ln: #d6efde;
-  --add-ink: #18693b;
-  --del-bg: #fdeeeb;
-  --del-ln: #f8dad4;
+  --add-bg: #e9f7ee;
+  --add-ln: #d3efdc;
+  --add-ink: #1b6537;
+  --del-bg: #fdeeec;
+  --del-ln: #f8d9d4;
   --del-ink: #a5311f;
-  --hunk-bg: #f4f4f7;
-  --hunk-ink: #6a6a76;
+  --hunk-bg: #eef2f7;
+  --hunk-ink: #4f5763;
 
   /* Syntax colours in diffs: no green or red, which mean added and removed there. */
-  --syn-keyword: #5d36c4;
+  --syn-keyword: #2a4fc4;
   --syn-type: #0b6e7e;
   --syn-function: #8a5300;
-  --syn-string: #1d5fa8;
+  --syn-string: #6a3fb0;
   --syn-number: #a8336b;
-  --syn-comment: #6b6b77;
+  --syn-comment: #5d646e;
   --syn-meta: #7d4795;
+
+  /* Depth: the sheet, a card, a key's lower edge, anything that floats, the dialog backdrop. */
+  --shadow-sheet: 0 0 0 1px rgb(17 24 37 / 0.06), 0 1px 2px rgb(17 24 37 / 0.05), 0 4px 16px -6px rgb(17 24 37 / 0.1);
+  --shadow-card: 0 1px 2px rgb(17 24 37 / 0.05), 0 2px 8px -4px rgb(17 24 37 / 0.08);
+  --shadow-card-hover: 0 1px 2px rgb(17 24 37 / 0.06), 0 6px 18px -8px rgb(17 24 37 / 0.18);
+  /* A key's lower edge: its bottom border a step darker than the rest. */
+  --key-edge: #a9b0ba;
+  --accent-edge: #0a3f9c;
+  --shadow-float: 0 0 0 1px rgb(17 24 37 / 0.04), 0 2px 4px rgb(17 24 37 / 0.06), 0 16px 36px -10px rgb(17 24 37 / 0.26);
+  --backdrop: rgb(17 24 37 / 0.3);
 }
 
+/* Dark: graphite in steps, the base darkest, the sheet one step up, cards and keys above it. */
 :root[data-theme='dark'] {
   color-scheme: dark;
-  --bg: #242428;
-  --rail: #1e1e22;
-  --panel: #29292d;
-  --raised: #303035;
-  --field: #1e1e22;
-  --overlay: #323237;
-  --line: #38383f;
-  --line-soft: #2f2f34;
-  --line-strong: #4a4a53;
-  --ink: #ebebef;
-  --ink-2: #b4b4be;
-  --ink-3: #9d9da8;
-  --hover: rgb(235 235 245 / 0.045);
-  --press: rgb(235 235 245 / 0.08);
-  --rail-hover: rgb(235 235 245 / 0.05);
+  --bg: #1f232a;
+  --rail: #1a1e25;
+  --panel: #23282f;
+  --raised: #292e37;
+  --field: #1c2028;
+  --overlay: #2d323b;
+  --line: #333840;
+  --line-soft: #2a2f37;
+  --line-strong: #444a54;
+  --line-edge: #7b8390;
+  --ink: #e7ecf0;
+  --ink-2: #b8bec7;
+  --ink-3: #9aa2ad;
+  --hover: rgb(231 236 240 / 0.05);
+  --press: rgb(231 236 240 / 0.09);
+  --rail-hover: rgb(231 236 240 / 0.055);
 
-  --accent: #9a88ff;
-  --accent-hover: #ae9fff;
-  --accent-ink: #130e2e;
-  --accent-text: #b4a7ff;
-  --sel: #393258;
-  --sel-ink: #e4defe;
-  --text-sel: #4f4590;
-  --focus: #9a88ff;
+  --accent: #6d9df5;
+  --accent-hover: #87b1fd;
+  --accent-ink: #09152c;
+  --accent-text: #9bbeff;
+  --sel: #263a5f;
+  --sel-ink: #dde8fd;
+  --text-sel: #325392;
+  --focus: #6d9df5;
 
-  --amber: #e5a443;
-  --amber-ink: #f2bf6c;
-  --amber-soft: #3f3220;
-  --blue: #5aa6f0;
-  --blue-ink: #8fc4f6;
-  --blue-soft: #1f3348;
-  --green: #4cbd80;
-  --green-ink: #82d6a7;
-  --green-soft: #1c3727;
-  --red: #f0705f;
-  --red-ink: #ff9d90;
-  --red-soft: #432826;
-  --red-on: #2a0c08;
+  --amber: #e8aa4e;
+  --amber-ink: #f0c374;
+  --amber-soft: #3f2c15;
+  --blue: #4abbdb;
+  --blue-ink: #7ed2ed;
+  --blue-soft: #10323f;
+  --green: #5dc47e;
+  --green-ink: #86db9d;
+  --green-soft: #193521;
+  --red: #f2716a;
+  --red-ink: #fe9b93;
+  --red-soft: #4a2321;
+  --red-on: #200a08;
 
   --g-teal: #3bb3b6;
   --g-rose: #e2689f;
@@ -194,22 +222,30 @@
   --g-olive: #a3b23e;
   --g-plum: #b884cc;
 
-  --add-bg: #1c3125;
-  --add-ln: #223b2c;
+  --add-bg: #1b3024;
+  --add-ln: #213a2b;
   --add-ink: #7fd3a1;
-  --del-bg: #372422;
-  --del-ln: #452a27;
+  --del-bg: #362325;
+  --del-ln: #442a2b;
   --del-ink: #f78d7e;
-  --hunk-bg: #2a2a2f;
-  --hunk-ink: #9a9aa5;
+  --hunk-bg: #262b33;
+  --hunk-ink: #a3abb6;
 
-  --syn-keyword: #b4a7ff;
+  --syn-keyword: #8fb3ff;
   --syn-type: #5cc8cf;
   --syn-function: #e5b567;
-  --syn-string: #8fc4f6;
+  --syn-string: #c4a7ff;
   --syn-number: #f08fbf;
-  --syn-comment: #9d9da8;
+  --syn-comment: #9aa2ad;
   --syn-meta: #c99ad9;
+
+  --shadow-sheet: 0 0 0 1px rgb(0 0 0 / 0.35), 0 1px 0 rgb(255 255 255 / 0.04) inset, 0 6px 20px -8px rgb(0 0 0 / 0.5);
+  --shadow-card: 0 1px 0 rgb(255 255 255 / 0.04) inset, 0 1px 2px rgb(0 0 0 / 0.3);
+  --shadow-card-hover: 0 1px 0 rgb(255 255 255 / 0.05) inset, 0 8px 20px -8px rgb(0 0 0 / 0.55);
+  --key-edge: #2e333b;
+  --accent-edge: #4f7fd6;
+  --shadow-float: 0 0 0 1px rgb(0 0 0 / 0.4), 0 2px 4px rgb(0 0 0 / 0.3), 0 18px 40px -10px rgb(0 0 0 / 0.6);
+  --backdrop: rgb(6 9 14 / 0.5);
 }
 
 /* ---------------------------------------------------------------- base */
@@ -223,7 +259,7 @@ body {
   user-select: none;
   -webkit-user-select: none;
   cursor: default;
-  background: var(--bg);
+  background: var(--rail);
 }
 input,
 textarea,
@@ -245,7 +281,7 @@ body,
 #root {
   height: 100%;
   margin: 0;
-  overflow: hidden;
+  overflow: clip;
 }
 ::selection {
   background: var(--text-sel);
@@ -274,7 +310,7 @@ body,
 h1 {
   margin: 0;
   font: 600 var(--fs-lg) / 1.2 var(--font-ui);
-  letter-spacing: -0.008em;
+  letter-spacing: -0.012em;
 }
 h2 {
   margin: 0 0 var(--s3);
@@ -298,16 +334,16 @@ kbd,
 kbd {
   display: inline-block;
   min-width: 20px;
-  padding: 1px 6px;
+  padding: 0 var(--s3);
   border: 1px solid var(--line-strong);
-  border-bottom-width: 2px;
+  border-bottom-color: var(--line-edge);
   border-radius: var(--r-sm);
   background: var(--raised);
   font-size: var(--fs-xs);
   text-align: center;
 }
 code {
-  padding: 1px 5px;
+  padding: 0 var(--s2);
   border-radius: var(--r-sm);
   background: var(--panel);
   border: 1px solid var(--line-soft);
@@ -329,7 +365,7 @@ textarea {
   color: inherit;
 }
 
-/* Standard button: a raised face with a hairline, like a Windows command button. */
+/* Standard button: a key, a raised face on a hairline with a faint lower edge, like a WinUI button. */
 button {
   display: inline-flex;
   align-items: center;
@@ -338,6 +374,7 @@ button {
   height: var(--ctl);
   padding: 0 var(--s5);
   border: 1px solid var(--line-strong);
+  border-bottom-color: var(--key-edge);
   border-radius: var(--r);
   background: var(--raised);
   font-weight: 500;
@@ -354,14 +391,18 @@ button:hover:not(:disabled) {
 button:active:not(:disabled) {
   background: color-mix(in oklab, var(--raised), var(--ink) 8%);
 }
+/* Disabled: a flat face, quiet ink and a no-entry cursor, as well as the attribute. */
 button:disabled {
-  opacity: 0.42;
+  border-color: var(--line);
+  color: var(--ink-3);
+  cursor: not-allowed;
 }
 
 /* Quiet: toolbar and inline actions. No face until hovered. */
 button.quiet {
   border-color: transparent;
   background: transparent;
+  box-shadow: none;
   color: var(--ink);
 }
 button.quiet:hover:not(:disabled) {
@@ -377,16 +418,23 @@ button.quiet .ico {
 /* Primary: the one action this view is for. */
 button.primary {
   border-color: var(--accent);
+  border-bottom-color: var(--accent-edge);
   background: var(--accent);
   color: var(--accent-ink);
   font-weight: 600;
 }
 button.primary:hover:not(:disabled) {
   border-color: var(--accent-hover);
+  border-bottom-color: var(--accent-edge);
   background: var(--accent-hover);
 }
 button.primary:active:not(:disabled) {
-  background: color-mix(in oklab, var(--accent-hover), black 10%);
+  background: color-mix(in oklab, var(--accent-hover), var(--ink) 12%);
+}
+button.primary:disabled {
+  border-color: var(--line);
+  background: var(--panel);
+  color: var(--ink-3);
 }
 
 /* Next: what the repo is waiting for (Pull when behind, Push when ahead). Still quiet, but in the
@@ -423,6 +471,7 @@ button.icon {
   padding: 0;
   border-color: transparent;
   background: transparent;
+  box-shadow: none;
   color: var(--ink-2);
 }
 button.icon:hover:not(:disabled) {
@@ -439,6 +488,7 @@ button.link {
   padding: 0;
   border: 0;
   background: none;
+  box-shadow: none;
   color: var(--ink);
   text-align: left;
   overflow: hidden;
@@ -451,18 +501,20 @@ button.link:hover:not(:disabled) {
   text-decoration-color: color-mix(in oklab, currentColor 45%, transparent);
 }
 
+/* Fields: a hairline box with a darker lower edge, as WinUI draws them; focus adds an accent ring. */
 input,
 select {
   height: var(--ctl);
   padding: 0 var(--s4);
   border: 1px solid var(--line-strong);
+  border-bottom-color: var(--line-edge);
   border-radius: var(--r);
   background: var(--field);
 }
-input:hover:not(:focus),
-select:hover:not(:focus),
-textarea:hover:not(:focus) {
-  border-color: color-mix(in oklab, var(--line-strong), var(--ink) 18%);
+input:hover,
+select:hover,
+textarea:hover {
+  background: color-mix(in oklab, var(--field), var(--ink) 2.5%);
 }
 select {
   padding-right: var(--s3);
@@ -473,6 +525,7 @@ select option {
 }
 textarea {
   border: 1px solid var(--line-strong);
+  border-bottom-color: var(--line-edge);
   border-radius: var(--r);
   background: var(--field);
 }
@@ -503,8 +556,9 @@ input[type='radio']:focus-visible {
 input:not([type='checkbox']):not([type='radio']):focus,
 select:focus,
 textarea:focus {
-  border-color: var(--focus);
-  box-shadow: 0 0 0 1px var(--focus);
+  outline: 2px solid var(--focus);
+  outline-offset: -1px;
+  background: var(--field);
 }
 /* Lists and panes take the ring inside their edge, so a neighbour never covers it. */
 ul:focus-visible,
@@ -519,20 +573,22 @@ ul:focus-visible,
 }
 
 /* Segmented control: a small group of exclusive choices (Unified / Split). */
+/* Segmented control: keys on a sunken tray, the chosen one raised. */
 .segmented {
   display: inline-flex;
-  padding: 2px;
-  gap: 2px;
-  border-radius: var(--r);
-  background: var(--panel);
-  border: 1px solid var(--line);
+  padding: var(--s1);
+  gap: var(--s1);
+  border-radius: calc(var(--r) + 2px);
+  background: color-mix(in oklab, var(--panel), var(--ink) 4%);
+  box-shadow: inset 0 1px 2px color-mix(in oklab, var(--ink) 8%, transparent);
 }
 .segmented button {
-  height: 20px;
+  height: var(--ctl-xs);
   padding: 0 var(--s4);
   border: 0;
-  border-radius: var(--r-sm);
+  border-radius: var(--r);
   background: transparent;
+  box-shadow: none;
   color: var(--ink-2);
   font-size: var(--fs-sm);
 }
@@ -555,12 +611,14 @@ ul:focus-visible,
   background: var(--raised);
   color: var(--ink);
   font-weight: 600;
-  box-shadow: 0 0 0 1px var(--line-strong);
+  box-shadow:
+    0 0 0 1px var(--line),
+    0 1px 2px color-mix(in oklab, var(--ink) 12%, transparent);
 }
 
 /* The dashboard's layout switch: an icon and a word per choice; narrow, only the icons. */
 .layout-switch button {
-  gap: 5px;
+  gap: var(--s3);
   padding: 0 var(--s4) 0 var(--s3);
 }
 .layout-switch .ico {
@@ -751,13 +809,19 @@ ul:focus-visible,
   /* The sidebar, the 0-wide track of its splitter, the main column. --rail-user is a dragged width. */
   grid-template-columns: var(--rail-user, var(--rail-w)) 0 minmax(0, 1fr);
   height: 100%;
+  background: var(--rail);
 }
+/* The sheet: every view sits on one surface laid over the base, with a hairline and a soft edge. */
 .main {
   display: flex;
   flex-direction: column;
   min-width: 0;
   min-height: 0;
+  margin: var(--gap) var(--gap) var(--gap) 0;
+  overflow: clip;
+  border-radius: var(--r-sheet);
   background: var(--bg);
+  box-shadow: var(--shadow-sheet);
 }
 
 /*
@@ -823,13 +887,12 @@ body.resizing-y * {
   cursor: row-resize !important;
 }
 
-/* Sidebar: brand, Dashboard, the repos by group, Settings. A tinted column, not a card. */
+/* Sidebar: brand, Dashboard, the repos by group, Settings. It sits on the window's base, beside the sheet. */
 .sidebar {
   display: flex;
   flex-direction: column;
   min-height: 0;
   background: var(--rail);
-  border-right: 1px solid var(--line);
 }
 .brand {
   display: flex;
@@ -837,7 +900,7 @@ body.resizing-y * {
   gap: var(--s4);
   height: var(--bar);
   flex: none;
-  padding: 0 var(--s6);
+  padding: 0 var(--s6) 0 var(--s7);
   font: 600 var(--fs-md) / 1 var(--font-ui);
   letter-spacing: -0.01em;
 }
@@ -862,15 +925,17 @@ body.resizing-y * {
   fill: var(--accent);
 }
 .nav-item {
+  position: relative;
   display: flex;
   flex: none;
   height: var(--ctl);
-  margin: 0 var(--s4);
-  padding: 0 var(--s4);
+  margin: 0 var(--s4) 0 var(--s5);
+  padding: 0 var(--s4) 0 var(--s5);
   justify-content: flex-start;
   gap: var(--s4);
   border-color: transparent;
   background: transparent;
+  box-shadow: none;
   color: var(--ink);
   text-align: left;
 }
@@ -881,13 +946,26 @@ body.resizing-y * {
 .repo-item:hover:not(:disabled) {
   background: var(--rail-hover);
 }
+/* The open view rises to paper, marked by a short cobalt bar at its start, as in a WinUI nav pane. */
 .nav-item.active,
 .nav-item.active:hover:not(:disabled),
 .repo-item.active,
 .repo-item.active:hover:not(:disabled) {
-  background: var(--sel);
-  color: var(--sel-ink);
+  background: var(--raised);
+  box-shadow: var(--shadow-card);
+  color: var(--ink);
   font-weight: 600;
+}
+.nav-item.active::before,
+.repo-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: calc(50% - 8px);
+  width: 3px;
+  height: 16px;
+  border-radius: 2px;
+  background: var(--accent);
 }
 .nav-item.active .ico {
   color: var(--accent-text);
@@ -895,8 +973,8 @@ body.resizing-y * {
 .nav-count {
   margin-left: auto;
   min-width: 18px;
-  height: 17px;
-  padding: 0 5px;
+  height: 18px;
+  padding: 0 var(--s2);
   border-radius: 9px;
   display: inline-grid;
   place-items: center;
@@ -912,7 +990,7 @@ body.resizing-y * {
   flex: none;
   align-items: center;
   gap: var(--s1);
-  margin: var(--s4);
+  margin: var(--s4) var(--s4) var(--s4) var(--s5);
 }
 .rail-foot .nav-item.nav-settings {
   flex: 1;
@@ -926,20 +1004,25 @@ body.resizing-y * {
 .rail-tools {
   display: flex;
   align-items: center;
-  gap: var(--s1);
+  gap: var(--s2);
   flex: none;
-  margin: var(--s3) var(--s3) var(--s2) var(--s4);
+  margin: var(--s4) var(--s4) var(--s2) var(--s5);
 }
 .sidebar .search {
   flex: 1;
   min-width: 0;
-  height: 26px;
+  height: var(--ctl-sm);
   border-color: var(--line);
+  border-bottom-color: var(--line-edge);
+  background: color-mix(in oklab, var(--field) 70%, transparent);
   font-size: var(--fs-sm);
 }
+.sidebar .search:focus {
+  background: var(--field);
+}
 .rail-tools button.icon {
-  width: 26px;
-  height: 26px;
+  width: var(--ctl-sm);
+  height: var(--ctl-sm);
 }
 .rail-tools button.icon:hover:not(:disabled) {
   background: var(--rail-hover);
@@ -947,25 +1030,26 @@ body.resizing-y * {
 .tree {
   flex: 1;
   overflow-y: auto;
-  padding: 0 var(--s4) var(--s4);
+  padding: 0 var(--s4) var(--s4) var(--s5);
 }
 .group {
   position: relative;
 }
+/* A group is told apart by its heading and the space above it, nothing else. */
 .group-head {
   display: flex;
   width: 100%;
-  height: 28px;
-  margin-top: var(--s4);
+  height: var(--row);
+  margin-top: var(--s6);
   padding: 0 var(--s4) 0 var(--s2);
   justify-content: flex-start;
-  gap: var(--s2);
+  gap: var(--s3);
   border: none;
   background: none;
+  box-shadow: none;
   color: var(--ink-2);
-  font-size: var(--fs-xs);
+  font-size: var(--fs-sm);
   font-weight: 600;
-  letter-spacing: 0.02em;
 }
 .group-head:hover:not(:disabled) {
   background: none;
@@ -998,11 +1082,12 @@ body.resizing-y * {
   display: flex;
   width: 100%;
   height: var(--row);
-  padding: 0 var(--s4) 0 var(--s2);
+  padding: 0 var(--s4) 0 var(--s3);
   justify-content: flex-start;
   gap: var(--s3);
   border-color: transparent;
   background: transparent;
+  box-shadow: none;
   color: var(--ink);
   font-weight: 450;
   text-align: left;
@@ -1031,14 +1116,14 @@ body.resizing-y * {
   font-size: var(--fs-sm);
 }
 
-/* Title bar of a view: 44px, title left, actions right. */
+/* Title bar of a view: 52px, title left, actions right. */
 .toolbar {
   display: flex;
   align-items: center;
   gap: var(--s2);
   flex: none;
   min-height: var(--bar);
-  padding: 0 var(--s5) 0 var(--s6);
+  padding: 0 var(--s5) 0 var(--s7);
   border-bottom: 1px solid var(--line);
 }
 .toolbar h1 {
@@ -1052,7 +1137,7 @@ body.resizing-y * {
 }
 .toolbar-sep {
   width: 1px;
-  height: 18px;
+  height: 20px;
   margin: 0 var(--s2);
   background: var(--line);
 }
@@ -1147,12 +1232,12 @@ body.resizing-y * {
 .banner.operation .lucide {
   color: var(--ink-2);
 }
-/* News, not a warning. */
+/* News about Gitr itself, not a repo's state: the cobalt wash, so it never reads as "behind". */
 .banner.update {
-  background: var(--blue-soft);
+  background: var(--sel);
 }
 .banner.update .lucide {
-  color: var(--blue-ink);
+  color: var(--accent-text);
 }
 .banner.operation.conflicted .lucide,
 .banner.operation.conflicted .operation-text .muted {
@@ -1303,16 +1388,17 @@ body.resizing-y * {
 .dashboard .filters {
   flex: none;
   min-height: var(--strip);
-  padding: var(--s3) var(--s5) var(--s3) var(--s6);
+  padding: var(--s4) var(--s5) var(--s4) var(--s7);
   border-bottom: 1px solid var(--line);
 }
 .dashboard .filters select {
-  height: 26px;
+  height: var(--ctl-sm);
   max-width: 170px;
   font-size: var(--fs-sm);
 }
 .dashboard .search-field input {
-  height: 26px;
+  width: 256px;
+  height: var(--ctl-sm);
   font-size: var(--fs-sm);
 }
 /* Filter tabs: each says how many repos it would show. */
@@ -1321,11 +1407,12 @@ body.resizing-y * {
   gap: var(--s1);
 }
 .filter-tabs button {
-  height: 26px;
+  height: var(--ctl-sm);
   padding: 0 var(--s3) 0 var(--s4);
   gap: var(--s3);
   border-color: transparent;
   background: transparent;
+  box-shadow: none;
   color: var(--ink-2);
   font-size: var(--fs-sm);
 }
@@ -1338,9 +1425,6 @@ body.resizing-y * {
   background: var(--sel);
   color: var(--sel-ink);
   font-weight: 600;
-}
-.filter-tabs button {
-  gap: 5px;
 }
 .filter-count {
   color: var(--ink-3);
@@ -1362,23 +1446,23 @@ body.resizing-y * {
     minmax(150px, 1.6fr) 88px;
   align-items: center;
   gap: var(--s5);
-  padding: 0 var(--s4) 0 var(--s6);
+  padding: 0 var(--s4) 0 var(--s7);
 }
+/* Column heads: quiet body-face labels on the sheet, ruled once below. */
 .table-head {
   flex: none;
-  height: 28px;
+  height: 32px;
   padding-right: calc(var(--s4) + 12px);
   border-bottom: 1px solid var(--line);
-  background: var(--panel);
-  color: var(--ink-2);
+  color: var(--ink-3);
   font-size: var(--fs-xs);
-  font-weight: 600;
+  font-weight: 500;
   white-space: nowrap;
 }
 .th-divergence {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 9px;
+  gap: var(--s4);
 }
 .th-divergence span:first-child {
   text-align: right;
@@ -1391,6 +1475,7 @@ body.resizing-y * {
 }
 .table-body .row {
   border-bottom: 1px solid var(--line-soft);
+  transition: background-color var(--t-fast) var(--ease);
 }
 .table-body .row:hover {
   background: var(--hover);
@@ -1398,6 +1483,17 @@ body.resizing-y * {
 .table-body .row.cursor,
 .table-body .row.cursor:hover {
   background: var(--sel);
+}
+/* The cursor row carries the same short cobalt bar as the open view in the sidebar. */
+.table-body .row.cursor::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: calc(50% - 8px);
+  width: 3px;
+  height: 16px;
+  border-radius: 0 2px 2px 0;
+  background: var(--accent);
 }
 .table-body:focus-visible .row.cursor {
   box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--accent) 55%, transparent);
@@ -1411,17 +1507,16 @@ body.resizing-y * {
 .branch-cell {
   color: var(--ink-2);
 }
-/* Band headings: what needs you, then each group or everything else. */
+/* Band headings: what needs you, then each group or everything else. A group reads by its name. */
 .band {
   display: flex;
   align-items: flex-end;
   gap: var(--s3);
-  padding: 0 var(--s6) var(--s2);
+  padding: 0 var(--s7) var(--s3);
   border-bottom: 1px solid var(--line);
-  color: var(--ink-2);
-  font-size: var(--fs-xs);
+  color: var(--ink);
+  font-size: var(--fs-sm);
   font-weight: 600;
-  letter-spacing: 0.02em;
 }
 .band:not(.first) {
   padding-top: var(--s4);
@@ -1554,15 +1649,17 @@ body.resizing-y * {
 }
 
 /*
- * Cards: the dashboard's default layout. Flat faces on a hairline like the settings card, under the
- * ledger's band headings; state still reads from marks, counts and words, never filled chips.
+ * Cards: the dashboard's default layout. Paper cards lifted off the sheet by a hairline and a soft
+ * shadow, under the ledger's band headings; state still reads from marks, counts and words, never
+ * filled chips. A card's tools wait for the pointer or the cursor; only what the repo is waiting
+ * for (Pull, Push) always shows.
  */
 .card-list {
   flex: 1;
   min-height: 0;
   overflow-y: scroll;
   scrollbar-gutter: stable;
-  padding: 0 var(--s4) var(--s6) var(--s6);
+  padding: 0 var(--s5) var(--s7) var(--s7);
 }
 .card-list:focus-visible {
   outline: 2px solid var(--focus);
@@ -1572,18 +1669,18 @@ body.resizing-y * {
   display: flex;
   align-items: center;
   gap: var(--s3);
-  height: 28px;
-  margin-top: var(--s4);
-  color: var(--ink-2);
-  font-size: var(--fs-xs);
+  height: 32px;
+  margin-top: var(--s6);
+  margin-bottom: var(--s2);
+  color: var(--ink);
+  font-size: var(--fs-sm);
   font-weight: 600;
-  letter-spacing: 0.02em;
 }
 .card-band.first {
-  margin-top: var(--s2);
+  margin-top: var(--s4);
 }
 .card-section:first-child > .card-grid:first-child {
-  margin-top: var(--s5);
+  margin-top: var(--s6);
 }
 .card-grid {
   display: grid;
@@ -1602,18 +1699,24 @@ body.resizing-y * {
   border: 1px solid var(--line);
   border-radius: var(--r-lg);
   background: var(--raised);
-  transition: border-color var(--t-fast) var(--ease);
+  box-shadow: var(--shadow-card);
+  transition:
+    border-color var(--t-fast) var(--ease),
+    box-shadow var(--t) var(--ease);
 }
 .repo-card:hover {
   border-color: var(--line-strong);
+  box-shadow: var(--shadow-card-hover);
 }
 .repo-card.cursor,
 .repo-card.cursor:hover {
-  border-color: color-mix(in oklab, var(--accent) 55%, var(--line));
-  background: var(--sel);
+  border-color: var(--accent);
+  background: color-mix(in oklab, var(--sel) 55%, var(--raised));
 }
 .card-list:focus-visible .repo-card.cursor {
-  box-shadow: 0 0 0 1px var(--accent);
+  box-shadow:
+    0 0 0 1px var(--accent),
+    var(--shadow-card-hover);
 }
 .repo-card.cursor .repo-link {
   color: var(--sel-ink);
@@ -1622,7 +1725,7 @@ body.resizing-y * {
   display: flex;
   flex-direction: column;
   gap: var(--s2);
-  padding: 10px var(--s5) var(--s4);
+  padding: var(--s5) var(--s6) var(--s2);
   min-width: 0;
 }
 .card-top {
@@ -1637,13 +1740,12 @@ body.resizing-y * {
   white-space: nowrap;
 }
 .card-group {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
   color: var(--ink-3);
   font-size: var(--fs-xs);
-  font-weight: 600;
-  letter-spacing: 0.02em;
+  font-weight: 500;
   white-space: nowrap;
 }
 .card-counts {
@@ -1693,18 +1795,24 @@ body.resizing-y * {
   display: flex;
   align-items: center;
   gap: var(--s1);
-  min-height: 32px;
+  min-height: 36px;
   margin-top: auto;
-  padding: var(--s1) var(--s3) var(--s1) var(--s4);
-  border-top: 1px solid var(--line-soft);
+  padding: 0 var(--s3) var(--s2) var(--s5);
 }
 .card-tools {
   display: flex;
   gap: var(--s1);
+  opacity: 0;
+  transition: opacity var(--t-fast) var(--ease);
+}
+.repo-card:hover .card-tools,
+.repo-card.cursor .card-tools,
+.repo-card:focus-within .card-tools {
+  opacity: 1;
 }
 .card-tools button.icon {
-  width: 26px;
-  height: 24px;
+  width: var(--ctl-sm);
+  height: var(--ctl-xs);
   color: var(--ink-3);
 }
 .card-tools button.icon .ico {
@@ -1722,8 +1830,8 @@ body.resizing-y * {
   margin-left: var(--s1);
 }
 .repo-card.detailed .card-body {
-  gap: var(--s3);
-  padding: var(--s5) 14px 10px;
+  gap: var(--s4);
+  padding: var(--s5) var(--s6) var(--s3);
 }
 .card-detail {
   display: flex;
@@ -1732,7 +1840,7 @@ body.resizing-y * {
 }
 .card-alert {
   margin: 0;
-  padding: var(--s4) 10px;
+  padding: var(--s4) var(--s5);
   border-radius: var(--r);
   background: var(--red-soft);
   color: var(--red-ink);
@@ -1742,18 +1850,18 @@ body.resizing-y * {
 .card-stats {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  border: 1px solid var(--line-soft);
   border-radius: var(--r);
+  background: var(--panel);
 }
 .card-stat {
   display: flex;
   flex-direction: column;
-  padding: var(--s3) 10px;
+  padding: var(--s3) var(--s5);
   color: var(--ink-3);
   font-size: var(--fs-xs);
 }
 .card-stat + .card-stat {
-  border-left: 1px solid var(--line-soft);
+  border-left: 1px solid var(--line);
 }
 .card-stat b {
   font-size: var(--fs-lg);
@@ -1772,10 +1880,11 @@ body.resizing-y * {
 .card-mix {
   display: flex;
   height: 4px;
-  margin-top: -2px;
+  margin-top: calc(-1 * var(--s1));
   overflow: hidden;
   border-radius: 2px;
   background: var(--line-soft);
+  color: var(--ink);
 }
 .mix-conflict {
   background: var(--red);
@@ -1897,7 +2006,7 @@ body.resizing-y * {
   gap: var(--s6);
   flex: none;
   min-height: var(--status-h);
-  padding: 0 var(--s6);
+  padding: 0 var(--s5) 0 var(--s7);
   border-top: 1px solid var(--line);
   background: var(--panel);
   color: var(--ink-2);
@@ -2046,7 +2155,7 @@ button.icon .count {
   display: flex;
   flex: none;
   gap: var(--s1);
-  padding: 0 var(--s4);
+  padding: 0 var(--s6);
   border-bottom: 1px solid var(--line);
 }
 .tabs button {
@@ -2377,8 +2486,8 @@ li:focus-within .row-actions {
   border-radius: 0 var(--r) var(--r) 0;
 }
 .commit-actions button.primary:disabled {
-  opacity: 1;
   border-color: var(--line);
+  cursor: not-allowed;
   background: color-mix(in oklab, var(--panel), var(--ink) 6%);
   color: var(--ink-3);
 }
@@ -2422,7 +2531,7 @@ button.ai.generating .ico {
 }
 .diff-note {
   flex: none;
-  padding: 1px 6px;
+  padding: 0 var(--s3);
   border-radius: var(--r-sm);
   background: var(--panel);
   color: var(--ink-2);
@@ -2434,7 +2543,7 @@ button.ai.generating .ico {
 }
 .diff-zoom-level {
   flex: none;
-  padding: 1px 6px;
+  padding: 0 var(--s3);
   border: 0;
   border-radius: var(--r-sm);
   background: var(--panel);
@@ -2808,10 +2917,10 @@ button.undo-reset {
   display: inline-flex;
   align-items: center;
   flex: 0 1 auto;
-  gap: 3px;
+  gap: var(--s1);
   min-width: calc(6ch + 24px);
   height: 18px;
-  padding: 0 5px;
+  padding: 0 var(--s2);
   border: 1px solid var(--line-strong);
   border-radius: var(--r-sm);
   color: var(--ink-2);
@@ -2870,7 +2979,7 @@ button.undo-reset {
 .commit-title {
   flex: 1 1 220px;
   min-width: 0;
-  margin: 3px 0 0;
+  margin: var(--s1) 0 0;
   font: 600 var(--fs-md) / 1.35 var(--font-ui);
   overflow-wrap: anywhere;
 }
@@ -2897,7 +3006,7 @@ button.undo-reset {
 }
 button.sha-chip {
   height: 20px;
-  padding: 0 5px;
+  padding: 0 var(--s2);
   gap: var(--s2);
   border-color: var(--line);
   background: var(--panel);
@@ -3024,8 +3133,7 @@ button.sha-chip .ico {
 .branch-lists h2 {
   margin: var(--s5) var(--s2) var(--s2);
   color: var(--ink-2);
-  font: 600 var(--fs-xs) / 1.3 var(--font-ui);
-  letter-spacing: 0.02em;
+  font: 600 var(--fs-sm) / 1.3 var(--font-ui);
 }
 .branch-list {
   margin: 0;
@@ -3121,10 +3229,10 @@ button.sha-chip .ico {
   display: grid;
   flex: 1;
   grid-template-columns: 180px minmax(0, 760px);
-  gap: var(--s7);
+  gap: var(--s8);
   justify-content: start;
   min-height: 0;
-  padding-left: var(--s4);
+  padding-left: var(--s6);
 }
 .settings-nav {
   position: sticky;
@@ -3136,9 +3244,10 @@ button.sha-chip .ico {
   padding-top: var(--s4);
 }
 .settings-nav button {
+  position: relative;
   justify-content: flex-start;
   height: var(--ctl);
-  padding: 0 var(--s4);
+  padding: 0 var(--s5);
   border: none;
   background: none;
   color: var(--ink-2);
@@ -3153,6 +3262,16 @@ button.sha-chip .ico {
   background: var(--sel);
   color: var(--sel-ink);
   font-weight: 600;
+}
+.settings-nav button.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: calc(50% - 8px);
+  width: 3px;
+  height: 16px;
+  border-radius: 2px;
+  background: var(--accent);
 }
 .settings-body {
   display: flex;
@@ -3180,8 +3299,9 @@ button.sha-chip .ico {
   margin-bottom: var(--s4);
   padding: var(--s4) var(--s4) var(--s3);
   border: 1px solid var(--line);
-  border-radius: var(--r);
-  background: var(--panel);
+  border-radius: var(--r-lg);
+  background: var(--raised);
+  box-shadow: var(--shadow-card);
 }
 .card-head {
   display: flex;
@@ -3315,7 +3435,7 @@ button.sha-chip .ico {
 }
 .toast-detail {
   max-height: 200px;
-  margin: var(--s4) 0 0 23px;
+  margin: var(--s4) 0 0 calc(var(--icon) + var(--s4));
   padding: var(--s3) var(--s4);
   overflow: auto;
   border-radius: var(--r-sm);
@@ -3328,7 +3448,7 @@ button.sha-chip .ico {
   display: flex;
   flex-wrap: wrap;
   gap: var(--s3);
-  margin: var(--s4) 0 0 23px;
+  margin: var(--s4) 0 0 calc(var(--icon) + var(--s4));
 }
 
 /* Busy: a stop button beside a running operation, and a pulse in the sidebar. */
@@ -3409,7 +3529,7 @@ dialog {
   color: var(--ink);
 }
 dialog::backdrop {
-  background: rgb(10 10 16 / 0.32);
+  background: var(--backdrop);
   animation: appear var(--t) var(--ease);
 }
 .reset-dialog,
@@ -3428,7 +3548,7 @@ dialog::backdrop {
   }
 }
 .reset-dialog {
-  width: min(460px, calc(100vw - 32px));
+  width: min(460px, calc(100% - 32px));
 }
 .reset-dialog form {
   display: flex;
@@ -3448,7 +3568,7 @@ dialog::backdrop {
   margin: 0;
 }
 .reset-subject {
-  margin-top: -6px !important;
+  margin-top: calc(-1 * var(--s3)) !important;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -3482,7 +3602,7 @@ dialog::backdrop {
   outline-offset: 1px;
 }
 .reset-modes input {
-  margin-top: 3px;
+  margin-top: var(--s1);
 }
 .reset-modes label > span {
   display: flex;
@@ -3522,7 +3642,7 @@ dialog::backdrop {
 
 /* Ctrl+P: go to a repository. A floating panel near the top. */
 .switcher {
-  width: min(560px, calc(100vw - 48px));
+  width: min(560px, calc(100% - 48px));
   max-height: min(480px, calc(100vh - 120px));
   margin: 72px auto auto;
 }
@@ -3543,8 +3663,8 @@ dialog::backdrop {
   font-size: var(--fs-md);
 }
 .switcher-panel input:focus {
-  box-shadow: none;
-  border-color: var(--line);
+  outline: none;
+  box-shadow: inset 0 -2px 0 var(--focus);
 }
 .switcher-list {
   margin: 0;

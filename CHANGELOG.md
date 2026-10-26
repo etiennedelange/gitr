@@ -10,6 +10,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - **New changes stand out.** When a repository gets new changes, incoming or outgoing commits, or an error, its card briefly lights up in that colour and a small dot stays beside its counts until you hover over or open it. With animations turned off in Windows, only the dot shows.
 
 ### Changed
+- **A calmer, clearer look.** Every view now sits on one sheet beside the sidebar, with a cobalt accent, larger controls and more room between rows. Cards lift off the page, and their Open in VS Code, terminal and More buttons appear when you point at a card. Incoming commits are now shown in cyan, so they are never confused with the selection.
 - **Groups no longer have colours.** The coloured stripes and squares beside workspace groups in the sidebar, the dashboard table and the cards are gone, and so is the colour choice in **Settings → Workspaces**. Groups are told apart by their headings and the space between them; a card outside its group's heading names the group instead.
 
 ### Security

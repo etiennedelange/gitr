@@ -425,7 +425,7 @@ function SettingsForm({ saved }: { saved: Config }) {
               </select>
             </label>
             <p className="zoom-level">
-              Zoom: {zoom}% <span className="muted">— Ctrl + scroll to change. Over a diff, Ctrl + scroll sizes only the diff text.</span>
+              Zoom: {zoom}%. <span className="muted">Ctrl + scroll to change. Over a diff, Ctrl + scroll sizes only the diff text.</span>
             </p>
           </section>
 

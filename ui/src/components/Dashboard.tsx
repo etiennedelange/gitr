@@ -32,8 +32,8 @@ import type { BatchProgress, RepoSummary } from '../types'
 
 const FILTERS: Filter[] = ['all', 'attention', 'dirty', 'behind', 'ahead']
 const FILTER_LABEL: Record<Filter, string> = { all: 'All', attention: 'Attention', dirty: 'Changes', behind: 'Behind', ahead: 'Ahead' }
-const ROW_H = 30
-const BAND_H = 28
+const ROW_H = 34
+const BAND_H = 40
 const VIEWS: { view: DashboardView; label: string; title: string; Icon: typeof Rows3 }[] = [
   { view: 'table', label: 'Table', title: 'Table: one row per repository', Icon: Rows3 },
   { view: 'compact', label: 'Cards', title: 'Compact cards', Icon: LayoutGrid },
