@@ -1490,12 +1490,12 @@ raw-window-handle 0.6.2 (Rust crate)
   Source:  https://github.com/rust-windowing/raw-window-handle
   Texts:   [4] [207] [208]
 
-react 19.3.0 (npm package)
+react 19.3.1 (npm package)
   Licence: MIT
   Source:  https://react.dev/
   Texts:   [209]
 
-react-dom 19.3.0 (npm package)
+react-dom 19.3.1 (npm package)
   Licence: MIT
   Source:  https://react.dev/
   Texts:   [209]
@@ -14221,7 +14221,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 3. This notice may not be removed or altered from any source distribution.
 
 
------ [209] used by: react 19.3.0, react-dom 19.3.0, scheduler 0.28.0
+----- [209] used by: react 19.3.1, react-dom 19.3.1, scheduler 0.28.0
 
 MIT License
 
