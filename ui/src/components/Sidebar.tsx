@@ -102,7 +102,7 @@ export function Sidebar() {
         <input
           {...plainInput}
           className="search"
-          placeholder="Filter repositories"
+          placeholder="Filter repositories…"
           aria-label="Filter repositories in the sidebar"
           value={filter}
           onChange={(e) => setFilter(e.target.value)}

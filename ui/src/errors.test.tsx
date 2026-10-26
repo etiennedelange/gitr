@@ -184,6 +184,7 @@ describe('error toasts', () => {
     showError(err('dubious-ownership'))
     await act(async () => fireEvent.click(screen.getByRole('button', { name: 'Trust this folder' })))
     expect(ask.mock.calls[0][0]).toMatch(/safe\.directory in your global git config/)
+    expect(ask.mock.calls[0][1]).toMatchObject({ okLabel: 'Trust folder', cancelLabel: 'Cancel' })
     expect(api.trustFolder).toHaveBeenCalledWith(PATH)
   })
 

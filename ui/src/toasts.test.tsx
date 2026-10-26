@@ -46,6 +46,14 @@ describe('toasts', () => {
     expect(screen.queryByText('Committed abc')).toBeNull()
   })
 
+  it('announces info toasts through a polite live region that is always there', () => {
+    show()
+    const region = document.querySelector('.toasts') as HTMLElement
+    expect(region.getAttribute('aria-live')).toBe('polite')
+    act(() => useApp.getState().toast('info', 'Deleted feature'))
+    expect(region.textContent).toContain('Deleted feature')
+  })
+
   it('never auto-dismisses an error toast', () => {
     show()
     act(() => useApp.getState().toast('error', 'Push rejected'))

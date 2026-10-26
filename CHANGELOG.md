@@ -18,6 +18,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - **Windows narrower than 1100 pixels showed nothing.** With the window between its minimum width and 1100 pixels, the dashboard, a repository and Settings all came up blank beside the sidebar's icon strip. They now show as they do in a wider window.
 - **Buttons looked cut off in the dark theme.** Their bottom edge disappeared against the panel behind them. Buttons and text boxes now have an even border all round, in both themes.
 - **Clearer for screen readers in Settings.** Each workspace group's buttons now say which group they act on (for example "Remove group Work").
+- **Clearer confirmations.** Deleting a branch, discarding files that can't go to the Recycle Bin, aborting a merge or rebase, ending a bisect, removing a stale lock and trusting a folder now ask with buttons that say what they do (for example **Delete branch** / **Cancel**) instead of Yes / No.
+- **Better with a screen reader.** Info messages such as "Deleted feature" are now read out, the Stage, Unstage and Discard buttons in Changes say which file they act on, and the branch filter, new-branch name and Ctrl+P fields have labels. Those row buttons are also a little bigger to hit.
+- **Create & checkout explains an empty name.** The button no longer sits disabled until you type; pressing it with no name says what's missing.
+- **Dates in your format.** Commit dates and times follow your Windows region settings (for example "Oct 3, 2026, 2:02 PM" in the US), and "5 min ago" no longer wraps between the number and "min".
 
 ### Security
 - **Safer connections.** Updated the TLS library Gitr uses for updates and AI requests (rustls 0.23.46, rustls-webpki 0.103.16, webpki-root-certs 1.0.10). The fixes stop a forged server reply from weakening later connections, close a way for certificates from distrusted authorities to be accepted, and remove distrusted root certificates.

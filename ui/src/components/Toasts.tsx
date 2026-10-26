@@ -45,7 +45,7 @@ export function Toasts() {
   })
   const strategyOf = (repo: string) => strategies[nonFfRepos.indexOf(repo)]?.data
   return (
-    <div className="toasts">
+    <div className="toasts" aria-live="polite">
       {toasts.map((t) => {
         const own = t.action ? [t.action] : []
         const actions = t.kind === 'error' ? [...errorActions(t.error, (repo) => !!busy[repo], strategyOf), ...own] : own
