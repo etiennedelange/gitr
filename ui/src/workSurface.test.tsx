@@ -225,6 +225,7 @@ describe('Ctrl+P', () => {
     await screen.findAllByText('alpha')
     fireEvent.keyDown(window, { key: 'p', ctrlKey: true })
     const box = await screen.findByPlaceholderText('Go to repository…')
+    expect(box.getAttribute('aria-label')).toBe('Go to repository')
     fireEvent.change(box, { target: { value: 'zet' } })
     fireEvent.keyDown(box, { key: 'Enter' })
     expect(useApp.getState().view).toEqual({ kind: 'repo', path: Z })

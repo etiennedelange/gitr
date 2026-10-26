@@ -62,6 +62,7 @@ export function RepoSwitcher({ onClose }: { onClose: () => void }) {
           aria-controls="switcher-list"
           aria-activedescendant={current ? `switch-${current.path}` : undefined}
           placeholder="Go to repository…"
+          aria-label="Go to repository"
           value={query}
           onChange={(e) => {
             setQuery(e.target.value)

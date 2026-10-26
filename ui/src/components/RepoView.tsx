@@ -71,7 +71,7 @@ export function RepoView({ path }: { path: string }) {
       bisect
         ? 'End the bisect? You go back to the branch and commit you started it from.'
         : `Abort the ${noun}? Your branch goes back to how it was before the ${noun} started.`,
-      { title: bisect ? 'End bisect' : `Abort ${noun}`, kind: 'warning' },
+      { title: bisect ? 'End bisect' : `Abort ${noun}`, kind: 'warning', okLabel: bisect ? 'End bisect' : `Abort ${noun}`, cancelLabel: 'Cancel' },
     )
     if (!ok) return
     try {

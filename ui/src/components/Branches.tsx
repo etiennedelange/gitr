@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { ask } from '@tauri-apps/plugin-dialog'
 import { api, errorMessage } from '../api'
@@ -14,6 +14,9 @@ export function Branches({ path, remote }: { path: string; remote: RemoteInfo | 
   const branches = useQuery({ queryKey: ['branches', path], queryFn: () => api.branches(path) })
   const [filter, setFilter] = useState('')
   const [newName, setNewName] = useState('')
+  // Set when Create is pressed with no name, until the name changes.
+  const [nameMissing, setNameMissing] = useState(false)
+  const nameInput = useRef<HTMLInputElement>(null)
   const busy = !!useBusy(path)
   // Switching branches during a merge, rebase, cherry-pick or revert would make it worse.
   const operation = useApp((st) => st.summaries[path]?.operation ?? null)
@@ -33,7 +36,7 @@ export function Branches({ path, remote }: { path: string; remote: RemoteInfo | 
     () => 'Branch created',
   )
 
-  const nameProblem = branchNameProblem(newName.trim())
+  const nameProblem = branchNameProblem(newName.trim()) ?? (nameMissing ? 'Type a name for the new branch.' : null)
 
   const { local, remotes } = useMemo(() => {
     const q = filter.toLowerCase()
@@ -44,13 +47,13 @@ export function Branches({ path, remote }: { path: string; remote: RemoteInfo | 
   const remove = async (b: Branch) => {
     if (busy) return
     const unpushed = b.ahead ? ` It has ${b.ahead} commit${b.ahead === 1 ? '' : 's'} not pushed.` : ''
-    if (!(await ask(`Delete local branch ${b.name}?${unpushed}`, { title: 'Delete branch', kind: 'warning' }))) return
+    if (!(await ask(`Delete local branch ${b.name}?${unpushed}`, { title: 'Delete branch', kind: 'warning', okLabel: 'Delete branch', cancelLabel: 'Cancel' }))) return
     try {
       await api.deleteBranch(path, b.name, false)
     } catch (e) {
       const msg = errorMessage(e)
       if (!/not fully merged/i.test(msg)) return notifyError(e)
-      if (!(await ask(`${b.name} is not fully merged. Delete anyway?`, { title: 'Force delete', kind: 'warning' }))) return
+      if (!(await ask(`${b.name} is not fully merged. Delete anyway?`, { title: 'Force delete', kind: 'warning', okLabel: 'Force delete', cancelLabel: 'Cancel' }))) return
       try {
         await api.deleteBranch(path, b.name, true)
       } catch (e2) {
@@ -129,6 +132,7 @@ export function Branches({ path, remote }: { path: string; remote: RemoteInfo | 
           {...plainInput}
           className="search"
           placeholder="Filter branches…"
+          aria-label="Filter branches"
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
         />
@@ -137,7 +141,12 @@ export function Branches({ path, remote }: { path: string; remote: RemoteInfo | 
           className="inline-form"
           onSubmit={(e) => {
             e.preventDefault()
-            if (newName.trim() && !nameProblem && !noSwitch) create.mutate([newName.trim()], { onSuccess: () => setNewName('') })
+            if (!newName.trim()) {
+              setNameMissing(true)
+              nameInput.current?.focus()
+              return
+            }
+            if (!nameProblem && !noSwitch) create.mutate([newName.trim()], { onSuccess: () => setNewName('') })
           }}
         >
           {nameProblem && (
@@ -147,12 +156,17 @@ export function Branches({ path, remote }: { path: string; remote: RemoteInfo | 
           )}
           <input
             {...plainInput}
+            ref={nameInput}
             placeholder="new-branch-name"
+            aria-label="New branch name"
             value={newName}
             aria-invalid={!!nameProblem}
-            onChange={(e) => setNewName(e.target.value)}
+            onChange={(e) => {
+              setNewName(e.target.value)
+              setNameMissing(false)
+            }}
           />
-          <button type="submit" disabled={!newName.trim() || !!nameProblem || create.isPending || noSwitch}>
+          <button type="submit" disabled={!!nameProblem || create.isPending || noSwitch}>
             Create & checkout
           </button>
         </form>
