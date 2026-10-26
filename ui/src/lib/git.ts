@@ -157,14 +157,16 @@ export type FreshKind = 'trouble' | 'behind' | 'dirty' | 'ahead'
 
 /**
  * What a new summary brings that the last one didn't: an error or more conflicts, more incoming
- * commits, more changed files or more outgoing commits, in that order. Null for the first summary
- * of a repo (nothing to compare with) and for anything that only went down.
+ * commits, more unstaged files or more outgoing commits, in that order. Null for the first summary
+ * of a repo (nothing to compare with) and for anything that only went down. Staging and unstaging
+ * are not news: a partly staged file counts as staged and unstaged, so staging a hunk raises the
+ * total, and unstaging raises the unstaged count; new work raises both.
  */
 export function freshKind(prev: RepoSummary | undefined, next: RepoSummary): FreshKind | null {
   if (!prev) return null
   if ((next.error && !prev.error) || next.conflicted > prev.conflicted) return 'trouble'
   if (next.behind > prev.behind) return 'behind'
-  if (next.staged + next.unstaged > prev.staged + prev.unstaged) return 'dirty'
+  if (next.unstaged > prev.unstaged && next.staged + next.unstaged > prev.staged + prev.unstaged) return 'dirty'
   if (next.ahead > prev.ahead) return 'ahead'
   return null
 }

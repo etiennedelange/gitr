@@ -21,6 +21,34 @@ export interface CardSection {
   rows: Row[]
 }
 
+/**
+ * The index of the card above (`dir` -1) or below (+1) card `at`, counting through sections of
+ * `sizes` cards laid out `cols` to a row: the same column one row up or down, which may be the
+ * previous or next section's nearest row (its last card when that row is shorter). `at` when there
+ * is none.
+ */
+export function cardAbove(sizes: number[], at: number, cols: number, dir: 1 | -1): number {
+  let start = 0
+  let sec = 0
+  while (sec < sizes.length && at >= start + sizes[sec]) start += sizes[sec++]
+  if (sec >= sizes.length) return at
+  const idx = at - start
+  const col = idx % cols
+  const row = Math.floor(idx / cols)
+  if (dir === 1 && (row + 1) * cols < sizes[sec]) return start + Math.min((row + 1) * cols + col, sizes[sec] - 1)
+  if (dir === -1 && row > 0) return at - cols
+  // Into the next or previous section that has cards.
+  for (let s = sec + dir, from = dir === 1 ? start + sizes[sec] : start; s >= 0 && s < sizes.length; s += dir) {
+    if (dir === -1) from -= sizes[s]
+    if (sizes[s]) {
+      const target = dir === 1 ? Math.min(col, sizes[s] - 1) : Math.min(Math.floor((sizes[s] - 1) / cols) * cols + col, sizes[s] - 1)
+      return from + target
+    }
+    if (dir === 1) from += sizes[s]
+  }
+  return at
+}
+
 /** How long a card's highlight plays after something new arrives; it matches the CSS animation. */
 export const FLASH_MS = 1600
 

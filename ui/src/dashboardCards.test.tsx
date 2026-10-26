@@ -183,6 +183,95 @@ describe('dashboard cards', () => {
     expect(useApp.getState().view).toEqual({ kind: 'repo', path: 'D:/w/alpha' })
   })
 
+  it('moves down and up to the card below and above, across the bands', async () => {
+    useApp.setState({
+      summaries: {
+        'D:/w/alpha': summary('D:/w/alpha', { error: 'boom' }),
+        'D:/w/beta': summary('D:/w/beta', {}),
+        'D:/w/gamma': summary('D:/w/gamma', {}),
+      },
+    })
+    mount()
+    await screen.findByText('alpha')
+    // Three cards a row: "Needs attention" holds alpha, "Everything else" beta and gamma.
+    for (const g of document.querySelectorAll<HTMLElement>('.card-grid')) g.style.gridTemplateColumns = '1fr 1fr 1fr'
+    fireEvent.keyDown(list(), { key: 'ArrowDown' })
+    expect(card('alpha')).toHaveAttribute('aria-current', 'true')
+    fireEvent.keyDown(list(), { key: 'ArrowRight' })
+    expect(card('beta')).toHaveAttribute('aria-current', 'true')
+    fireEvent.keyDown(list(), { key: 'ArrowLeft' })
+    fireEvent.keyDown(list(), { key: 'ArrowDown' })
+    expect(card('beta')).toHaveAttribute('aria-current', 'true')
+    fireEvent.keyDown(list(), { key: 'ArrowRight' })
+    expect(card('gamma')).toHaveAttribute('aria-current', 'true')
+    fireEvent.keyDown(list(), { key: 'ArrowUp' })
+    expect(card('alpha')).toHaveAttribute('aria-current', 'true')
+  })
+
+  it('shows the axis only when behind or ahead, and says when a card is up to date', async () => {
+    useApp.setState({
+      summaries: { 'D:/w/alpha': summary('D:/w/alpha', {}), 'D:/w/beta': summary('D:/w/beta', { behind: 1 }) },
+    })
+    mount()
+    await screen.findByText('alpha')
+    expect(card('alpha').querySelector('.divergence')).toBeNull()
+    expect(card('alpha')).toHaveTextContent('Up to date')
+    expect(card('beta').querySelector('.divergence')).not.toBeNull()
+    expect(card('beta')).not.toHaveTextContent('Up to date')
+  })
+
+  it('offers no Pull or Push on a repo with an error', async () => {
+    useApp.setState({ summaries: { 'D:/w/alpha': summary('D:/w/alpha', { behind: 2, ahead: 1, error: 'boom' }) } })
+    mount()
+    await screen.findByText('alpha')
+    expect(card('alpha').querySelector('.next')).toBeNull()
+  })
+
+  it('shows an error once on a detailed card, with dashes for zero counts and no change bar when clean', async () => {
+    useLayout.setState({ dashboardView: 'detailed' })
+    useApp.setState({
+      summaries: {
+        'D:/w/alpha': summary('D:/w/alpha', { error: 'Couldn’t reach the remote' }),
+        'D:/w/beta': summary('D:/w/beta', {}),
+        'D:/w/gamma': summary('D:/w/gamma', { ahead: 1 }),
+      },
+    })
+    mount()
+    await screen.findByText('alpha')
+    expect(card('alpha').textContent!.split('Couldn’t reach the remote').length - 1).toBe(1)
+    expect([...card('beta').querySelectorAll('.card-stat b')].map((b) => b.textContent)).toEqual(['–', '–', '–'])
+    expect(card('beta').querySelector('.card-mix')).toBeNull()
+    expect(card('gamma')).toHaveTextContent('↑1')
+    expect(card('gamma').querySelector('.badge')).toBeNull()
+  })
+
+  it('names the group on a card only where no group heading does', async () => {
+    config.groups.push({ id: 'p', name: 'Personal', roots: ['D:/p'] })
+    repos.push({ path: 'D:/p/delta', name: 'delta', groupId: 'p' })
+    try {
+      useLayout.setState({ dashboardView: 'detailed' })
+      useApp.setState({
+        summaries: {
+          'D:/w/alpha': summary('D:/w/alpha', { error: 'boom' }),
+          'D:/w/beta': summary('D:/w/beta', {}),
+          'D:/p/delta': summary('D:/p/delta', {}),
+        },
+      })
+      mount()
+      await screen.findByText('delta')
+      expect(card('alpha').querySelector('.card-group')).toHaveTextContent('Work')
+      expect(card('beta').querySelector('.card-group')).toBeNull()
+      expect(card('delta').querySelector('.card-group')).toBeNull()
+      // Compact cards show only the swatch, on the same terms.
+      fireEvent.click(screen.getByRole('button', { name: 'Cards' }))
+      expect(card('alpha').querySelector('.group-swatch')).not.toBeNull()
+      expect(card('beta').querySelector('.group-swatch')).toBeNull()
+    } finally {
+      config.groups.pop()
+      repos.pop()
+    }
+  })
+
   it('moves across the cards with the arrow keys and opens one with Enter', async () => {
     mount()
     await screen.findByText('alpha')
@@ -237,6 +326,16 @@ describe('new changes on the cards', () => {
     vi.restoreAllMocks()
   })
 
+  it('counts opening the repo from anywhere as seeing it', async () => {
+    useApp.setState({ summaries: { 'D:/w/alpha': summary('D:/w/alpha', {}) } })
+    mount()
+    await screen.findByText('alpha')
+    act(() => useApp.getState().setSummary(summary('D:/w/alpha', { behind: 1 })))
+    // The sidebar and Ctrl+P open a repo without touching its card.
+    act(() => useApp.getState().setView({ kind: 'repo', path: 'D:/w/alpha' }))
+    expect(useApp.getState().fresh['D:/w/alpha']?.seen).toBe(true)
+  })
+
   it('drops the mark once what it pointed at is gone', async () => {
     useApp.setState({ summaries: { 'D:/w/alpha': summary('D:/w/alpha', {}) } })
     mount()
@@ -245,5 +344,33 @@ describe('new changes on the cards', () => {
     act(() => useApp.getState().setSummary(summary('D:/w/alpha', { behind: 0 })))
     expect(useApp.getState().fresh['D:/w/alpha']).toBeUndefined()
     expect(card('alpha').querySelector('.fresh-dot')).toBeNull()
+  })
+})
+
+const { cardAbove } = await import('./components/DashboardCards')
+
+describe('cardAbove', () => {
+  // Sections of 2, 5 and 1 cards, 3 to a row:  [0 1]  [2 3 4 / 5 6]  [7]
+  const sizes = [2, 5, 1]
+  it('moves a row within a section, onto a shorter last row', () => {
+    expect(cardAbove(sizes, 2, 3, 1)).toBe(5)
+    expect(cardAbove(sizes, 4, 3, 1)).toBe(6)
+    expect(cardAbove(sizes, 6, 3, -1)).toBe(3)
+  })
+  it('crosses into the next and previous sections, keeping the column where it can', () => {
+    expect(cardAbove(sizes, 1, 3, 1)).toBe(3)
+    expect(cardAbove(sizes, 6, 3, 1)).toBe(7)
+    expect(cardAbove(sizes, 4, 3, -1)).toBe(1)
+    expect(cardAbove(sizes, 7, 3, -1)).toBe(5)
+  })
+  it('skips empty sections and stays put at either end', () => {
+    expect(cardAbove([1, 0, 2], 0, 3, 1)).toBe(1)
+    expect(cardAbove([1, 0, 2], 2, 3, -1)).toBe(0)
+    expect(cardAbove(sizes, 0, 3, -1)).toBe(0)
+    expect(cardAbove(sizes, 7, 3, 1)).toBe(7)
+  })
+  it('leaves a section whose last row is full', () => {
+    expect(cardAbove([3, 1], 0, 3, 1)).toBe(3)
+    expect(cardAbove([3, 1], 2, 3, 1)).toBe(3)
   })
 })

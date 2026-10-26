@@ -26,7 +26,7 @@ import { SignInBanner } from './SignInBanner'
 import { CountChips, Divergence, StatusMark } from './Marks'
 import { groupColors, groupStyle, type GroupColor } from '../lib/groupColor'
 import { useLayout, type DashboardView } from '../layout'
-import { DashboardCards, type CardSection } from './DashboardCards'
+import { DashboardCards, cardAbove, type CardSection } from './DashboardCards'
 import { RepoStatusText } from './RepoStatusText'
 import type { BatchProgress, RepoSummary } from '../types'
 
@@ -193,8 +193,17 @@ export function Dashboard() {
     // Cards move a row of the grid up and down, and one card left and right.
     const across = cards ? columns(scrollRef.current) : 1
     const page = cards ? across * 3 : Math.max(1, Math.floor((scrollRef.current?.clientHeight ?? ROW_H) / ROW_H) - 1)
-    if (e.key === 'ArrowDown') go(i < 0 ? 0 : i + across)
-    else if (e.key === 'ArrowUp') go(i < 0 ? 0 : i - across)
+    const vertical = (dir: 1 | -1) =>
+      cards
+        ? cardAbove(
+            sections.map((s) => s.rows.length),
+            i,
+            across,
+            dir,
+          )
+        : i + dir
+    if (e.key === 'ArrowDown') go(i < 0 ? 0 : vertical(1))
+    else if (e.key === 'ArrowUp') go(i < 0 ? 0 : vertical(-1))
     else if (cards && e.key === 'ArrowRight') go(i + 1)
     else if (cards && e.key === 'ArrowLeft') go(i < 0 ? 0 : i - 1)
     else if (e.key === 'PageDown') go(i + page)

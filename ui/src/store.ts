@@ -129,7 +129,17 @@ export const useApp = create<AppStore>((set) => ({
   setDashboard: (patch) => set((st) => ({ dashboard: { ...st.dashboard, ...patch } })),
   zoom: 100,
   devtools: false,
-  setView: (view) => set((st) => ({ view, returnView: view.kind === 'settings' && st.view.kind !== 'settings' ? st.view : st.returnView })),
+  setView: (view) =>
+    set((st) => {
+      // Opening a repo, from its card, the sidebar or Ctrl+P, counts as seeing what is new in it.
+      const path = view.kind === 'repo' ? view.path : null
+      const f = path ? st.fresh[path] : undefined
+      return {
+        view,
+        returnView: view.kind === 'settings' && st.view.kind !== 'settings' ? st.view : st.returnView,
+        ...(path && f && !f.seen ? { fresh: { ...st.fresh, [path]: { ...f, seen: true } } } : {}),
+      }
+    }),
   closeSettings: () => set((st) => (st.view.kind === 'settings' ? { view: st.returnView } : {})),
   setZoom: (zoom) => set({ zoom }),
   setDevtools: (devtools) => set({ devtools }),

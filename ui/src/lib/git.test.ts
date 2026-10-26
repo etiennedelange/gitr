@@ -166,14 +166,25 @@ describe('freshKind', () => {
 
   it('names what went up, trouble first', () => {
     expect(freshKind(s({}), s({ behind: 1, unstaged: 1 }))).toBe('behind')
-    expect(freshKind(s({}), s({ staged: 1 }))).toBe('dirty')
+    expect(freshKind(s({}), s({ unstaged: 1 }))).toBe('dirty')
     expect(freshKind(s({}), s({ ahead: 1 }))).toBe('ahead')
     expect(freshKind(s({}), s({ error: 'boom', behind: 2 }))).toBe('trouble')
     expect(freshKind(s({ conflicted: 1 }), s({ conflicted: 2 }))).toBe('trouble')
   })
 
+  it('does not take staging part of a file for a new change', () => {
+    // A partly staged file counts once as staged and once as unstaged.
+    expect(freshKind(s({ unstaged: 1 }), s({ staged: 1, unstaged: 1 }))).toBeNull()
+    expect(freshKind(s({ unstaged: 2 }), s({ staged: 2 }))).toBeNull()
+    expect(freshKind(s({ staged: 2 }), s({ unstaged: 2 }))).toBeNull()
+    expect(freshKind(s({ staged: 1, unstaged: 1 }), s({ staged: 1, unstaged: 2 }))).toBe('dirty')
+  })
+
   it('ignores what only went down or stayed', () => {
     expect(freshKind(s({ behind: 3 }), s({ behind: 1 }))).toBeNull()
+    expect(freshKind(s({ behind: 3 }), s({ behind: 3 }))).toBeNull()
+    expect(freshKind(s({ ahead: 2 }), s({ ahead: 2 }))).toBeNull()
+    expect(freshKind(s({ conflicted: 1 }), s({ conflicted: 1 }))).toBeNull()
     expect(freshKind(s({ error: 'boom' }), s({ error: 'boom' }))).toBeNull()
     expect(freshKind(s({ staged: 2 }), s({ unstaged: 2 }))).toBeNull()
   })
@@ -183,5 +194,7 @@ describe('freshKind', () => {
     expect(stillFresh('behind', s({}))).toBe(false)
     expect(stillFresh('trouble', s({ conflicted: 1 }))).toBe(true)
     expect(stillFresh('dirty', s({ ahead: 1 }))).toBe(false)
+    expect(stillFresh('ahead', s({ ahead: 1 }))).toBe(true)
+    expect(stillFresh('ahead', s({ behind: 1 }))).toBe(false)
   })
 })
