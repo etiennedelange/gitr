@@ -1,59 +1,57 @@
 ---
 name: Gitr
-description: A ledger of Git repositories for the Windows desktop. Dense, flat, cool graphite, one violet accent.
+description: Cobalt. A ruled sheet on a cool base for the Windows desktop. Calm, readable, one cobalt accent.
 colors:
-  accent: "#6145d4"
-  accent-hover: "#5236c4"
-  accent-text: "#5236c4"
+  accent: "#1961d4"
+  accent-hover: "#0d50c3"
+  accent-text: "#0d4cb7"
   accent-ink: "#ffffff"
-  selection: "#ebe7fc"
-  selection-ink: "#2b1d74"
-  window: "#fcfcfd"
-  rail: "#f3f3f6"
-  panel: "#f6f6f8"
+  accent-edge: "#0a3f9c"
+  selection: "#e0eeff"
+  selection-ink: "#072c73"
+  sheet: "#f9fbfe"
+  rail: "#ebeff4"
+  panel: "#f0f4f8"
   raised: "#ffffff"
-  line: "#e3e3e8"
-  line-soft: "#ececf0"
-  line-strong: "#cfcfd7"
-  ink: "#1b1b20"
-  ink-2: "#5a5a66"
-  ink-3: "#6b6b77"
-  amber: "#d48a1c"
-  amber-ink: "#8b4f00"
-  amber-soft: "#fbf0dc"
-  sky: "#2f84d6"
-  sky-ink: "#1b60a6"
-  green: "#2c9a5e"
-  green-ink: "#1c7244"
-  red: "#d2402f"
-  red-ink: "#ab2a1c"
-  red-soft: "#fdece9"
+  line: "#dbe0e6"
+  line-soft: "#e6eaee"
+  line-strong: "#c5cbd2"
+  line-edge: "#7f8793"
+  key-edge: "#a9b0ba"
+  ink: "#111825"
+  ink-2: "#414853"
+  ink-3: "#5d646e"
+  amber: "#df911a"
+  amber-ink: "#905211"
+  amber-soft: "#fef0d8"
+  cyan: "#1794b5"
+  cyan-ink: "#006581"
+  green: "#359658"
+  green-ink: "#22683b"
+  red: "#cc3430"
+  red-ink: "#a92321"
+  red-soft: "#ffece9"
   red-on: "#ffffff"
-  group-teal: "#13858a"
-  group-rose: "#c23f7d"
-  group-ochre: "#9a6a2c"
-  group-slate: "#5c6c88"
-  group-olive: "#6f7d1c"
-  group-plum: "#8a4fa0"
-  add-bg: "#ebf7ef"
-  del-bg: "#fdeeeb"
-  accent-dark: "#9a88ff"
-  accent-text-dark: "#b4a7ff"
-  selection-dark: "#2c2747"
-  window-dark: "#19191c"
-  rail-dark: "#141417"
-  panel-dark: "#1e1e22"
-  raised-dark: "#25252a"
-  line-dark: "#2b2b31"
-  ink-dark: "#ebebef"
-  ink-2-dark: "#a4a4ae"
+  add-bg: "#e9f7ee"
+  del-bg: "#fdeeec"
+  accent-dark: "#6d9df5"
+  accent-text-dark: "#9bbeff"
+  selection-dark: "#263a5f"
+  sheet-dark: "#1f232a"
+  rail-dark: "#1a1e25"
+  panel-dark: "#23282f"
+  raised-dark: "#292e37"
+  line-dark: "#333840"
+  ink-dark: "#e7ecf0"
+  ink-2-dark: "#b8bec7"
+  ink-3-dark: "#9aa2ad"
 typography:
   headline:
     fontFamily: "IBM Plex Sans Variable, IBM Plex Sans Fallback, Segoe UI, sans-serif"
-    fontSize: "17px"
+    fontSize: "18px"
     fontWeight: 600
     lineHeight: 1.2
-    letterSpacing: "-0.008em"
+    letterSpacing: "-0.01em"
   title:
     fontFamily: "IBM Plex Sans Variable, IBM Plex Sans Fallback, Segoe UI, sans-serif"
     fontSize: "15px"
@@ -70,11 +68,10 @@ typography:
     fontSize: "13px"
     fontWeight: 600
     lineHeight: 1.3
-  band:
+  caption:
     fontFamily: "IBM Plex Sans Variable, IBM Plex Sans Fallback, Segoe UI, sans-serif"
     fontSize: "12px"
-    fontWeight: 600
-    letterSpacing: "0.02em"
+    fontWeight: 500
   mono:
     fontFamily: "JetBrains Mono Variable, JetBrains Mono Fallback, Consolas, monospace"
     fontSize: "13px"
@@ -82,8 +79,9 @@ typography:
     lineHeight: 1.55
 rounded:
   sm: "4px"
-  md: "5px"
+  md: "6px"
   lg: "8px"
+  sheet: "10px"
 spacing:
   s1: "2px"
   s2: "4px"
@@ -92,237 +90,242 @@ spacing:
   s5: "12px"
   s6: "16px"
   s7: "24px"
+  s8: "32px"
 components:
   button:
     backgroundColor: "{colors.raised}"
     textColor: "{colors.ink}"
+    border: "1px {colors.line-strong}, bottom {colors.key-edge}"
     rounded: "{rounded.md}"
     padding: "0 12px"
-    height: "28px"
+    height: "32px"
   button-primary:
     backgroundColor: "{colors.accent}"
     textColor: "{colors.accent-ink}"
+    border: "1px {colors.accent}, bottom {colors.accent-edge}"
     rounded: "{rounded.md}"
-    padding: "0 12px"
-    height: "28px"
-  button-primary-hover:
-    backgroundColor: "{colors.accent-hover}"
+    height: "32px"
   button-quiet:
     textColor: "{colors.ink}"
     rounded: "{rounded.md}"
-    padding: "0 12px"
-    height: "28px"
+    height: "32px"
   button-icon:
     textColor: "{colors.ink-2}"
     rounded: "{rounded.md}"
-    size: "28px"
+    size: "32px"
   button-small:
     rounded: "{rounded.md}"
     padding: "0 8px"
-    height: "24px"
+    height: "28px"
   input:
     backgroundColor: "{colors.raised}"
-    textColor: "{colors.ink}"
+    border: "1px {colors.line-strong}, bottom {colors.line-edge}"
     rounded: "{rounded.md}"
     padding: "0 8px"
-    height: "28px"
+    height: "32px"
+  segmented:
+    backgroundColor: "sunken panel"
+    height: "24px per segment"
+    rounded: "{rounded.md}"
   filter-tab-on:
     backgroundColor: "{colors.selection}"
     textColor: "{colors.selection-ink}"
     typography: "{typography.label}"
-    rounded: "{rounded.md}"
-    height: "26px"
   nav-item-active:
-    backgroundColor: "{colors.selection}"
-    textColor: "{colors.selection-ink}"
-    rounded: "{rounded.md}"
-    height: "28px"
-  list-row:
-    rounded: "{rounded.sm}"
-    height: "26px"
+    backgroundColor: "{colors.raised}"
+    indicator: "3x16px {colors.accent} bar at the start"
+    height: "32px"
   ledger-row:
-    height: "30px"
-    padding: "0 8px 0 16px"
-  commit-row:
-    rounded: "{rounded.sm}"
-    height: "44px"
+    height: "34px"
+    padding: "0 8px 0 24px"
+  card:
+    backgroundColor: "{colors.raised}"
+    border: "1px {colors.line}"
+    rounded: "{rounded.lg}"
+    shadow: "shadow-card"
+  sheet:
+    backgroundColor: "{colors.sheet}"
+    rounded: "{rounded.sheet}"
+    inset: "8px from the window edge"
+    shadow: "shadow-sheet"
   menu:
     backgroundColor: "{colors.raised}"
     rounded: "{rounded.lg}"
     padding: "4px"
-  ref-label:
-    textColor: "{colors.ink-2}"
-    rounded: "{rounded.sm}"
-    height: "18px"
-    padding: "0 5px"
 ---
 
-# Design System: Gitr
+# Design System: Gitr (Cobalt)
 
 ## Overview
 
-**Creative North Star: "The Ledger"**
+**Creative North Star: "A ruled sheet on a cool base"**
 
-Gitr reads like a ledger of repositories. State is read from tabular numerals and small marks, not from chips or pills. The window is one flat surface on cool graphite neutrals (hue near 285, almost no chroma), split by 1px hairlines into a tinted sidebar, a 44px title bar, a filter strip, the repositories (flat cards by default, or a dense table) and a status bar.
+The window's base is a cool blue-grey. The sidebar sits directly on it. Every view (Dashboard, a repository, Settings) is one sheet laid over the base, 8px in from the window edge, with a 10px radius, a hairline and a soft edge, like a Windows 11 content layer. Inside the sheet the work is flat and ruled: state is read down aligned columns of numerals and small marks, never from filled chips.
 
-The system is dense and quiet. Body text is 14px, rows are 26 to 30px, controls are 28px. One violet accent marks selection, focus and the single primary action of a view. Amber, sky, green and red only ever mean changes, behind, ahead and trouble. It follows Windows desktop conventions: raised command buttons with a hairline, F6-style focus rings, Explorer-like lists, light and dark themes that follow the OS.
+The system is calm and readable rather than dense: 32px controls as in WinUI, 34px ledger rows, a 52px title bar and room between groups. One cobalt accent marks selection, focus and the single primary action of a view. Amber, cyan, green and red only ever mean changes, behind, ahead and trouble. It follows Windows desktop conventions: keys with a faint lower edge, fields with a darker lower edge, a short accent bar on the open item as in a WinUI navigation pane, F6-style focus rings, light and dark themes that follow the OS.
 
-**Key Characteristics:**
-- Flat surfaces, hairline separators, no shadow except on things that float.
+The system was set by a Hallmark redesign (theme Cobalt, app-screen scope) in October 2026. It replaced the earlier flat "ledger" look with its violet accent and per-group colours.
+
+**Key characteristics:**
+- The base and the sheet: the only large surfaces. Depth comes from the sheet over the base, then cards and keys on the sheet.
 - Tabular numerals everywhere; counts and status words in state ink, never in filled chips.
-- One violet accent, used for selection, focus and one primary button per view.
+- One cobalt accent: selection, focus, the open item's bar, one primary button per view.
 - IBM Plex Sans for interface, JetBrains Mono for branches, paths, SHAs, diffs and the commit message, both bundled with the app.
 - The divergence column: behind bars grow left and ahead bars grow right from a shared axis.
+- Groups have no colours. A group is told apart by its heading and the space above it.
 
 ## Colors
 
-Cool graphite neutrals, one violet accent and four state hues that each do one job. Every color has a light and a dark value; the dark theme is the same roles, not a different palette.
+Cool neutrals tilted toward hue 255 (blue-grey), one cobalt accent and four state hues that each do one job. Every colour has a light and a dark value; the dark theme is the same roles in graphite steps, not a different palette. Every text colour clears WCAG AA (4.5:1) on every surface it sits on, and every mark clears 3:1; `ui/src/themeContrast.test.ts` enforces it.
 
-### Primary
-- **Ledger Violet** (accent; dark: accent-dark): selected filter tab count, active tab underline, the HEAD commit mark, focus rings, and the fill of the one primary button per view (Commit). `accent-text` is the darker or lighter variant for violet text on the window.
-- **Violet Wash** (selection, with selection-ink): background and ink of the selected row, nav item, filter tab, file and commit. Selection is a tint, never a solid accent bar.
+### Accent
+- **Cobalt** (`--accent`; dark `#6d9df5`): selected filter tab count, the open item's bar in the sidebar and the ledger's cursor bar, the active tab underline, the HEAD commit mark, focus rings, the brand mark, and the fill of the one primary button per view (Commit). `--accent-text` is the variant for cobalt text on the sheet. `--accent-edge` is the primary key's darker lower edge.
+- **Selection** (`--sel` with `--sel-ink`): background and ink of the selected row, filter tab, file and commit, and the cursor card's wash. Selection is a tint plus the short bar, never a solid accent fill.
 
-### Secondary (state hues)
-- **Changes Amber** (amber / amber-ink / amber-soft): uncommitted changes, modified files, tag refs, and the sign-in and Git banners.
-- **Behind Sky** (sky / sky-ink): incoming commits, the behind bar, renamed files, the Pull "next" button.
-- **Ahead Green** (green / green-ink): outgoing commits, the ahead bar, added files, unpushed commit marks, the Push "next" button, success toasts.
-- **Trouble Red** (red / red-ink / red-soft / red-on): errors, conflicts, failed operations, deletions. The two solid red shapes (the sidebar alert count and the conflict letter tile) set their text in `red-on`: white in light, near-black in dark, where white on the lighter red is only about 3:1.
+### State hues
+- **Changes amber** (`--amber` / `--amber-ink` / `--amber-soft`): uncommitted changes, modified files, tag refs, the sign-in and Git banners.
+- **Behind cyan** (`--blue` / `--blue-ink`, valued cyan): incoming commits, the behind bar, renamed files, the Pull button. It is cyan rather than blue so it never reads as the cobalt selection.
+- **Ahead green** (`--green` / `--green-ink`): outgoing commits, the ahead bar, added files, unpushed commit marks, the Push button, success toasts.
+- **Trouble red** (`--red` / `--red-ink` / `--red-soft` / `--red-on`): errors, conflicts, failed operations, deletions. The solid red shapes (the sidebar alert count, the conflict letter tile) set their text in `--red-on`.
 
-Each hue has a plain value for marks and bars, an `-ink` value for text at body size, and a `-soft` wash for full-width strips. Diff lines use their own add/del washes (add-bg, del-bg, plus line-number tints in the sidecar).
+Each hue has a plain value for marks and bars, an `-ink` value for text at body size and a `-soft` wash for full-width strips. Diff lines use their own add/del washes. Syntax colours in diffs avoid green and red, which mean added and removed there.
 
-### Group colours
-- **Teal, Rose, Ochre, Slate, Olive, Plum** (`--g-*`, each with a lighter dark-theme value): one per workspace group, chosen in Settings or given the next unused one. They are hues no state uses, so a group never reads as changes, behind, ahead or trouble. Shown only when there is more than one group, as a 3px stripe down the left edge of the group's rows (sidebar and ledger) and an 8px square swatch beside the group's name (sidebar heading, ledger band).
+### Neutrals
+- **Rail** (`--rail`): the window's base, behind the sidebar and around the sheet.
+- **Sheet** (`--bg`): the surface every view sits on.
+- **Panel** (`--panel`): table and list heads, the commit box, banners in progress, inline code; one step off the sheet.
+- **Raised** (`--raised`): button faces, fields, cards, the open sidebar item, menus and dialogs.
+- **Hairlines**: `--line` between regions, `--line-soft` between rows, `--line-strong` for control borders, the divergence axis and the history branch line, `--line-edge` and `--key-edge` for a field's and a key's lower edge.
+- **Ink** (`--ink`, `--ink-2`, `--ink-3`): primary text, secondary text (branch names, list heads), tertiary text (paths, counts, metadata, placeholders).
+- Hover and press are translucent ink overlays (about 4.5% and 8.5%) so they work on any surface.
 
-### Neutral
-- **Window** (window): the work area.
-- **Rail** (rail): the sidebar column, slightly darker than the window.
-- **Panel** (panel): table head, status bar, commit box, inline code; one step off the window.
-- **Raised** (raised): button faces, fields, menus and dialogs.
-- **Hairlines** (line, line-soft, line-strong): `line` between regions, `line-soft` between rows, `line-strong` for control borders, the divergence axis and the history branch line.
-- **Ink** (ink, ink-2, ink-3): primary text, secondary text (branch names, headings of lists), tertiary text (paths, counts, metadata).
-- Hover and press are translucent ink overlays (4.5% and 8%) so they work on any surface.
+### Named rules
+**The One Signal Rule.** Cobalt marks selection, focus, the open item and at most one primary button per view. Everything else that wants emphasis uses weight or state ink.
 
-### Named Rules
-**The One Voice Rule.** Violet marks selection, focus and at most one primary button per view. Everything else that wants emphasis uses weight or state ink.
+**The Hue Has A Job Rule.** Amber is changes, cyan is behind, green is ahead, red is error or conflict. A state hue is never decoration, and colour never stands alone: a count, letter or word always sits beside it.
 
-**The Hue Has A Job Rule.** Amber is changes, sky is behind/incoming, green is ahead/outgoing, red is error or conflict. A state hue is never decoration, and color never stands alone: a count, letter or word always sits beside it. Group colours name a group and nothing else: the group's name always heads the rows that carry its stripe, as the sidebar heading and, with all groups showing, the ledger band.
+**No Group Colours.** Workspace groups have no colour, swatch or stripe anywhere (sidebar, ledger, cards, Settings). A group reads by its name: its heading in the sidebar, its band in the ledger, and on a card that sits outside its group's band, the group's name in text.
 
 ## Typography
 
-**Body Font:** IBM Plex Sans Variable (bundled; metric-matched Arial fallback, then Segoe UI)
-**Mono Font:** JetBrains Mono Variable (bundled; metric-matched Courier New fallback, then Consolas)
+**Body font:** IBM Plex Sans Variable (bundled; metric-matched Arial fallback, then Segoe UI).
+**Mono font:** JetBrains Mono Variable (bundled; metric-matched Courier New fallback, then Consolas).
 
-Both are the personal brand's defaults (`design/brand.md`), bundled so every machine shows the same type; Windows 10 has no Cascadia Mono.
-
-**Character:** A plain grotesk at small sizes with weights between 400 and 600, tabular numerals on by default. Mono marks anything that is git's own text: branch names, diff paths, SHAs, code, the commit message (so the 50/72 line discipline stays visible). File-list folder paths stay in the grotesk for density.
+Both are the personal brand's faces, bundled so every machine shows the same type and nothing shifts when they load. The scale is about 1.13: 12, 13, 14, 15, 18px, with tabular numerals on the root.
 
 ### Hierarchy
-- **Headline** (600, 17px, 1.2): view titles in the 44px title bar, dialog titles.
-- **Title** (600, 15px, 1.3): settings section headings, brand name.
-- **Body** (400, 14px, 1.45): everything by default. Repo names in the ledger are 600; sidebar repo names 450; file names and commit subjects 500.
-- **Label** (600, 13px): count numerals, divergence numbers, status words (500), filter tabs, small buttons, section heads in lists.
-- **Band** (600, 12px, 0.02em tracking, sentence case): ledger band headings ("Needs attention", "Everything else"), sidebar group names, table column heads (600), status bar, commit metadata line.
-- **Mono** (400, 13px): diff body (line-height 1.6), commit message box (1.55), branch cells, SHAs, file status letters (700, 12px).
+- **Headline** (600, 18px): view titles in the title bar, dialog titles.
+- **Title** (600, 15px): settings section headings, the brand name, repo names on cards.
+- **Body** (400, 14px, 1.45): everything by default. Repo names in the ledger are 600; file names and commit subjects 500.
+- **Label** (600, 13px): band and group headings, count numerals, divergence numbers, filter tabs, small buttons. Status words are 13px 500.
+- **Caption** (500, 12px): column heads, the status bar, commit metadata. Sentence case, untracked.
+- **Mono** (400, 13px): diff body, the commit message box, branch cells, SHAs, file status letters (700, 12px).
 
-### Named Rules
+### Named rules
 **The Tabular Rule.** `font-variant-numeric: tabular-nums` is set on the root. Numbers line up down every column; never turn it off.
 
-**The Sentence Case Rule.** Headings, bands and labels are sentence case at 12 to 17px. Hierarchy comes from weight and ink, not uppercase or tracking.
+**The Sentence Case Rule.** Headings, bands, column heads and labels are sentence case and untracked. Hierarchy comes from weight, size and ink, never from uppercase or letter-spacing.
 
 ## Layout
 
-A two-column window: a 240px sidebar and a flexible main column. The main column stacks a 44px title bar, an optional 40px banner or filter strip, the content, and a 26px status bar, each split by a 1px hairline. Spacing steps are 2, 4, 6, 8, 12, 16, 24px; title bars and strips pad 16px left and 12px right.
+A two-column window: a 248px sidebar on the base, and the sheet. The sheet stacks a 52px title bar, an optional banner or 48px filter strip, the content, and a 28px status bar, each split by a hairline. Spacing steps are 2, 4, 6, 8, 12, 16, 24 and 32px; title bars, strips and the ledger pad 24px on the left.
 
-The dashboard ledger is one CSS grid shared by the head and every row, so columns line up: mark (16px), repository, branch, divergence (112px), changes (60px), status, row tools (88px). Rows are 30px, band headings 28px. Sidebar and file-list rows are 26px; history rows are 44px with two lines. The repo view splits into a file list column (37% of the main column, 290 to 420px) and a diff, with the commit box pinned at the foot of the lists. Pane boundaries are splitters: the sidebar's edge, the file list's edge, the line between Unstaged and Staged, the commit list's edge in History and the foot of a commit's file list. Each is an 8px grab area over the hairline, which turns violet on hover, drag or focus; arrow keys move it 16px, Enter or a double-click resets it. Dragged sizes are remembered. Changed files show as a folder tree by default (chevron and folder name, chains of single folders on one row, 16px indent per level), or as a flat list with each file's folder beside it; a two-icon segmented control in the list's head switches, and the choice is remembered.
+The ledger is one CSS grid shared by the head and every row, so columns line up: mark, repository, branch, divergence (112px), changes (60px), status, row tools (88px). Rows are 34px with a 32px column head; bands are 40px. The repo view splits into a file list column (about 37% of the sheet, 290 to 420px) and the diff, with the commit box at the foot of the lists. Pane boundaries are splitters: an 8px grab area over the hairline, which turns cobalt on hover, drag or focus; arrow keys move it 16px, Enter or a double-click resets it, and dragged sizes are remembered. Changed files show as a folder tree by default or as a flat list; a two-icon segmented control in the list's head switches, and the choice is remembered.
 
-Responsive steps: below 980px of dashboard width the row tools go and the columns tighten; below 1100px window width the sidebar collapses to a 48px strip of marks and icons (names move to screen readers, Ctrl+P finds a repo); below 720px height the file lists shrink to their headers before the commit box leaves; below 760px the title bar wraps. Minimum window is 900x600.
+The dashboard shows compact cards by default. A Table / Cards / Details switch in the filter strip (icon and word; icons only below 980px) changes between the ledger, compact cards and detailed cards, and the choice is remembered.
+
+Responsive steps: below 980px of dashboard width the row tools go and the columns tighten; below 1100px window width the sidebar collapses to a strip of marks and icons (names move to tooltips and screen readers, Ctrl+P finds a repo); below 720px height the file lists shrink to their headers before the commit box leaves. Minimum window is 900x600.
 
 ## Elevation & Depth
 
-Flat. Depth comes from tone (rail darker than window, panel one step off) and hairlines. The only shadow is for surfaces that float above the window: menus, dialogs, the Ctrl+P switcher and toasts.
+Three levels, each with its own shadow token, and nothing else casts a shadow:
 
-### Shadow Vocabulary
-- **Float** (`box-shadow: 0 1px 2px rgb(0 0 0 / 0.06), 0 10px 28px -6px rgb(0 0 0 / 0.22)`): menus, dialogs, switcher, toasts. Always paired with a 1px `line` border and the 8px radius.
+1. **The sheet** (`--shadow-sheet`): a hairline ring and a soft edge where the sheet meets the base.
+2. **Cards and the open sidebar item** (`--shadow-card`, `--shadow-card-hover` on hover): a faint lift off the sheet or the base.
+3. **Floating surfaces** (`--shadow-float`): menus, dialogs, the Ctrl+P switcher and toasts. Dialogs dim the window with `--backdrop`.
 
-### Named Rules
-**The Only Floaters Cast Shadows Rule.** If it sits in the window's flow (sidebar, table, panes, cards in settings), it has no shadow. If it floats over the window, it gets the float shadow and nothing stronger.
+Keys (buttons) and fields get their depth from a darker lower border (`--key-edge`, `--line-edge`, `--accent-edge`), not a shadow. Rows, panes, the ledger, the diff and the sidebar are flat and ruled.
 
 ## Shapes
 
-Small, even corners. Controls and the settings card use 5px; list rows, menu items, ref labels, inline code and key caps use 4px; menus, dialogs, toasts and the switcher use 8px. Regions and table rows are square and divided by hairlines. Status marks are 8px circles (filled, hollow ring, half-filled, or haloed); divergence bars are 8px tall with 3px rounding on the outer end only. The sidebar alert count is the one fully rounded shape.
+Small, even corners. Controls and fields use 6px; list rows, menu items, ref labels, inline code and key caps 4px; cards, menus, dialogs, toasts and the switcher 8px; the sheet 10px. Rows and panes inside the sheet are square and divided by hairlines. Status marks are 8px circles (filled, hollow ring, half-filled or haloed); divergence bars are 8px tall with rounding on the outer end only. The open item's bar is 3x16px with 2px rounding. The sidebar alert count is the one fully rounded shape.
 
 ## Components
 
 ### Buttons
-Windows command buttons: quiet, compact, with a hairline.
-- **Shape:** 5px radius, 28px tall, 12px side padding, weight 500, 6px gap to a 15px icon (stroke 1.75).
-- **Standard:** raised face with a `line-strong` hairline; hover mixes 4% ink into the face, press 8%.
-- **Primary:** violet fill, white ink (dark theme: dark ink on light violet), weight 600. One per view. The commit button splits into Commit and a Push segment joined by a tinted seam; disabled it turns to a flat panel face instead of fading.
-- **Quiet:** no face until hovered; used in title bars and inline (Fetch all, Pull all).
-- **Next:** a quiet button in the state's ink and weight 600, for what the repo is waiting for (Pull when behind, Push when ahead). It never competes with the primary.
-- **Icon:** 28px square, quiet, ink-2, labelled by aria-label and tooltip. Row tools use 26x24.
-- **Small:** 24px tall, 8px padding, 13px text. **Danger:** red ink only, no red fill.
-- **Focus:** 2px violet outline, 1px offset. Lists and panes draw it 2px inside their edge.
+Windows command buttons: keys with a faint lower edge.
+- **Shape:** 6px radius, 32px tall, 12px side padding, weight 500, 6px gap to a 16px icon (stroke 1.75).
+- **Standard:** raised face on a `--line-strong` hairline with a `--key-edge` lower border; hover mixes 4% ink into the face, press 8%.
+- **Primary:** cobalt fill, white ink (dark theme: dark ink on light cobalt), weight 600, `--accent-edge` lower border. One per view. The commit button splits into Commit and a Push segment. Disabled it turns to a flat panel face.
+- **Quiet:** no face until hovered; title bar and inline actions.
+- **Next:** a quiet button in the state's ink and weight 600, for what the repo is waiting for (Pull in cyan when behind, Push in green when ahead). It never competes with the primary.
+- **Icon:** 32px square, quiet, ink-2, labelled by aria-label and a tooltip. Row and card tools are 26x24.
+- **Small:** 28px tall, 8px padding, 13px text. **Danger:** red ink only, never a red fill.
+- **Disabled:** a flat face, ink-3 and a not-allowed cursor.
+- **Focus:** 2px cobalt outline, 1px offset. Lists and panes draw it 2px inside their edge.
 
-### Filter tabs and segmented control
-- **Filter tabs:** 26px quiet buttons in ink-2, each followed by its count in ink-3. The selected tab takes the violet wash with its count in accent text; an alert count turns red ink at 600.
-- **Segmented control:** a panel track with a hairline; the selected segment is a raised face with a `line-strong` ring.
+### Fields
+Raised box on a `--line-strong` hairline with a darker `--line-edge` lower border, 6px radius, 32px tall (28px in filter strips, 13px text). Focus adds a 2px cobalt ring. Search fields carry a 14px icon inside on the left and a clear button on the right. The commit message is mono 13px, line-height 1.55, at least 92px tall, resizable.
+
+### Filter tabs and segmented controls
+- **Filter tabs:** quiet buttons in ink-2, each followed by its count in ink-3. The selected tab takes the selection wash with its count in accent text; an alert count turns red ink at 600.
+- **Segmented control:** keys on a sunken tray (the panel tone with a faint inner shadow); the chosen segment is raised with a hairline ring and a small shadow.
 
 ### View tabs
-Text tabs at 34px in ink-2; the selected tab turns ink and 600 and gets a 2px violet underline sitting on the hairline below.
-
-### Inputs / Fields
-- **Style:** raised field, `line-strong` hairline, 5px radius, 28px tall (26px in filter strips, 13px text). Search fields carry a 14px icon inside on the left and a clear button on the right.
-- **Hover:** border darkens by 18% ink. **Focus:** border and a 1px ring in violet.
-- **Commit message:** mono 13px, line-height 1.55, at least 92px tall, resizable.
+Text tabs in ink-2; the selected tab turns ink and 600 with a 2px cobalt underline on the hairline below.
 
 ### Navigation (sidebar)
-A tinted column, not a card. Brand mark and name at the top in a 44px bar, Dashboard, a filter field, groups of repos, Settings at the foot. Nav items and repo rows have no face until hovered (rail-hover); the active one takes the violet wash, selection ink and weight 600. Group heads are band type in ink-2 with a chevron and a count. Each repo row carries its status mark and count notation in two fixed slots, so numerals align down the list. With several groups, each group heading carries its swatch and its repos a stripe along the rail's left edge, unbroken down the group.
+On the base, not on the sheet. The brand at the top: the Lucide `git-pull-request` icon in cobalt, 18px, beside "Gitr" in 15px 600. Then Dashboard (with the red attention count), a repo filter, the groups of repos, and Settings with the theme toggle at the foot. Items have no face until hovered; the open one rises to a raised face with the card shadow, weight 600 and the 3x16px cobalt bar at its start. Group heads are 13px 600 ink-2 with a chevron and a count, 16px above each group. Each repo row carries its status mark and its counts in two fixed slots, so numerals align down the list.
 
 ### State marks and counts (signature)
 - **Status mark:** one 8px mark per repo: filled in the state hue for changes, behind or ahead; a hollow ink-3 ring when clean; a red ring for an error; a solid red dot with a soft halo for conflicts; a half-filled ring while a merge or rebase waits.
-- **Counts:** colored numerals with notation and no fill (`±n` changes in amber ink, `↓n` behind in sky ink, `↑n` ahead in green ink), 13px 600. Screen readers get the words.
+- **Counts:** coloured numerals with notation and no fill (`±n` changes in amber ink, `↓n` behind in cyan ink, `↑n` ahead in green ink), 13px 600. Screen readers get the words.
 - **Status words:** plain 13px text in the state's ink ("Merging · 1 conflict", "No upstream"). Never a filled pill.
 - **File status letters:** git's letter in mono 700 in the state's ink. A conflict is the one solid red tile.
 
 ### Divergence column (signature)
-Behind and ahead on one axis in every ledger row. A `line-strong` vertical axis runs down the column; behind commits draw a sky bar growing left with its number on the outside, ahead commits a green bar growing right. Bar length is linear for 1 to 4 commits, then logarithmic to a 40px cap. A repo with no upstream draws nothing.
-
-### Dashboard cards
-The dashboard's default layout; a segmented control in the filter strip (an icon and a word each: Table, Cards, Details; icons only below 980px) switches between the ledger table, compact cards and detailed cards, and the choice is remembered. Cards sit in the window's flow: a raised face, 1px `line` border, 8px radius, no shadow; hover darkens the border to `line-strong`, the keyboard cursor card takes the violet wash with a violet border (a 1px violet ring when the list has focus). They fill a grid (`auto-fill`, at least 260px compact, 400px detailed, 12px gaps) under the same bands as the ledger. A card under its group's band doesn't repeat the group; elsewhere, with several groups, it shows the 8px swatch (detailed: swatch and name).
-- **Compact:** mark, name (600, 15px) and count notation on one line; the branch in mono with a branch icon; the divergence axis (only when behind or ahead) and the status word; a hairline foot with VS Code, terminal and More icons and the next buttons: a sky "Pull ↓n" when behind and a green "Push ↑n" when ahead of an upstream (both when diverged).
-- **Detailed:** adds the remote host and the upstream; changes, behind and ahead as three 17px numerals in hairline cells (– when zero); a 4px bar splitting conflicted, staged and unstaged files; the HEAD commit's short SHA, subject and age; an error as a red-soft strip; the status word in the foot.
-- **New changes:** when a count goes up or trouble starts, the card washes in that state's soft hue with its hairline in the plain hue, holds, and fades over 1.6s, once per change (never on first load or re-render). A 6px dot in the state hue stays beside the counts until the card is hovered, focused or opened. Under reduced motion only the dot shows.
+Behind and ahead on one axis in every ledger row and on compact cards. A `--line-strong` vertical axis; behind commits draw a cyan bar growing left with its number outside, ahead commits a green bar growing right. Bar length is linear for 1 to 4 commits, then logarithmic to a 40px cap. A repo with no upstream draws nothing.
 
 ### Ledger rows
-30px grid rows split by `line-soft`. Hover is the ink overlay; the keyboard cursor row is the violet wash, with a 1px inset violet ring when the table has focus. Row tools fade in on hover or cursor. Bands are 12px band type with a count, on a hairline: "Needs attention" above "Everything else", or, sorted by status with all of several groups showing, above one band per group led by its swatch. With several groups, each row carries its group's 3px stripe at its left edge.
+34px grid rows split by `--line-soft`. Hover is the ink overlay; the keyboard cursor row takes the selection wash and the 3x16px cobalt bar at its left edge, with a 1px inset cobalt ring when the table has focus. Row tools appear on hover or for the cursor row. Bands are 13px 600 headings with a count, ruled below: "Needs attention" above "Everything else", or, sorted by status with several groups showing, above one band per group.
+
+### Dashboard cards
+Raised cards with a `--line` hairline, 8px radius and the card shadow, in a grid (`auto-fill`, at least 260px compact, 400px detailed, 12px gaps) under the same bands as the ledger. Hover lifts the shadow; the cursor card takes a cobalt border and a light selection wash. A card's VS Code, terminal and More buttons appear on hover or for the cursor card; Pull and Push always show. A card outside its group's band names the group in text.
+- **Compact:** mark, name and counts on one line; the branch in mono; the divergence axis and the status word; Pull or Push in the foot.
+- **Detailed:** adds the remote host and the upstream; changes, behind and ahead as three numerals (– when zero); a 4px bar splitting conflicted, staged and unstaged files; the HEAD commit's short SHA, subject and age; an error as a red-soft strip; the status word in the foot.
+- **New changes:** when a count goes up or trouble starts, the card washes in that state's soft hue and fades over 1.6s, once per change. A 6px dot in the state hue stays beside the counts until the card is hovered, focused or opened. Under reduced motion only the dot shows.
 
 ### History rows
-Two-line 44px rows. A `line-strong` branch line runs through 8px commit marks: ink-3 by default, violet and 10px for HEAD, a green ring for unpushed, a ringed target for merges. The second line (author, SHA, date) is 12px ink-3. Ref labels are quiet 18px outlines: HEAD in violet, tags in amber, remotes dashed.
+Two-line 44px rows. A 1.5px `--line-strong` branch line runs through 8px commit marks: ink-3 by default, cobalt and 10px for HEAD, a green ring for unpushed, a ringed target for merges. The second line (author, SHA, date) is 12px ink-3. Ref labels are quiet 18px outlines; the checked-out branch is in accent ink, tags in amber, remotes dashed.
 
 ### Menus, dialogs, toasts
-Raised overlay, 1px `line` border, 8px radius, float shadow. Menus open 4px below their trigger with a 3px slide and fade (140ms); items are 28px, 4px radius, and take the violet wash on hover or focus. Toasts sit above the status bar bottom right, rise 6px over 180ms, and lead with a green or red icon.
+Raised overlay, 1px `--line` border, 8px radius, float shadow. Menus open below their trigger with a short slide and fade; items take the selection wash on hover or focus. Toasts sit above the status bar at the bottom right, rise in over 180ms, and lead with a green or red icon. Dialogs sit over `--backdrop`.
 
 ### Banners
-Full-width strips under the title bar, 40px minimum, 15px icon on the left, bold message, muted detail, actions on the right. Amber wash for sign-in and Git problems, panel for an operation in progress, red wash for conflicts and errors.
+Full-width strips under the title bar, a 16px icon on the left, a bold message, muted detail, actions on the right. Amber wash for sign-in and Git problems, panel for an operation in progress, red wash for conflicts and errors, cobalt wash for news about Gitr itself (an update), so it never reads as "behind".
 
 ### Diff
-Mono 13px at line-height 1.6 in a table. Added lines on a green wash, removed on a red wash, with stronger tints in the line-number gutter. Hunk headers are 12px grotesk on a hunk panel.
+Mono 13px at line-height 1.6 in a table. Added lines on a green wash and removed on a red wash, with stronger tints in the line-number gutter. Hunk headers are 12px sans on the hunk panel.
+
+## Motion
+
+Quick and ease-out: 100ms for state changes, 160ms for menus and tabs, on `cubic-bezier(0.16, 1, 0.3, 1)`. Only transform, opacity, colour and shadow animate. One authored moment: the card flash for new changes. Under `prefers-reduced-motion` every animation and transition collapses to 1ms.
 
 ## Do's and Don'ts
 
 ### Do:
 - **Do** set state in columns of tabular numerals and 8px marks, with words for screen readers.
-- **Do** keep violet to selection, focus and one primary button per view (Commit in the repo view).
+- **Do** keep cobalt to selection, focus, the open item's bar and one primary button per view (Commit in the repo view).
 - **Do** use the `-ink` variant of a state hue for text and the plain hue for marks and bars.
 - **Do** put branches, paths, SHAs, code and commit messages in JetBrains Mono 13px.
-- **Do** divide regions and rows with 1px hairlines (`line` between regions, `line-soft` between rows).
-- **Do** give anything that floats the 8px radius, `line` border and float shadow, and nothing else a shadow.
-- **Do** keep motion quick and ease-out (90ms state changes, 140ms menus and tabs) and collapse it under reduced motion.
+- **Do** keep views on the sheet and the sidebar on the base; divide regions and rows inside the sheet with hairlines.
+- **Do** keep shadows to the three levels: the sheet, cards and the open item, floating surfaces.
+- **Do** keep motion quick and ease-out, and collapse it under reduced motion.
 
 ### Don't:
-- **Don't** build bordered-button toolbars or filled status chips, or give cards shadows, coloured faces or coloured edges; a card's state reads from its marks, counts and words like a ledger row.
-- **Don't** use a state hue as decoration, or show a color without a count, letter or word beside it.
-- **Don't** add shadows to surfaces that sit in the window's flow; the window is flat.
-- **Don't** set headings or labels in uppercase or with wide tracking.
-- **Don't** add a second accent color or a second primary button to a view.
+- **Don't** give workspace groups a colour, stripe or swatch; a group reads by its name.
+- **Don't** build filled status chips or badge confetti, or use a state hue as decoration.
+- **Don't** show a colour without a count, letter or word beside it.
+- **Don't** set headings, labels or column heads in uppercase or with letter-spacing.
+- **Don't** add a second accent colour or a second primary button to a view, or use blue for anything but cobalt's jobs (behind is cyan).
+- **Don't** add shadows to rows, panes or the sidebar; only the sheet, cards, keys' lower edges and floating surfaces have depth.

@@ -1,7 +1,7 @@
 import { useMemo, useRef, useState, type KeyboardEvent } from 'react'
 import { useConfig, useRepos } from '../hooks'
 import { useApp } from '../store'
-import { ChevronDown, ChevronRight, FolderPlus, LayoutGrid, Moon, Settings as SettingsIcon, Sun } from 'lucide-react'
+import { ChevronDown, ChevronRight, FolderPlus, GitPullRequest, LayoutGrid, Moon, Settings as SettingsIcon, Sun } from 'lucide-react'
 import { useRepoMenu } from '../repoMenu'
 import { plainInput } from '../lib/inputProps'
 import { BusyDot } from './Busy'
@@ -82,13 +82,7 @@ export function Sidebar() {
   return (
     <nav className="sidebar" aria-label="Repositories">
       <div className="brand">
-        {/* Two commits on a line; the newest in accent. */}
-        <svg className="brand-mark" viewBox="0 0 18 18" aria-hidden>
-          <rect width="18" height="18" rx="4" className="bm-ground" />
-          <path d="M5 9h8" className="bm-line" />
-          <circle cx="5" cy="9" r="2.2" className="bm-old" />
-          <circle cx="13" cy="9" r="2.6" className="bm-new" />
-        </svg>
+        <GitPullRequest className="brand-mark" aria-hidden />
         <span className="nav-label">Gitr</span>
       </div>
       <button

@@ -24,7 +24,6 @@ import { plainInput } from '../lib/inputProps'
 import { useAddFolder } from '../lib/addFolder'
 import { SignInBanner } from './SignInBanner'
 import { CountChips, Divergence, StatusMark } from './Marks'
-import { groupColors, type GroupColor } from '../lib/groupColor'
 import { useLayout, type DashboardView } from '../layout'
 import { DashboardCards, cardAbove, type CardSection } from './DashboardCards'
 import { RepoStatusText } from './RepoStatusText'
@@ -41,7 +40,7 @@ const VIEWS: { view: DashboardView; label: string; title: string; Icon: typeof R
 ]
 
 /** A virtual list item: a repo row, or the heading of the band of rows below it. */
-type Item = { kind: 'band'; key: string; label: string; count: number; color?: GroupColor } | { kind: 'row'; row: Row }
+type Item = { kind: 'band'; key: string; label: string; count: number; group?: boolean } | { kind: 'row'; row: Row }
 
 export function Dashboard() {
   const config = useConfig()
@@ -90,8 +89,7 @@ export function Dashboard() {
 
   // With more than one group, the rest are banded by group (told apart by their headings).
   const groups = useMemo(() => config.data?.groups ?? [], [config.data])
-  const colors = useMemo(() => groupColors(groups), [groups])
-  const colored = groups.length > 1
+  const grouped = groups.length > 1
 
   // Sorted by status, the repos that need you get their own band above the rest, and with all
   // groups showing the rest are banded by group. Held rows keep their places, so the bands only
@@ -101,29 +99,29 @@ export function Dashboard() {
     if (sort !== 'status' || holdOrder) return flat()
     const urgent = filter !== 'attention' ? rows.filter(attention) : []
     const rest = rows.filter((r) => !urgent.includes(r))
-    const bands: { key: string; label: string; color?: GroupColor; rows: Row[] }[] = []
+    const bands: { key: string; label: string; group?: boolean; rows: Row[] }[] = []
     if (urgent.length) bands.push({ key: 'attention', label: 'Needs attention', rows: urgent })
-    if (colored && !group) {
+    if (grouped && !group) {
       for (const g of groups) {
         const mine = rest.filter((r) => r.repo.groupId === g.id)
-        if (mine.length) bands.push({ key: 'group:' + g.id, label: g.name, color: colors.get(g.id), rows: mine })
+        if (mine.length) bands.push({ key: 'group:' + g.id, label: g.name, group: true, rows: mine })
       }
-      const other = rest.filter((r) => !colors.has(r.repo.groupId))
+      const other = rest.filter((r) => !groups.some((g) => g.id === r.repo.groupId))
       if (other.length) bands.push({ key: 'rest', label: 'Everything else', rows: other })
     } else if (rest.length) bands.push({ key: 'rest', label: 'Everything else', rows: rest })
     if (bands.length < 2) return flat()
     return bands.flatMap((b): Item[] => [
-      { kind: 'band', key: b.key, label: b.label, count: b.rows.length, color: b.color },
+      { kind: 'band', key: b.key, label: b.label, count: b.rows.length, group: b.group },
       ...b.rows.map((row): Item => ({ kind: 'row', row })),
     ])
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rows, sort, filter, holdOrder, group, groups, colors, colored])
+  }, [rows, sort, filter, holdOrder, group, groups, grouped])
 
   // The same bands as the ledger, each a grid of cards.
   const sections = useMemo((): CardSection[] => {
     const out: CardSection[] = []
     for (const it of items) {
-      if (it.kind === 'band') out.push({ key: it.key, label: it.label, count: it.count, color: it.color, rows: [] })
+      if (it.kind === 'band') out.push({ key: it.key, label: it.label, count: it.count, group: it.group, rows: [] })
       else {
         if (!out.length) out.push({ key: 'all', rows: [] })
         out[out.length - 1].rows.push(it.row)
@@ -427,14 +425,7 @@ export function Dashboard() {
             </div>
           ) : null)}
         {cards && (
-          <DashboardCards
-            view={view}
-            sections={sections}
-            cursor={cursor}
-            setCursor={setCursor}
-            colors={colored ? colors : null}
-            groupNames={groupNames}
-          />
+          <DashboardCards view={view} sections={sections} cursor={cursor} setCursor={setCursor} grouped={grouped} groupNames={groupNames} />
         )}
         <div style={{ height: cards ? 0 : virtual.getTotalSize(), position: 'relative' }}>
           {!cards &&

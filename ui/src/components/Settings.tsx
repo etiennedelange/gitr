@@ -9,7 +9,6 @@ import type { Config, Group } from '../types'
 import { plainInput } from '../lib/inputProps'
 import { saveThemePref, useTheme, type ThemePref } from '../theme'
 import { folderName, pickFolder } from '../lib/addFolder'
-import { nextGroupColor } from '../lib/groupColor'
 
 const SECTIONS = [
   { id: 'workspaces', label: 'Workspaces' },
@@ -185,7 +184,7 @@ function SettingsForm({ saved }: { saved: Config }) {
     if (!dir) return
     const next = {
       ...draft,
-      groups: [...draft.groups, { id: crypto.randomUUID(), name: folderName(dir), roots: [dir], color: nextGroupColor(draft.groups) }],
+      groups: [...draft.groups, { id: crypto.randomUUID(), name: folderName(dir), roots: [dir] }],
     }
     // The first group is saved right away, so its repositories fill the sidebar without a Save step.
     if (!saved.groups.length && !draft.groups.length) {

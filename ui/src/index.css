@@ -135,14 +135,6 @@
   --red-soft: #ffece9;
   --red-on: #ffffff;
 
-  /* Group colours: kept for a group's saved choice; nothing draws them since groups read by name. */
-  --g-teal: #13858a;
-  --g-rose: #c23f7d;
-  --g-ochre: #9a6a2c;
-  --g-slate: #5c6c88;
-  --g-olive: #6f7d1c;
-  --g-plum: #8a4fa0;
-
   --add-bg: #e9f7ee;
   --add-ln: #d3efdc;
   --add-ink: #1b6537;
@@ -214,13 +206,6 @@
   --red-ink: #fe9b93;
   --red-soft: #4a2321;
   --red-on: #200a08;
-
-  --g-teal: #3bb3b6;
-  --g-rose: #e2689f;
-  --g-ochre: #c9944f;
-  --g-slate: #8b9bb8;
-  --g-olive: #a3b23e;
-  --g-plum: #b884cc;
 
   --add-bg: #1b3024;
   --add-ln: #213a2b;
@@ -826,7 +811,7 @@ ul:focus-visible,
 
 /*
  * Splitters: a 0-wide (or 0-tall) item between two panes with an 8px grab area over their shared
- * hairline. The hairline turns violet while hovered, dragged or focused.
+ * hairline. The hairline turns cobalt while hovered, dragged or focused.
  */
 .splitter {
   position: relative;
@@ -904,25 +889,13 @@ body.resizing-y * {
   font: 600 var(--fs-md) / 1 var(--font-ui);
   letter-spacing: -0.01em;
 }
-/* The mark: two commits on a line, the newer one in accent. */
+/* The mark: a branch merging back, drawn in the accent like the rest of the icon set. */
 .brand-mark {
   width: 18px;
   height: 18px;
   flex: none;
-}
-.bm-ground {
-  fill: var(--ink);
-}
-.bm-line {
-  stroke: var(--rail);
-  stroke-width: 1.5;
-  opacity: 0.7;
-}
-.bm-old {
-  fill: var(--rail);
-}
-.bm-new {
-  fill: var(--accent);
+  color: var(--accent);
+  stroke-width: 2;
 }
 .nav-item {
   position: relative;

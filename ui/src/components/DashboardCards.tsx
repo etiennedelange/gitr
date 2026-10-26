@@ -3,7 +3,6 @@ import { api } from '../api'
 import { notifyError, useBatch, useBatchRunning } from '../hooks'
 import { useApp, type Fresh } from '../store'
 import { useRepoMenu } from '../repoMenu'
-import { type GroupColor } from '../lib/groupColor'
 import { absoluteTime, relativeTime } from '../lib/time'
 import { needsAttention, type Row } from '../lib/git'
 import { runPush } from '../lib/send'
@@ -17,7 +16,8 @@ export interface CardSection {
   key: string
   label?: string
   count?: number
-  color?: GroupColor
+  /** The band is a group's own heading. */
+  group?: boolean
   rows: Row[]
 }
 
@@ -66,13 +66,13 @@ interface Props {
   sections: CardSection[]
   cursor: string | null
   setCursor: (path: string) => void
-  /** Group colours by group id, when there is more than one group. */
-  colors: Map<string, GroupColor> | null
+  /** There is more than one group, so a card outside its group's band names it. */
+  grouped: boolean
   groupNames: Map<string, string>
 }
 
 /** The dashboard as cards: compact ones in a dense grid, or detailed ones with the last commit. */
-export function DashboardCards({ view, sections, cursor, setCursor, colors, groupNames }: Props) {
+export function DashboardCards({ view, sections, cursor, setCursor, grouped, groupNames }: Props) {
   return (
     <>
       {sections.map((sec, i) => (
@@ -92,7 +92,7 @@ export function DashboardCards({ view, sections, cursor, setCursor, colors, grou
                 cursor={row.repo.path === cursor}
                 setCursor={setCursor}
                 // Under its group's own heading a card doesn't repeat the group.
-                groupName={colors && !sec.color ? groupNames.get(row.repo.groupId) : undefined}
+                groupName={grouped && !sec.group ? groupNames.get(row.repo.groupId) : undefined}
               />
             ))}
           </div>
