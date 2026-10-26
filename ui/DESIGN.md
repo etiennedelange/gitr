@@ -6,7 +6,6 @@ colors:
   accent-hover: "#0d50c3"
   accent-text: "#0d4cb7"
   accent-ink: "#ffffff"
-  accent-edge: "#0a3f9c"
   selection: "#e0eeff"
   selection-ink: "#072c73"
   sheet: "#f9fbfe"
@@ -17,7 +16,6 @@ colors:
   line-soft: "#e6eaee"
   line-strong: "#c5cbd2"
   line-edge: "#7f8793"
-  key-edge: "#a9b0ba"
   ink: "#111825"
   ink-2: "#414853"
   ink-3: "#5d646e"
@@ -95,14 +93,14 @@ components:
   button:
     backgroundColor: "{colors.raised}"
     textColor: "{colors.ink}"
-    border: "1px {colors.line-strong}, bottom {colors.key-edge}"
+    border: "1px {colors.line-strong}"
     rounded: "{rounded.md}"
     padding: "0 12px"
     height: "32px"
   button-primary:
     backgroundColor: "{colors.accent}"
     textColor: "{colors.accent-ink}"
-    border: "1px {colors.accent}, bottom {colors.accent-edge}"
+    border: "1px {colors.accent}"
     rounded: "{rounded.md}"
     height: "32px"
   button-quiet:
@@ -119,7 +117,7 @@ components:
     height: "28px"
   input:
     backgroundColor: "{colors.raised}"
-    border: "1px {colors.line-strong}, bottom {colors.line-edge}"
+    border: "1px {colors.line-strong}; {colors.line-edge} on hover"
     rounded: "{rounded.md}"
     padding: "0 8px"
     height: "32px"
@@ -162,7 +160,7 @@ components:
 
 The window's base is a cool blue-grey. The sidebar sits directly on it. Every view (Dashboard, a repository, Settings) is one sheet laid over the base, 8px in from the window edge, with a 10px radius, a hairline and a soft edge, like a Windows 11 content layer. Inside the sheet the work is flat and ruled: state is read down aligned columns of numerals and small marks, never from filled chips.
 
-The system is calm and readable rather than dense: 32px controls as in WinUI, 34px ledger rows, a 52px title bar and room between groups. One cobalt accent marks selection, focus and the single primary action of a view. Amber, cyan, green and red only ever mean changes, behind, ahead and trouble. It follows Windows desktop conventions: keys with a faint lower edge, fields with a darker lower edge, a short accent bar on the open item as in a WinUI navigation pane, F6-style focus rings, light and dark themes that follow the OS.
+The system is calm and readable rather than dense: 32px controls as in WinUI, 34px ledger rows, a 52px title bar and room between groups. One cobalt accent marks selection, focus and the single primary action of a view. Amber, cyan, green and red only ever mean changes, behind, ahead and trouble. It follows Windows desktop conventions: buttons and fields in an even hairline, a short accent bar on the open item as in a WinUI navigation pane, F6-style focus rings, light and dark themes that follow the OS.
 
 The system was set by a Hallmark redesign (theme Cobalt, app-screen scope) in October 2026. It replaced the earlier flat "ledger" look with its violet accent and per-group colours.
 
@@ -179,7 +177,7 @@ The system was set by a Hallmark redesign (theme Cobalt, app-screen scope) in Oc
 Cool neutrals tilted toward hue 255 (blue-grey), one cobalt accent and four state hues that each do one job. Every colour has a light and a dark value; the dark theme is the same roles in graphite steps, not a different palette. Every text colour clears WCAG AA (4.5:1) on every surface it sits on, and every mark clears 3:1; `ui/src/themeContrast.test.ts` enforces it.
 
 ### Accent
-- **Cobalt** (`--accent`; dark `#6d9df5`): selected filter tab count, the open item's bar in the sidebar and the ledger's cursor bar, the active tab underline, the HEAD commit mark, focus rings, the brand mark, and the fill of the one primary button per view (Commit). `--accent-text` is the variant for cobalt text on the sheet. `--accent-edge` is the primary key's darker lower edge.
+- **Cobalt** (`--accent`; dark `#6d9df5`): selected filter tab count, the open item's bar in the sidebar and the ledger's cursor bar, the active tab underline, the HEAD commit mark, focus rings, the brand mark, and the fill of the one primary button per view (Commit). `--accent-text` is the variant for cobalt text on the sheet.
 - **Selection** (`--sel` with `--sel-ink`): background and ink of the selected row, filter tab, file and commit, and the cursor card's wash. Selection is a tint plus the short bar, never a solid accent fill.
 
 ### State hues
@@ -195,7 +193,7 @@ Each hue has a plain value for marks and bars, an `-ink` value for text at body 
 - **Sheet** (`--bg`): the surface every view sits on.
 - **Panel** (`--panel`): table and list heads, the commit box, banners in progress, inline code; one step off the sheet.
 - **Raised** (`--raised`): button faces, fields, cards, the open sidebar item, menus and dialogs.
-- **Hairlines**: `--line` between regions, `--line-soft` between rows, `--line-strong` for control borders, the divergence axis and the history branch line, `--line-edge` and `--key-edge` for a field's and a key's lower edge.
+- **Hairlines**: `--line` between regions, `--line-soft` between rows, `--line-strong` for control borders, the divergence axis and the history branch line, `--line-edge` for a hovered field's border and a key cap's lower edge.
 - **Ink** (`--ink`, `--ink-2`, `--ink-3`): primary text, secondary text (branch names, list heads), tertiary text (paths, counts, metadata, placeholders).
 - Hover and press are translucent ink overlays (about 4.5% and 8.5%) so they work on any surface.
 
@@ -244,7 +242,7 @@ Three levels, each with its own shadow token, and nothing else casts a shadow:
 2. **Cards and the open sidebar item** (`--shadow-card`, `--shadow-card-hover` on hover): a faint lift off the sheet or the base.
 3. **Floating surfaces** (`--shadow-float`): menus, dialogs, the Ctrl+P switcher and toasts. Dialogs dim the window with `--backdrop`.
 
-Keys (buttons) and fields get their depth from a darker lower border (`--key-edge`, `--line-edge`, `--accent-edge`), not a shadow. Rows, panes, the ledger, the diff and the sidebar are flat and ruled.
+Buttons and fields are flat with an even hairline. A darker lower edge read as a thick underline in light and, in dark, as a missing bottom border, so neither has one. Rows, panes, the ledger, the diff and the sidebar are flat and ruled.
 
 ## Shapes
 
@@ -253,10 +251,10 @@ Small, even corners. Controls and fields use 6px; list rows, menu items, ref lab
 ## Components
 
 ### Buttons
-Windows command buttons: keys with a faint lower edge.
+Windows command buttons: a raised face on an even hairline.
 - **Shape:** 6px radius, 32px tall, 12px side padding, weight 500, 6px gap to a 16px icon (stroke 1.75).
-- **Standard:** raised face on a `--line-strong` hairline with a `--key-edge` lower border; hover mixes 4% ink into the face, press 8%.
-- **Primary:** cobalt fill, white ink (dark theme: dark ink on light cobalt), weight 600, `--accent-edge` lower border. One per view. The commit button splits into Commit and a Push segment. Disabled it turns to a flat panel face.
+- **Standard:** raised face on an even `--line-strong` hairline; hover mixes 4% ink into the face, press 8%.
+- **Primary:** cobalt fill, white ink (dark theme: dark ink on light cobalt), weight 600. One per view. The commit button splits into Commit and a Push segment. Disabled it turns to a flat panel face.
 - **Quiet:** no face until hovered; title bar and inline actions.
 - **Next:** a quiet button in the state's ink and weight 600, for what the repo is waiting for (Pull in cyan when behind, Push in green when ahead). It never competes with the primary.
 - **Icon:** 32px square, quiet, ink-2, labelled by aria-label and a tooltip. Row and card tools are 26x24.
@@ -265,7 +263,7 @@ Windows command buttons: keys with a faint lower edge.
 - **Focus:** 2px cobalt outline, 1px offset. Lists and panes draw it 2px inside their edge.
 
 ### Fields
-Raised box on a `--line-strong` hairline with a darker `--line-edge` lower border, 6px radius, 32px tall (28px in filter strips, 13px text). Focus adds a 2px cobalt ring. Search fields carry a 14px icon inside on the left and a clear button on the right. The commit message is mono 13px, line-height 1.55, at least 92px tall, resizable.
+Raised box on an even `--line-strong` hairline that darkens to `--line-edge` on hover, 6px radius, 32px tall (28px in filter strips, 13px text). Focus adds a 2px cobalt ring. Search fields carry a 14px icon inside on the left and a clear button on the right. The commit message is mono 13px, line-height 1.55, at least 92px tall, resizable.
 
 ### Filter tabs and segmented controls
 - **Filter tabs:** quiet buttons in ink-2, each followed by its count in ink-3. The selected tab takes the selection wash with its count in accent text; an alert count turns red ink at 600.
@@ -304,6 +302,9 @@ Raised overlay, 1px `--line` border, 8px radius, float shadow. Menus open below 
 ### Banners
 Full-width strips under the title bar, a 16px icon on the left, a bold message, muted detail, actions on the right. Amber wash for sign-in and Git problems, panel for an operation in progress, red wash for conflicts and errors, cobalt wash for news about Gitr itself (an update), so it never reads as "behind".
 
+### Settings
+Nav (168px) and content (up to 720px) centred on the sheet; the whole sheet scrolls, and the nav sticks. Each section is a title (15px 600), an optional line on what it is for, and one raised list (`--line` border, 8px radius, no shadow) of setting rows ruled by `--line` (the dark soft hairline vanishes on the raised face). A row is at least 56px: name (500, ink) with a 13px ink-3 hint under it on the left, the control right-aligned. Number fields are 72px and right-aligned, text fields and selects 260px. On/off settings are WinUI toggle switches (40x20, cobalt track when on); the theme is a segmented control. Workspace groups are blocks in the list: the name field, the repo count in ink-3, then Add folder and Remove group; folders below in mono with a folder icon. Shortcuts are grouped by where they work, each key a cap. "Unsaved changes" shows in amber ink beside Revert and Save.
+
 ### Diff
 Mono 13px at line-height 1.6 in a table. Added lines on a green wash and removed on a red wash, with stronger tints in the line-number gutter. Hunk headers are 12px sans on the hunk panel.
 
@@ -328,4 +329,4 @@ Quick and ease-out: 100ms for state changes, 160ms for menus and tabs, on `cubic
 - **Don't** show a colour without a count, letter or word beside it.
 - **Don't** set headings, labels or column heads in uppercase or with letter-spacing.
 - **Don't** add a second accent colour or a second primary button to a view, or use blue for anything but cobalt's jobs (behind is cyan).
-- **Don't** add shadows to rows, panes or the sidebar; only the sheet, cards, keys' lower edges and floating surfaces have depth.
+- **Don't** add shadows to rows, panes or the sidebar; only the sheet, cards and floating surfaces have depth.

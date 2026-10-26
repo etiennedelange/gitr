@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test'
-import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
+import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useApp } from './store'
 import type { Config } from './types'
@@ -62,6 +62,14 @@ describe('settings form', () => {
     mount(client)
     expect(await screen.findByLabelText('Group name')).toHaveValue('Renamed')
     expect(screen.getByRole('button', { name: 'Save' })).toBeEnabled()
+  })
+
+  it("names each group's buttons after the group", async () => {
+    useApp.getState().setSettingsDraft(null)
+    mount(newClient())
+    const group = await screen.findByRole('group', { name: 'Work' })
+    expect(within(group).getByRole('button', { name: 'Add folder to Work' })).toBeInTheDocument()
+    expect(within(group).getByRole('button', { name: 'Remove group Work' })).toBeInTheDocument()
   })
 
   it('forgets the kept edits after Revert', async () => {

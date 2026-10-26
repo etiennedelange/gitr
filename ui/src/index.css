@@ -158,8 +158,6 @@
   --shadow-card: 0 1px 2px rgb(17 24 37 / 0.05), 0 2px 8px -4px rgb(17 24 37 / 0.08);
   --shadow-card-hover: 0 1px 2px rgb(17 24 37 / 0.06), 0 6px 18px -8px rgb(17 24 37 / 0.18);
   /* A key's lower edge: its bottom border a step darker than the rest. */
-  --key-edge: #a9b0ba;
-  --accent-edge: #0a3f9c;
   --shadow-float: 0 0 0 1px rgb(17 24 37 / 0.04), 0 2px 4px rgb(17 24 37 / 0.06), 0 16px 36px -10px rgb(17 24 37 / 0.26);
   --backdrop: rgb(17 24 37 / 0.3);
 }
@@ -227,8 +225,6 @@
   --shadow-sheet: 0 0 0 1px rgb(0 0 0 / 0.35), 0 1px 0 rgb(255 255 255 / 0.04) inset, 0 6px 20px -8px rgb(0 0 0 / 0.5);
   --shadow-card: 0 1px 0 rgb(255 255 255 / 0.04) inset, 0 1px 2px rgb(0 0 0 / 0.3);
   --shadow-card-hover: 0 1px 0 rgb(255 255 255 / 0.05) inset, 0 8px 20px -8px rgb(0 0 0 / 0.55);
-  --key-edge: #2e333b;
-  --accent-edge: #4f7fd6;
   --shadow-float: 0 0 0 1px rgb(0 0 0 / 0.4), 0 2px 4px rgb(0 0 0 / 0.3), 0 18px 40px -10px rgb(0 0 0 / 0.6);
   --backdrop: rgb(6 9 14 / 0.5);
 }
@@ -350,7 +346,7 @@ textarea {
   color: inherit;
 }
 
-/* Standard button: a key, a raised face on a hairline with a faint lower edge, like a WinUI button. */
+/* Standard button: a raised face on an even hairline. */
 button {
   display: inline-flex;
   align-items: center;
@@ -359,7 +355,6 @@ button {
   height: var(--ctl);
   padding: 0 var(--s5);
   border: 1px solid var(--line-strong);
-  border-bottom-color: var(--key-edge);
   border-radius: var(--r);
   background: var(--raised);
   font-weight: 500;
@@ -403,14 +398,12 @@ button.quiet .ico {
 /* Primary: the one action this view is for. */
 button.primary {
   border-color: var(--accent);
-  border-bottom-color: var(--accent-edge);
   background: var(--accent);
   color: var(--accent-ink);
   font-weight: 600;
 }
 button.primary:hover:not(:disabled) {
   border-color: var(--accent-hover);
-  border-bottom-color: var(--accent-edge);
   background: var(--accent-hover);
 }
 button.primary:active:not(:disabled) {
@@ -486,19 +479,19 @@ button.link:hover:not(:disabled) {
   text-decoration-color: color-mix(in oklab, currentColor 45%, transparent);
 }
 
-/* Fields: a hairline box with a darker lower edge, as WinUI draws them; focus adds an accent ring. */
+/* Fields: an even hairline box that darkens on hover; focus adds an accent ring. */
 input,
 select {
   height: var(--ctl);
   padding: 0 var(--s4);
   border: 1px solid var(--line-strong);
-  border-bottom-color: var(--line-edge);
   border-radius: var(--r);
   background: var(--field);
 }
 input:hover,
 select:hover,
 textarea:hover {
+  border-color: var(--line-edge);
   background: color-mix(in oklab, var(--field), var(--ink) 2.5%);
 }
 select {
@@ -510,7 +503,6 @@ select option {
 }
 textarea {
   border: 1px solid var(--line-strong);
-  border-bottom-color: var(--line-edge);
   border-radius: var(--r);
   background: var(--field);
 }
@@ -798,6 +790,9 @@ ul:focus-visible,
 }
 /* The sheet: every view sits on one surface laid over the base, with a hairline and a soft edge. */
 .main {
+  /* Placed explicitly: when the splitter is hidden (narrow windows) auto-placement would put the
+     sheet in the splitter's 0-wide track. */
+  grid-column: 3;
   display: flex;
   flex-direction: column;
   min-width: 0;
@@ -985,8 +980,7 @@ body.resizing-y * {
   flex: 1;
   min-width: 0;
   height: var(--ctl-sm);
-  border-color: var(--line);
-  border-bottom-color: var(--line-edge);
+  border-color: var(--line-strong);
   background: color-mix(in oklab, var(--field) 70%, transparent);
   font-size: var(--fs-sm);
 }
@@ -3189,6 +3183,9 @@ button.sha-chip .ico {
 }
 
 /* ---------------------------------------------------------------- settings */
+/* Windows-style setting rows: name and hint on the left, the control in a column on the right,
+   rows ruled inside one raised list per section. Nav and content sit centred on the sheet; the
+   whole sheet scrolls, so the scrollbar stays at its edge. */
 .settings {
   display: flex;
   flex-direction: column;
@@ -3198,14 +3195,24 @@ button.sha-chip .ico {
 .settings .toolbar {
   gap: var(--s3);
 }
+.set-dirty {
+  margin-right: var(--s3);
+  color: var(--amber-ink);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+}
+.settings-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  position: relative;
+}
 .settings-layout {
   display: grid;
-  flex: 1;
-  grid-template-columns: 180px minmax(0, 760px);
+  grid-template-columns: 168px minmax(0, 720px);
   gap: var(--s8);
-  justify-content: start;
-  min-height: 0;
-  padding-left: var(--s6);
+  justify-content: center;
+  padding: 0 var(--s7);
 }
 .settings-nav {
   position: sticky;
@@ -3214,7 +3221,7 @@ button.sha-chip .ico {
   flex-direction: column;
   gap: var(--s1);
   align-self: start;
-  padding-top: var(--s4);
+  padding-top: var(--s7);
 }
 .settings-nav button {
   position: relative;
@@ -3246,47 +3253,165 @@ button.sha-chip .ico {
   border-radius: 2px;
   background: var(--accent);
 }
-.settings-body {
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-  padding: 0 var(--s6) var(--s7) 0;
-  overflow-y: auto;
-  position: relative;
+.settings-sections {
+  min-width: 0;
+  padding: var(--s7) 0 var(--s8);
 }
-.settings-body > section {
-  padding: var(--s6) 0 var(--s7);
-  border-bottom: 1px solid var(--line-soft);
+.settings-sections > section + section {
+  margin-top: var(--s8);
 }
-.settings-body > section:last-child {
-  border-bottom: 0;
+.settings-sections > section > h2 {
+  margin: 0 0 var(--s2);
 }
-.settings-body > section > h2 {
-  margin-bottom: var(--s4);
-}
-.settings-body p {
+.settings-sections p {
   max-width: 68ch;
   color: var(--ink-2);
 }
-.card {
-  margin-bottom: var(--s4);
-  padding: var(--s4) var(--s4) var(--s3);
+.set-intro {
+  margin: 0 0 var(--s5);
+}
+.settings-sections > section > h2 + .set-list {
+  margin-top: var(--s5);
+}
+
+/* One raised list per section; rows split by hairlines, flat inside. */
+.set-list {
+  margin: 0;
   border: 1px solid var(--line);
   border-radius: var(--r-lg);
   background: var(--raised);
-  box-shadow: var(--shadow-card);
 }
-.card-head {
+.set-row {
   display: flex;
   align-items: center;
-  gap: var(--s3);
   flex-wrap: wrap;
+  gap: var(--s3) var(--s7);
+  min-height: 56px;
+  padding: var(--s4) var(--s6);
 }
-.card-head input {
-  flex: 1 1 140px;
+.set-row + .set-row,
+.group-block + .group-block {
+  /* --line, not --line-soft: on the raised list the dark soft hairline all but disappears. */
+  border-top: 1px solid var(--line);
+}
+.set-text {
+  flex: 1 1 240px;
   min-width: 0;
-  max-width: 260px;
+}
+.set-text > label,
+.set-label {
+  display: block;
+  color: var(--ink);
+  font-weight: 500;
+}
+.set-hint {
+  margin-top: var(--s1);
+  color: var(--ink-3);
+  font-size: var(--fs-sm);
+  line-height: 1.4;
+}
+/* An empty status line stays in the tree, so screen readers announce it when text arrives. */
+.set-hint:empty:not([role='status']) {
+  display: none;
+}
+.set-hint .mono,
+.set-hint code {
+  font-size: var(--fs-xs);
+}
+.set-hint.news {
+  color: var(--accent-text);
   font-weight: 600;
+}
+.set-control {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--s3);
+  flex: 0 1 auto;
+  min-width: 0;
+  margin-left: auto;
+}
+.set-control input.wide {
+  width: 260px;
+  max-width: 100%;
+}
+.set-control input.num {
+  width: 72px;
+  text-align: right;
+}
+.set-control select {
+  width: 260px;
+  max-width: 100%;
+}
+.set-value {
+  min-width: 4ch;
+  color: var(--ink);
+  font-weight: 600;
+  text-align: right;
+}
+
+/* A checkbox drawn as a WinUI toggle switch: an outlined track off, a cobalt track on. */
+input.switch {
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  flex: none;
+  width: 40px;
+  height: 20px;
+  margin: 0;
+  border: 1px solid var(--line-edge);
+  border-radius: 10px;
+  background: var(--raised);
+  transition:
+    background-color var(--t-fast) var(--ease),
+    border-color var(--t-fast) var(--ease);
+}
+input.switch::before {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--ink-2);
+  transition: transform var(--t-fast) var(--ease);
+}
+input.switch:hover {
+  background: color-mix(in oklab, var(--raised), var(--ink) 4.5%);
+}
+input.switch:checked {
+  border-color: var(--accent);
+  background: var(--accent);
+}
+input.switch:checked::before {
+  background: var(--accent-ink);
+  transform: translateX(20px);
+}
+input.switch:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* Workspace groups: the name field, its repo count and tools on one line, its folders below. */
+.group-block {
+  padding: var(--s5) var(--s6) var(--s4);
+}
+.group-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--s3);
+}
+.group-row input.group-name {
+  flex: 0 1 220px;
+  min-width: 120px;
+  font-weight: 600;
+}
+.group-count {
+  margin-left: var(--s3);
+  color: var(--ink-3);
+  font-size: var(--fs-sm);
 }
 .roots {
   margin: var(--s3) 0 0;
@@ -3296,53 +3421,81 @@ button.sha-chip .ico {
 .roots li {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  height: 28px;
-  padding: 0 var(--s1) 0 var(--s2);
+  gap: var(--s4);
+  min-height: 28px;
+  padding: 0 var(--s1) 0 var(--s4);
   border-radius: var(--r-sm);
 }
 .roots li:hover {
   background: var(--hover);
 }
+.roots li > .ico {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  color: var(--ink-3);
+}
+.roots li > .mono {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
 .roots button.icon {
   width: 24px;
   height: 24px;
 }
-.field {
-  display: flex;
+.roots .roots-empty {
+  color: var(--ink-3);
+  font-size: var(--fs-sm);
+}
+button.set-add {
+  margin-top: var(--s5);
+}
+.settings-sections .first-run p {
+  color: var(--ink);
+}
+.settings-sections .first-run p + p {
+  color: var(--ink-2);
+}
+
+/* Shortcuts: what it does on the left, the keys as caps on the right, grouped by where they work. */
+.shortcut-group + .shortcut-group {
+  margin-top: var(--s6);
+}
+.shortcut-group > h3 {
+  margin: var(--s5) 0 var(--s3);
+}
+.shortcuts .set-row {
+  min-height: 40px;
+  padding-top: var(--s3);
+  padding-bottom: var(--s3);
+}
+.shortcuts dt {
+  flex: 1 1 240px;
+  min-width: 0;
+}
+.shortcuts dd {
+  margin: 0 0 0 auto;
+}
+.keys,
+.combo {
+  display: inline-flex;
   align-items: center;
-  gap: var(--s5);
-  flex-wrap: wrap;
-  margin: var(--s4) 0;
+  gap: var(--s2);
 }
-.field > span:first-child {
-  width: 190px;
-  color: var(--ink-2);
+.keys {
+  gap: var(--s3);
 }
-.field input:not([type='checkbox']),
-.field select {
-  width: 320px;
-  max-width: 100%;
-}
-.field.check > span {
-  width: auto;
+.keys kbd {
+  min-width: 26px;
+  height: 24px;
+  padding: 0 var(--s3);
+  font: 500 var(--fs-xs) / 22px var(--font-ui);
   color: var(--ink);
 }
-.shortcuts {
-  border-collapse: collapse;
-}
-.shortcuts td {
-  padding: var(--s2) var(--s6) var(--s2) 0;
-  border-bottom: 1px solid var(--line-soft);
-}
-.shortcuts tr:last-child td {
-  border-bottom: 0;
-}
-.settings-body .first-run p {
-  color: var(--ink);
-}
-.settings-body .first-run p + p {
-  color: var(--ink-2);
+.keys .or {
+  color: var(--ink-3);
+  font-size: var(--fs-sm);
 }
 
 /* ---------------------------------------------------------------- toasts */
@@ -3911,8 +4064,8 @@ dialog::backdrop {
     right: 5px;
   }
   .settings-layout {
-    grid-template-columns: 150px minmax(0, 1fr);
-    gap: var(--s5);
+    grid-template-columns: 150px minmax(0, 720px);
+    gap: var(--s6);
   }
 }
 
@@ -3926,18 +4079,18 @@ dialog::backdrop {
   }
   .settings-layout {
     grid-template-columns: minmax(0, 1fr);
-    gap: var(--s4);
-    align-content: start;
-    overflow-y: auto;
+    gap: 0;
     padding: 0 var(--s4);
   }
   .settings-nav {
     position: static;
     flex-direction: row;
     flex-wrap: wrap;
+    padding-top: var(--s4);
   }
-  .settings-body {
-    overflow: visible;
+  .set-row {
+    padding-left: var(--s5);
+    padding-right: var(--s5);
   }
 }
 

@@ -57,6 +57,9 @@ const SCENES = {
   // `extent` is not a preview parameter either: it sets the remembered Hunks / Full file choice.
   'full-file': { scenario: 'default', view: 'repo', repo: 'billing-service', file: 'InvoiceExporter.cs', extent: 'full' },
   conflict: { scenario: 'default', view: 'repo', repo: 'identity-server' },
+  settings: { scenario: 'default', view: 'settings' },
+  // `section` is not a preview parameter: it scrolls Settings to that section before the shot.
+  'settings-appearance': { scenario: 'default', view: 'settings', section: 'appearance' },
   'first-run': { scenario: 'empty' },
   // `wait` is not a preview parameter: the update check runs 5 s after startup.
   update: { scenario: 'default', update: 'available', wait: 5800 },
@@ -71,7 +74,7 @@ const LOOK = {
   dark: { bar: '#202020', ink: '#ffffff', glows: ['#3d4a3c', '#3a4380'], base: '#101210' },
 }
 
-async function captureRaw(browser, url, theme, { diff, extent, layout, wait, ...params }, out) {
+async function captureRaw(browser, url, theme, { diff, extent, layout, section, wait, ...params }, out) {
   const ctx = await browser.newContext({ viewport: { width: W, height: CLIENT_H }, deviceScaleFactor: 2 })
   if (diff) await ctx.addInitScript((mode) => localStorage.setItem('diffMode', mode), diff)
   if (extent) await ctx.addInitScript((e) => localStorage.setItem('diffExtent', e), extent)
@@ -84,6 +87,7 @@ async function captureRaw(browser, url, theme, { diff, extent, layout, wait, ...
   await page.waitForSelector('#root > *')
   // The preview selects the file and fills the commit box after 400 ms; let that and the diff land.
   await page.waitForTimeout(wait ?? (params.view === 'repo' ? 1200 : 600))
+  if (section) await page.evaluate((id) => document.getElementById(`settings-${id}`)?.scrollIntoView({ block: 'start' }), section)
   await page.mouse.move(W - 5, CLIENT_H - 5)
   await page.screenshot({ path: out })
   await ctx.close()

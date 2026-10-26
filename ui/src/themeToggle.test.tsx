@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test'
-import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
+import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import type { Config } from './types'
 
@@ -85,15 +85,16 @@ describe('light/dark toggle in the sidebar', () => {
     expect(localStorage.getItem('theme')).toBe('light')
   })
 
-  it('keeps the Settings theme select in step', async () => {
+  it('keeps the Settings theme switch in step', async () => {
     renderApp(true)
-    const select = (await screen.findByRole('combobox', { name: 'Theme' })) as HTMLSelectElement
-    expect(select.value).toBe('system')
+    const theme = await screen.findByRole('group', { name: 'Theme' })
+    const pressed = () => within(theme).getByRole('button', { pressed: true }).textContent
+    expect(pressed()).toBe('Match Windows')
     act(() => void fireEvent.click(screen.getByRole('button', { name: 'Switch to dark theme' })))
-    expect(select.value).toBe('dark')
-    // And the other way: Settings → Follow Windows changes what the toggle offers.
+    expect(pressed()).toBe('Dark')
+    // And the other way: Settings → Match Windows changes what the toggle offers.
     systemDark(false)
-    act(() => void fireEvent.change(select, { target: { value: 'system' } }))
+    act(() => void fireEvent.click(within(theme).getByRole('button', { name: 'Match Windows' })))
     expect(localStorage.getItem('theme')).toBeNull()
     expect(screen.getByRole('button', { name: 'Switch to dark theme' })).toBeTruthy()
   })

@@ -87,6 +87,12 @@
 					"editor.defaultFormatter": "oxc.oxc-vscode"
 				},
 
+				// Cargo's build output (many GB, rewritten on every build); merges with
+				// VS Code's default exclusions (.git/objects, node_modules).
+				"files.watcherExclude": {
+					"**/target/**": true
+				},
+
 				// rust-analyzer memory tuning
 				"rust-analyzer.lru.capacity": 64,
 				"rust-analyzer.cachePriming.enable": false,

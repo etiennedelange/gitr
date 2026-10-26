@@ -260,9 +260,9 @@ describe('in-progress merge / rebase', () => {
 describe('finding git', () => {
   it('Settings shows the git in use and saving a new path re-reads it (facts 11, 14)', async () => {
     wrap(<Settings />)
-    expect(await screen.findByText('Using C:/Program Files/Git/cmd/git.exe · git 2.55.0.windows.1')).toBeInTheDocument()
+    expect(await screen.findByText('Using C:/Program Files/Git/cmd/git.exe, git 2.55.0.windows.1.')).toBeInTheDocument()
     const field = screen.getByLabelText('Git path') as HTMLInputElement
-    expect(field.placeholder).toBe('Automatic (C:/Program Files/Git/cmd/git.exe)')
+    expect(field.placeholder).toBe('Automatic')
     openDialog.mockResolvedValueOnce('D:/tools/git/cmd/git.exe')
     await act(async () => fireEvent.click(screen.getByRole('button', { name: 'Browse…' })))
     expect(field.value).toBe('D:/tools/git/cmd/git.exe')

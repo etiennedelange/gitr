@@ -11,7 +11,13 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 - **A calmer, clearer look.** Every view now sits on one sheet beside the sidebar, with a cobalt accent, larger controls and more room between rows. Cards lift off the page, and their Open in VS Code, terminal and More buttons appear when you point at a card. Incoming commits are now shown in cyan, so they are never confused with the selection. The mark beside the name at the top of the sidebar is now a branch merging back, drawn in the accent.
+- **Settings, reorganised.** Settings now sits centred on the page. Each setting is a row with a short explanation under its name and the control on the right, grouped per section. On and off settings are switches, the theme is a three-way switch (Match Windows, Light, Dark), and each workspace group shows how many repositories it holds. Keyboard shortcuts are grouped by where they work and drawn as keys. The bar at the top says when you have unsaved changes.
 - **Groups no longer have colours.** The coloured stripes and squares beside workspace groups in the sidebar, the dashboard table and the cards are gone, and so is the colour choice in **Settings → Workspaces**; a colour saved by an earlier version is dropped the next time settings are saved. Groups are told apart by their headings and the space between them; a card outside its group's heading names the group instead.
+
+### Fixed
+- **Windows narrower than 1100 pixels showed nothing.** With the window between its minimum width and 1100 pixels, the dashboard, a repository and Settings all came up blank beside the sidebar's icon strip. They now show as they do in a wider window.
+- **Buttons looked cut off in the dark theme.** Their bottom edge disappeared against the panel behind them. Buttons and text boxes now have an even border all round, in both themes.
+- **Clearer for screen readers in Settings.** Each workspace group's buttons now say which group they act on (for example "Remove group Work").
 
 ### Security
 - **Safer connections.** Updated the TLS library Gitr uses for updates and AI requests (rustls 0.23.46, rustls-webpki 0.103.16, webpki-root-certs 1.0.10). The fixes stop a forged server reply from weakening later connections, close a way for certificates from distrusted authorities to be accepted, and remove distrusted root certificates.
