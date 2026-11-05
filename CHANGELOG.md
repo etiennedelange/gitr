@@ -5,6 +5,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-11-05
+
 ### Changed
 - **Ledger: a quieter, warmer look.** Gitr has its own design system, Ledger, and the whole app now follows it.
   - **Colours.** Both themes use warm neutrals instead of cool blue-greys, with a calmer cobalt. The colours for changes, behind, ahead, in progress (now violet) and trouble were retuned to match, and differ in lightness too, so they stay apart with red–green colour blindness. Text-field and dropdown borders are darker, so they're easier to see.
