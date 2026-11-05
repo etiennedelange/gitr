@@ -123,7 +123,14 @@ export function Dashboard() {
     }
     if (bands.length < 2) return flat()
     return bands.flatMap((b): Item[] => [
-      { kind: 'band', key: b.key, label: b.label, count: b.rows.length, group: b.group, summary: b.group ? bandSummary(b.rows) : undefined },
+      {
+        kind: 'band',
+        key: b.key,
+        label: b.label,
+        count: b.rows.length,
+        group: b.group,
+        summary: b.group ? bandSummary(b.rows) : undefined,
+      },
       ...b.rows.map((row): Item => ({ kind: 'row', row })),
     ])
   }, [rows, sort, holdOrder, group, groups, grouped])
@@ -496,9 +503,7 @@ export function Dashboard() {
                     {s?.detached ? '(detached)' : s?.branch ? <BranchName name={s.branch} /> : '…'}
                   </span>
                   <Divergence summary={s} />
-                  <span className="num counts">
-                    {changes ? <CountChips summary={s} only="changes" /> : null}
-                  </span>
+                  <span className="num counts">{changes ? <CountChips summary={s} only="changes" /> : null}</span>
                   <span className="ellipsis status-cell" title={p?.message ?? s?.error ?? undefined}>
                     <RepoStatusText path={repo.path} summary={s} />
                   </span>
@@ -571,7 +576,11 @@ function bandSummary(rows: Row[]): string {
   const changes = n((s) => s.staged + s.unstaged + s.conflicted > 0)
   const behind = n((s) => s.behind > 0)
   const ahead = n((s) => s.ahead > 0)
-  const parts = [...(changes ? [`${changes} with changes`] : []), ...(behind ? [`${behind} behind`] : []), ...(ahead ? [`${ahead} ahead`] : [])]
+  const parts = [
+    ...(changes ? [`${changes} with changes`] : []),
+    ...(behind ? [`${behind} behind`] : []),
+    ...(ahead ? [`${ahead} ahead`] : []),
+  ]
   return parts.length ? parts.join(' · ') : 'all clean'
 }
 

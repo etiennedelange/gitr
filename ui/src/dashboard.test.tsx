@@ -201,7 +201,8 @@ describe('dashboard', () => {
       const order = () => [...body().querySelectorAll('.band, .row .repo-link')].map((el) => el.textContent)
       // A group's band ends with a one-line summary of the repos in it.
       expect(order()).toEqual(['Work31 with changes', 'beta', 'gamma', 'alpha', 'Personal11 behind', 'delta'])
-      const stripe = (name: string) => screen.getByText(name, { selector: '.repo-link' }).closest<HTMLElement>('.row')!.style.getPropertyValue('--group')
+      const stripe = (name: string) =>
+        screen.getByText(name, { selector: '.repo-link' }).closest<HTMLElement>('.row')!.style.getPropertyValue('--group')
       expect([stripe('beta'), stripe('gamma'), stripe('delta')]).toEqual(['', '', ''])
       expect(body().querySelectorAll('.group-stripe, .group-swatch')).toHaveLength(0)
 
