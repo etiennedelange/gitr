@@ -648,6 +648,8 @@ ul:focus-visible,
   margin-left: var(--s3);
   color: var(--ink-3);
   font: 500 var(--fs-sm) / 1 var(--font-ui);
+  /* The font shorthand resets this to normal; counts keep even-width digits. */
+  font-variant-numeric: tabular-nums;
 }
 
 /* Empty, loading. */
@@ -768,6 +770,7 @@ ul:focus-visible,
   padding: 0 1px;
   background: none;
   font: 600 var(--fs-sm) / 1 var(--font-ui);
+  font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
 .badge.dirty {
@@ -947,6 +950,7 @@ body.resizing-y * {
   display: inline-grid;
   place-items: center;
   font: 600 var(--fs-xs) / 1 var(--font-ui);
+  font-variant-numeric: tabular-nums;
 }
 .nav-count.alert {
   background: var(--red);
@@ -1590,9 +1594,6 @@ body.resizing-y * {
 .pill.operation.conflicted {
   color: var(--red-ink);
 }
-.pill.busy {
-  animation: pulse 1.2s ease-in-out infinite;
-}
 
 /* Row tools: Pull, VS Code, more. Shown for the row under the pointer or the cursor. */
 .row-tools {
@@ -1701,8 +1702,11 @@ body.resizing-y * {
   gap: var(--s4);
   min-height: 22px;
 }
-.card-name {
+button.link.card-name {
   min-width: 0;
+  /* A 24px hit target around the 21px line, without moving the card's text. */
+  padding-block: 2px;
+  margin-block: -2px;
   font-size: var(--fs-md);
   white-space: nowrap;
 }
@@ -2113,8 +2117,13 @@ button.icon .count {
   font-size: var(--fs-sm);
   font-variant-numeric: tabular-nums;
 }
-.repo-head .pill.busy {
+.repo-head .busy-chip {
+  height: var(--ctl-sm);
   margin-right: var(--s2);
+  padding: 0 var(--s1) 0 var(--s4);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  background: var(--panel);
 }
 
 /* Tabs: text with an accent underline on the open one. */
@@ -3577,7 +3586,36 @@ button.set-add {
   margin: var(--s4) 0 0 calc(var(--icon) + var(--s4));
 }
 
-/* Busy: a stop button beside a running operation, and a pulse in the sidebar. */
+/* Busy: a spinner, the operation in sentence case and a Stop key; a pulse in the sidebar. */
+.busy-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+  white-space: nowrap;
+  font-size: var(--fs-sm);
+  color: var(--ink-2);
+}
+.busy-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s3);
+}
+.spinner {
+  flex: none;
+  box-sizing: border-box;
+  width: 12px;
+  height: 12px;
+  border: 1.5px solid color-mix(in oklab, var(--accent) 25%, transparent);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+/* The stop key is a 10px square; its hit area is 24px, the smallest a pointer target should be. */
+.busy-chip button.icon.stop {
+  width: 24px;
+  height: 24px;
+  margin-left: 0;
+}
 button.stop .ico {
   width: 10px;
   height: 10px;

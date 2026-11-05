@@ -312,8 +312,10 @@ export function Dashboard() {
               {...plainInput}
               ref={searchRef}
               className="search"
-              placeholder="Search name or branch (Ctrl+F)"
+              placeholder="Search name or branch…"
               aria-label="Search repositories"
+              aria-keyshortcuts="Control+F"
+              title="Search (Ctrl+F)"
               value={text}
               onChange={(e) => setDashboard({ text: e.target.value })}
               onKeyDown={(e) => {

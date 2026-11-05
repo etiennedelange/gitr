@@ -13,7 +13,7 @@ import type { LinkTarget } from '../types'
 import { Changes } from './Changes'
 import { Branches } from './Branches'
 import { History } from './History'
-import { StopButton } from './Busy'
+import { BusyChip } from './Busy'
 import { HookPanel } from './HookPanel'
 import { DropMenu, type DropMenuItem } from './DropMenu'
 
@@ -174,14 +174,7 @@ export function RepoView({ path }: { path: string }) {
           </span>
         </div>
         <div className="spacer" />
-        {busyOp && (
-          <>
-            <span className="pill running busy" role="status">
-              {busyOp}…
-            </span>
-            <StopButton path={path} op={busyOp} label />
-          </>
-        )}
+        <BusyChip path={path} />
         <div className="head-actions">
           <div className="icon-group" role="group" aria-label="Sync">
             <button
@@ -191,7 +184,7 @@ export function RepoView({ path }: { path: string }) {
               aria-label={busyOp === 'fetching' ? 'Fetching…' : 'Fetch'}
               title="Fetch from the remote"
             >
-              <RefreshCw className={`ico ${busyOp === 'fetching' ? 'spin' : ''}`} aria-hidden />
+              <RefreshCw className="ico" aria-hidden />
             </button>
             <button
               className={`icon ${s?.behind ? 'counted next next-behind' : ''}`}

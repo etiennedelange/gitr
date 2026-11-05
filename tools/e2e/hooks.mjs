@@ -97,7 +97,7 @@ try {
   check('your typed commit message is still in the box', (await E(`document.querySelector('.commit-box textarea').value`)) === 'Carefully written message')
   check('no commit was made', git(dir, 'log', '--oneline').trim().split('\n').length === 1)
   check('the file is still staged', git(dir, 'diff', '--cached', '--name-only').trim() === 'a.txt')
-  check('the repo is not stuck busy', await E(`!document.querySelector('.pill.busy') && !e.button('Commit').disabled`))
+  check('the repo is not stuck busy', await E(`!document.querySelector('.busy-chip') && !e.button('Commit').disabled`))
   check('there is no index.lock left behind', !existsSync(join(dir, '.git', 'index.lock')))
 
   // ---- fix the hook, retry ----

@@ -5,6 +5,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Changed
+- **A tidier "Fetching" indicator.** While a repository fetches, pulls, pushes or commits, the top of the repository view and the dashboard now show a small spinner and the operation's name ("Fetching") with a Stop button beside it, instead of lower-case pulsing text and a separate **Stop** button. The Fetch button no longer spins as well, and a quick operation no longer flashes the indicator on and off.
+
+### Fixed
+- **Numbers in the dashboard kept shifting.** Counts and badges now use even-width digits, so a column of numbers stays aligned as they change.
+- **Card names are easier to click.** Their click area is now at least 24 pixels tall.
+- **The dashboard search box** reads "Search name or branch…"; its Ctrl+F shortcut is in the tooltip and announced to screen readers.
+
 ## [0.2.0] - 2026-10-26
 
 ### Added
