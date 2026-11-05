@@ -4,9 +4,9 @@ import { notifyError, useBatch, useBatchRunning } from '../hooks'
 import { useApp, type Fresh } from '../store'
 import { useRepoMenu } from '../repoMenu'
 import { absoluteTime, relativeTime } from '../lib/time'
-import { needsAttention, type Row } from '../lib/git'
+import { needsAttention, statusClass, type Row } from '../lib/git'
 import { runPush } from '../lib/send'
-import { CountChips, Divergence, StatusMark } from './Marks'
+import { BranchName, CountChips, StatusMark } from './Marks'
 import { RepoStatusText } from './RepoStatusText'
 import type { DashboardView } from '../layout'
 import type { RepoSummary } from '../types'
@@ -18,6 +18,8 @@ export interface CardSection {
   count?: number
   /** The band is a group's own heading. */
   group?: boolean
+  /** A group band's one line: "3 with changes · 2 behind". */
+  summary?: string
   rows: Row[]
 }
 
@@ -79,8 +81,9 @@ export function DashboardCards({ view, sections, cursor, setCursor, grouped, gro
         <section key={sec.key} className="card-section" aria-label={sec.label}>
           {sec.label && (
             <div className={`card-band ${i === 0 ? 'first' : ''}`}>
-              {sec.label}
+              <span className="band-label">{sec.label}</span>
               <span className="band-count">{sec.count}</span>
+              {sec.summary && <span className="band-summary">{sec.summary}</span>}
             </div>
           )}
           <div className={`card-grid ${view}`}>
@@ -211,7 +214,7 @@ function RepoCard({
 
   return (
     <article
-      className={`repo-card ${view} ${cursor ? 'cursor' : ''} ${needsAttention(s, failed) ? 'urgent' : ''}`}
+      className={`repo-card ${view} ${cursor ? 'cursor' : ''} ${needsAttention(s, failed) ? 'urgent' : ''} ${statusClass(s).split(' ')[1] === 'clean' ? 'quiet' : ''}`}
       data-path={repo.path}
       aria-label={repo.name}
       aria-current={cursor ? 'true' : undefined}
@@ -255,12 +258,11 @@ function RepoCard({
         </div>
         <div className="card-branch mono" title={s?.branch ? (s.upstream ? `${s.branch} → ${s.upstream}` : s.branch) : undefined}>
           <GitBranch className="ico" aria-hidden />
-          <span className="ellipsis">{s?.detached ? '(detached)' : (s?.branch ?? '…')}</span>
+          <span className="ellipsis">{s?.detached ? '(detached)' : s?.branch ? <BranchName name={s.branch} /> : '…'}</span>
           {view === 'detailed' && s?.upstream && <span className="card-upstream ellipsis">→ {s.upstream}</span>}
         </div>
         {view === 'compact' ? (
           <div className="card-mid">
-            {!!(s?.behind || s?.ahead) && <Divergence summary={s} />}
             <span className="ellipsis status-cell">
               <RepoStatusText
                 path={repo.path}

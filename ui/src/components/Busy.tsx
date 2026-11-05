@@ -1,13 +1,13 @@
 import type { ReactNode } from 'react'
 import { Square } from 'lucide-react'
-import { useBusy } from '../hooks'
+import { BUSY_MIN_VISIBLE, useBusy } from '../hooks'
 import { stopOperation } from '../lib/stop'
 
-/** Stops the repo's operation; an icon, or a labelled button with `label`. */
-export function StopButton({ path, op, label }: { path: string; op: string; label?: boolean }) {
+/** Stops the repo's operation. */
+export function StopButton({ path, op }: { path: string; op: string }) {
   return (
     <button
-      className={label ? 'small stop' : 'icon stop'}
+      className="icon stop"
       title={`Stop ${op}`}
       aria-label={`Stop ${op}`}
       onClick={(e) => {
@@ -17,26 +17,40 @@ export function StopButton({ path, op, label }: { path: string; op: string; labe
       }}
     >
       <Square className="ico" aria-hidden />
-      {label && 'Stop'}
     </button>
   )
 }
 
-/** Shows “<operation>…” with a Stop button while the repo is busy, otherwise `children`. */
-export function BusyOr({ path, children }: { path: string; children?: ReactNode }) {
-  const op = useBusy(path)
-  return op ? (
-    <>
-      <span className="pill running busy">{op}…</span>
+/** "fetching" → "Fetching…": operation names are stored lower case; a running one ends in an ellipsis. */
+export const opLabel = (op: string) => `${op.charAt(0).toUpperCase()}${op.slice(1)}…`
+
+/** The repo's running operation as a chip, or nothing while it is idle. */
+export function BusyChip({ path }: { path: string }) {
+  const op = useBusy(path, BUSY_MIN_VISIBLE)
+  return op ? <Chip path={path} op={op} /> : null
+}
+
+/** A running operation: a small spinner, its name in sentence case, and a Stop key, as one quiet chip. */
+function Chip({ path, op }: { path: string; op: string }) {
+  return (
+    <span className="busy-chip">
+      <span className="busy-label" role="status">
+        <span className="spinner" aria-hidden />
+        {opLabel(op)}
+      </span>
       <StopButton path={path} op={op} />
-    </>
-  ) : (
-    <>{children}</>
+    </span>
   )
+}
+
+/** Shows the running operation with a Stop button while the repo is busy, otherwise `children`. */
+export function BusyOr({ path, children }: { path: string; children?: ReactNode }) {
+  const op = useBusy(path, BUSY_MIN_VISIBLE)
+  return op ? <Chip path={path} op={op} /> : <>{children}</>
 }
 
 /** A small pulsing dot while the repo is busy (sidebar). */
 export function BusyDot({ path }: { path: string }) {
-  const op = useBusy(path)
-  return op ? <span className="busy-dot" role="status" title={`${op}…`} aria-label={`${op}…`} /> : null
+  const op = useBusy(path, BUSY_MIN_VISIBLE)
+  return op ? <span className="busy-dot" role="status" title={opLabel(op)} aria-label={opLabel(op)} /> : null
 }

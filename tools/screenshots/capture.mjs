@@ -57,6 +57,7 @@ const SCENES = {
   // `extent` is not a preview parameter either: it sets the remembered Hunks / Full file choice.
   'full-file': { scenario: 'default', view: 'repo', repo: 'billing-service', file: 'InvoiceExporter.cs', extent: 'full' },
   conflict: { scenario: 'default', view: 'repo', repo: 'identity-server' },
+  busy: { scenario: 'many', view: 'repo', repo: 'scheduler' },
   settings: { scenario: 'default', view: 'settings' },
   // `section` is not a preview parameter: it scrolls Settings to that section before the shot.
   'settings-appearance': { scenario: 'default', view: 'settings', section: 'appearance' },

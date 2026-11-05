@@ -17,13 +17,14 @@ import {
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { api } from '../api'
 import { notifyError, useBatch, useBatchRunning, useConfig, useRepos, useRescan } from '../hooks'
-import { matchesFilter, needsAttention, sortRows, type Filter, type Row, type SortKey } from '../lib/git'
+import { matchesFilter, needsAttention, sortRows, statusClass, type Filter, type Row, type SortKey } from '../lib/git'
 import { useApp } from '../store'
 import { useRepoMenu } from '../repoMenu'
 import { plainInput } from '../lib/inputProps'
 import { useAddFolder } from '../lib/addFolder'
 import { SignInBanner } from './SignInBanner'
-import { CountChips, Divergence, StatusMark } from './Marks'
+import { AttentionBanner } from './AttentionBanner'
+import { BranchName, CountChips, Divergence, StatusMark } from './Marks'
 import { useLayout, type DashboardView } from '../layout'
 import { DashboardCards, cardAbove, type CardSection } from './DashboardCards'
 import { RepoStatusText } from './RepoStatusText'
@@ -40,7 +41,7 @@ const VIEWS: { view: DashboardView; label: string; title: string; Icon: typeof R
 ]
 
 /** A virtual list item: a repo row, or the heading of the band of rows below it. */
-type Item = { kind: 'band'; key: string; label: string; count: number; group?: boolean } | { kind: 'row'; row: Row }
+type Item = { kind: 'band'; key: string; label: string; count: number; group?: boolean; summary?: string } | { kind: 'row'; row: Row }
 
 export function Dashboard() {
   const config = useConfig()
@@ -87,20 +88,31 @@ export function Dashboard() {
 
   const attention = (r: Row) => needsAttention(r.summary, progress[r.repo.path]?.state === 'error')
 
+  // The attention banner: every repo in the chosen group that needs you, whatever the search or tab.
+  const urgent = useMemo(
+    () =>
+      sortRows(
+        (repos.data ?? [])
+          .filter((repo) => !group || repo.groupId === group)
+          .map((repo) => ({ repo, summary: summaries[repo.path] }))
+          .filter((r) => needsAttention(r.summary, progress[r.repo.path]?.state === 'error')),
+        'name',
+      ),
+    [repos.data, summaries, group, progress],
+  )
+
   // With more than one group, the rest are banded by group (told apart by their headings).
   const groups = useMemo(() => config.data?.groups ?? [], [config.data])
   const grouped = groups.length > 1
 
-  // Sorted by status, the repos that need you get their own band above the rest, and with all
-  // groups showing the rest are banded by group. Held rows keep their places, so the bands only
-  // form when the order is fresh.
+  // Sorted by status with all groups showing, the repos are banded by group. Repos that need you
+  // stay in their group (sorted first) and are also listed in the attention banner above. Held
+  // rows keep their places, so the bands only form when the order is fresh.
   const items = useMemo((): Item[] => {
     const flat = () => rows.map((row): Item => ({ kind: 'row', row }))
     if (sort !== 'status' || holdOrder) return flat()
-    const urgent = filter !== 'attention' ? rows.filter(attention) : []
-    const rest = rows.filter((r) => !urgent.includes(r))
+    const rest = rows
     const bands: { key: string; label: string; group?: boolean; rows: Row[] }[] = []
-    if (urgent.length) bands.push({ key: 'attention', label: 'Needs attention', rows: urgent })
     if (grouped && !group) {
       for (const g of groups) {
         const mine = rest.filter((r) => r.repo.groupId === g.id)
@@ -108,20 +120,26 @@ export function Dashboard() {
       }
       const other = rest.filter((r) => !groups.some((g) => g.id === r.repo.groupId))
       if (other.length) bands.push({ key: 'rest', label: 'Everything else', rows: other })
-    } else if (rest.length) bands.push({ key: 'rest', label: 'Everything else', rows: rest })
+    }
     if (bands.length < 2) return flat()
     return bands.flatMap((b): Item[] => [
-      { kind: 'band', key: b.key, label: b.label, count: b.rows.length, group: b.group },
+      {
+        kind: 'band',
+        key: b.key,
+        label: b.label,
+        count: b.rows.length,
+        group: b.group,
+        summary: b.group ? bandSummary(b.rows) : undefined,
+      },
       ...b.rows.map((row): Item => ({ kind: 'row', row })),
     ])
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rows, sort, filter, holdOrder, group, groups, grouped])
+  }, [rows, sort, holdOrder, group, groups, grouped])
 
   // The same bands as the ledger, each a grid of cards.
   const sections = useMemo((): CardSection[] => {
     const out: CardSection[] = []
     for (const it of items) {
-      if (it.kind === 'band') out.push({ key: it.key, label: it.label, count: it.count, group: it.group, rows: [] })
+      if (it.kind === 'band') out.push({ key: it.key, label: it.label, count: it.count, group: it.group, summary: it.summary, rows: [] })
       else {
         if (!out.length) out.push({ key: 'all', rows: [] })
         out[out.length - 1].rows.push(it.row)
@@ -312,8 +330,10 @@ export function Dashboard() {
               {...plainInput}
               ref={searchRef}
               className="search"
-              placeholder="Search name or branch (Ctrl+F)"
+              placeholder="Search name or branch…"
               aria-label="Search repositories"
+              aria-keyshortcuts="Control+F"
+              title="Search (Ctrl+F)"
               value={text}
               onChange={(e) => setDashboard({ text: e.target.value })}
               onKeyDown={(e) => {
@@ -380,6 +400,15 @@ export function Dashboard() {
         </div>
       )}
 
+      {!noRepos && (
+        <AttentionBanner
+          rows={urgent}
+          progress={progress}
+          running={running}
+          open={(path) => setView({ kind: 'repo', path })}
+          retry={(path, op) => batch.mutate({ op, paths: [path], interactive: true })}
+        />
+      )}
       {!noRepos && !cards && (
         <div className="table-head row" aria-hidden>
           <span />
@@ -443,8 +472,9 @@ export function Dashboard() {
               if (it.kind === 'band') {
                 return (
                   <div key={'band:' + it.key} className={`band ${v.index === 0 ? 'first' : ''}`} style={place}>
-                    {it.label}
+                    <span className="band-label">{it.label}</span>
                     <span className="band-count">{it.count}</span>
+                    {it.summary && <span className="band-summary">{it.summary}</span>}
                   </div>
                 )
               }
@@ -455,7 +485,7 @@ export function Dashboard() {
               return (
                 <div
                   key={repo.path}
-                  className={`row ${repo.path === cursor ? 'cursor' : ''} ${attention(it.row) ? 'urgent' : ''}`}
+                  className={`row ${repo.path === cursor ? 'cursor' : ''} ${attention(it.row) ? 'urgent' : ''} ${statusClass(s).split(' ')[1] === 'clean' ? 'quiet' : ''}`}
                   aria-current={repo.path === cursor ? 'true' : undefined}
                   onClick={() => setCursor(repo.path)}
                   style={place}
@@ -470,12 +500,10 @@ export function Dashboard() {
                     className="mono branch-cell ellipsis"
                     title={s?.branch ? (s.upstream ? `${s.branch} → ${s.upstream}` : s.branch) : undefined}
                   >
-                    {s?.detached ? '(detached)' : (s?.branch ?? '…')}
+                    {s?.detached ? '(detached)' : s?.branch ? <BranchName name={s.branch} /> : '…'}
                   </span>
                   <Divergence summary={s} />
-                  <span className="num counts">
-                    {changes ? <CountChips summary={s} only="changes" /> : <span className="none">–</span>}
-                  </span>
+                  <span className="num counts">{changes ? <CountChips summary={s} only="changes" /> : null}</span>
                   <span className="ellipsis status-cell" title={p?.message ?? s?.error ?? undefined}>
                     <RepoStatusText path={repo.path} summary={s} />
                   </span>
@@ -541,6 +569,20 @@ function columns(list: HTMLElement | null): number {
 
 /** "Fetching" or "Pulling", for the running batch's progress. */
 const op = (states: BatchProgress[]) => (states.some((p) => p.op === 'pull') ? 'Pulling' : 'Fetching')
+
+/** A group band's one-line summary: "3 with changes · 2 behind · 1 ahead", or "all clean". */
+function bandSummary(rows: Row[]): string {
+  const n = (f: (s: RepoSummary) => boolean) => rows.filter((r) => r.summary && f(r.summary)).length
+  const changes = n((s) => s.staged + s.unstaged + s.conflicted > 0)
+  const behind = n((s) => s.behind > 0)
+  const ahead = n((s) => s.ahead > 0)
+  const parts = [
+    ...(changes ? [`${changes} with changes`] : []),
+    ...(behind ? [`${behind} behind`] : []),
+    ...(ahead ? [`${ahead} ahead`] : []),
+  ]
+  return parts.length ? parts.join(' · ') : 'all clean'
+}
 
 /** One line on the whole set, all groups and filters included. */
 function tally(all: (RepoSummary | undefined)[]): string {

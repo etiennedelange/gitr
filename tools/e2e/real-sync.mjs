@@ -76,12 +76,12 @@ try {
   await E(`e.openRepo(${JSON.stringify(basename(REPO))})`)
 
   for (const label of ['Fetch', 'Pull', 'Push']) {
-    await W(`!!e.button('${label}') && !e.button('${label}').disabled && !document.querySelector('.pill.busy')`, `${label} enabled`, 30000)
+    await W(`!!e.button('${label}') && !e.button('${label}').disabled && !document.querySelector('.busy-chip')`, `${label} enabled`, 30000)
     await E(`e.clearToasts()`)
     const t0 = Date.now()
     await E(`e.click('${label}')`)
     await sleep(1500)
-    await W(`!document.querySelector('.pill.busy') && !!e.button('${label}') && !e.button('${label}').disabled`, `${label} to finish`, 240000)
+    await W(`!document.querySelector('.busy-chip') && !!e.button('${label}') && !e.button('${label}').disabled`, `${label} to finish`, 240000)
     const toasts = await E(`[...document.querySelectorAll('.toast')].map((t) => t.className.replace('toast ', '') + ': ' + e.text(t)).join(' || ')`)
     console.log(`${label}: finished in ${Date.now() - t0} ms; toasts: ${toasts || '(none)'}`)
     check(`${label} finished with no error and no sign-in problem`, !/error/.test(toasts) && !/sign-in|credential|authentic|401|403/i.test(toasts), toasts)
