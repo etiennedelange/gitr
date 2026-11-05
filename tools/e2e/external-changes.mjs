@@ -112,7 +112,7 @@ try {
   }
   console.log(`(deleted after ${attempts + 1} attempt(s))`)
   await sleep(2500)
-  await app.evaluate(`document.querySelector('.nav-item')?.click()`)
+  await app.evaluate(`document.querySelector('.home-button')?.click()`)
   await sleep(500)
   const alive = await E(`document.querySelector('#root').innerText.trim().length > 20`)
   check('the UI is still alive after the open repo was deleted', alive)

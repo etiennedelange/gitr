@@ -6,6 +6,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [Unreleased]
 
 ### Changed
+- **Ledger: a quieter, warmer look.** Gitr has its own design system, Ledger, and the whole app now follows it.
+  - **Colours.** Both themes use warm neutrals instead of cool blue-greys, with a calmer cobalt. The colours for changes, behind, ahead, in progress (now violet) and trouble were retuned to match, and differ in lightness too, so they stay apart with red–green colour blindness. Text-field and dropdown borders are darker, so they're easier to see.
+  - **No floating pane.** The main area now runs to the window's edges, with one thin line between it and the sidebar.
+  - **Home.** The **Dashboard** entry is now a home icon beside "Gitr", with a small violet dot when a repository needs attention.
+  - **The dashboard reads like a ledger.** Names are regular weight and clean repositories are shown in softer grey. Behind and ahead are plain numbers (↓12 ↑1) instead of bars, a zero leaves the cell empty instead of showing a dash, and branch names show their folder path dimmed so the branch's own name reads first. Each group's heading ends with a one-line summary, such as "2 with changes · 1 behind".
+  - **A quieter sidebar.** The sidebar shows each repository's mark and name; the counts are on the dashboard, and screen readers still hear them.
 - **A tidier "Fetching" indicator.** While a repository fetches, pulls, pushes or commits, the top of the repository view and the dashboard now show a small spinner and the operation's name ("Fetching") with a Stop button beside it, instead of lower-case pulsing text and a separate **Stop** button. The Fetch button no longer spins as well, and a quick operation no longer flashes the indicator on and off.
 
 ### Fixed

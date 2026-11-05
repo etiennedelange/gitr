@@ -1,18 +1,20 @@
-/* Hallmark · shape: app screen · genre: modern-minimal · theme: Cobalt (deal 3/3, seed windows-desktop-git-client-096c·653ba38b·2026-10-26·r0) · redesign: full
- * nav: kept (sidebar of groups, title bar per view) · signature: the ledger of repositories, its divergence axis · states: loading, empty, error, full, first run
- * axes: light/grotesk-sans/cool · posture: restrained · contrast: pass · v2.0.0 */
+/* Hallmark · shape: app screen · genre: modern-minimal · theme: Ledger (warm neutrals, cobalt signal; was Cobalt) · redesign: full
+ * nav: kept (sidebar of groups, title bar per view) · signature: the ledger of repositories, its aligned numerals · states: loading, empty, error, full, first run
+ * axes: light/grotesk-sans/warm · posture: restrained · contrast: pass · v2.0.0 */
 /* Hallmark · pre-emit critique: P4 H4 E4 S4 R4 V3 · weakest: V, one face for everything (IBM Plex Sans, the brand's), so hierarchy rides on weight, size and the sheet's depth */
 /* Hallmark · waive 39b · standard controls are 32px (--ctl), small ones 24 to 28px · a Windows desktop app driven by mouse and keyboard, sized like WinUI; small controls sit in rows that are the larger hit area */
 /* Hallmark · answered F3 · heads are one-line view and section titles in a desktop window; nothing wraps to balance */
 
 /*
- * Gitr: a ruled sheet on a cool base. The sidebar sits on the window's base; every view is one
- * sheet laid over it with a hairline and a soft edge, like a Windows 11 content layer. Inside the
- * sheet, state is read down aligned columns of numerals and small marks, never from filled
- * chips. One cobalt signal carries selection, focus and the single primary action of a view;
- * amber, cyan, green and red only ever mean changes, behind, ahead and trouble. Type is IBM Plex
- * Sans, code is JetBrains Mono, both bundled. Buttons are keys with a faint lower edge; cards
- * and anything that floats cast a soft shadow, the rest of the window is flat and ruled.
+ * Gitr's design system is Ledger: a repository list should read like an accounts ledger, with
+ * names in plain ink, numbers in aligned columns and colour only where something needs you.
+ * The sidebar sits on a warm grey base; every view is one sheet beside it, flush to the window and
+ * divided by a hairline, never floating. Weight is earned: only titles and band labels are bold.
+ * Quiet when clean: a zero is an empty cell, and clean repos recede to secondary ink. Colour is
+ * meaning: cobalt carries selection, focus and a view's one primary action; amber, teal, green,
+ * violet and red only ever mean changes, behind, ahead, in progress and trouble, each with a
+ * glyph or mark shape so colour never stands alone. Type is IBM Plex Sans, numerals and code
+ * JetBrains Mono, both bundled. The design reference is the "Gitr Dashboard Redesign" canvas.
  */
 
 /* ---------------------------------------------------------------- tokens */
@@ -91,58 +93,62 @@
   -webkit-font-smoothing: antialiased;
 }
 
-/* Light: cool near-white paper on a blue-grey base, ink and hairlines tilted to hue 255. */
+/* Light (Ledger): warm off-white paper on a warm grey base; neutrals lean warm without turning cream. */
 :root[data-theme='light'] {
   color-scheme: light;
-  --bg: #f9fbfe;
-  --rail: #ebeff4;
-  --panel: #f0f4f8;
-  --raised: #ffffff;
-  --field: #ffffff;
-  --overlay: #ffffff;
-  --line: #dbe0e6;
-  --line-soft: #e6eaee;
-  --line-strong: #c5cbd2;
+  --bg: #fbfaf8;
+  --rail: #f1efeb;
+  --panel: #f6f4f1;
+  --raised: #fefdfb;
+  --field: #fefdfb;
+  --overlay: #fefdfb;
+  --line: #e6e2dc;
+  --line-soft: #eeebe6;
+  --line-strong: #d6d1c9;
   /* A field's lower edge and a key's: the one line that reads at 3:1. */
-  --line-edge: #7f8793;
-  --ink: #111825;
-  --ink-2: #414853;
-  --ink-3: #5d646e;
-  --hover: rgb(17 24 37 / 0.045);
-  --press: rgb(17 24 37 / 0.085);
-  --rail-hover: rgb(17 24 37 / 0.055);
+  --line-edge: #8a847a;
+  --ink: #1c1a17;
+  --ink-2: #4a4640;
+  --ink-3: #66615a;
+  --hover: rgb(28 26 23 / 0.045);
+  --press: rgb(28 26 23 / 0.085);
+  --rail-hover: rgb(28 26 23 / 0.055);
 
-  --accent: #1961d4;
-  --accent-hover: #0d50c3;
+  --accent: #2f5fbf;
+  --accent-hover: #284fa6;
   --accent-ink: #ffffff;
-  --accent-text: #0d4cb7;
-  --sel: #e0eeff;
-  --sel-ink: #072c73;
-  --text-sel: #bfd9ff;
-  --focus: #1961d4;
+  --accent-text: #264f9f;
+  --sel: #e8ecf4;
+  --sel-ink: #1d3d7a;
+  --text-sel: #cbd8f2;
+  --focus: #2f5fbf;
 
-  --amber: #df911a;
-  --amber-ink: #905211;
-  --amber-soft: #fef0d8;
-  --blue: #1794b5;
-  --blue-ink: #006581;
-  --blue-soft: #dff5fc;
-  --green: #359658;
-  --green-ink: #22683b;
-  --green-soft: #e0f7e5;
-  --red: #cc3430;
-  --red-ink: #a92321;
-  --red-soft: #ffece9;
+  --amber: #b87318;
+  --amber-ink: #955709;
+  --amber-soft: #f8ecda;
+  --blue: #2b8199;
+  --blue-ink: #1f6a80;
+  --blue-soft: #e0eef2;
+  --green: #4c8f52;
+  --green-ink: #3d7542;
+  --green-soft: #e5f0e3;
+  --red: #b83c2f;
+  --red-ink: #a8352a;
+  --red-soft: #f9e7e3;
+  /* In progress: a merge, rebase or other operation waiting for you. */
+  --violet: #55389a;
+  --violet-ink: #55389a;
+  --violet-soft: #f2eef6;
   --red-on: #ffffff;
 
-  --add-bg: #e9f7ee;
-  --add-ln: #d3efdc;
-  --add-ink: #1b6537;
-  --del-bg: #fdeeec;
-  --del-ln: #f8d9d4;
-  --del-ink: #a5311f;
-  --hunk-bg: #eef2f7;
-  --hunk-ink: #4f5763;
+  --add-bg: #ecf4e6;
+  --add-ln: #dbebd2;
+  --add-ink: #2f6b35;
+  --del-bg: #fbece8;
+  --del-ln: #f6e0da;
+  --del-ink: #a3372b;
+  --hunk-bg: #f1eee9;
+  --hunk-ink: #57524b;
 
   /* Syntax colours in diffs: no green or red, which mean added and removed there. */
   --syn-keyword: #2a4fc4;
@@ -150,83 +156,86 @@
   --syn-function: #8a5300;
   --syn-string: #6a3fb0;
   --syn-number: #a8336b;
-  --syn-comment: #5d646e;
+  --syn-comment: #66615a;
   --syn-meta: #7d4795;
 
   /* Depth: the sheet, a card, a key's lower edge, anything that floats, the dialog backdrop. */
-  --shadow-sheet: 0 0 0 1px rgb(17 24 37 / 0.06), 0 1px 2px rgb(17 24 37 / 0.05), 0 4px 16px -6px rgb(17 24 37 / 0.1);
-  --shadow-card: 0 1px 2px rgb(17 24 37 / 0.05), 0 2px 8px -4px rgb(17 24 37 / 0.08);
-  --shadow-card-hover: 0 1px 2px rgb(17 24 37 / 0.06), 0 6px 18px -8px rgb(17 24 37 / 0.18);
+  --shadow-sheet: 0 0 0 1px rgb(28 26 23 / 0.06), 0 1px 2px rgb(28 26 23 / 0.05), 0 4px 16px -6px rgb(28 26 23 / 0.1);
+  --shadow-card: 0 1px 2px rgb(28 26 23 / 0.05), 0 2px 8px -4px rgb(28 26 23 / 0.08);
+  --shadow-card-hover: 0 1px 2px rgb(28 26 23 / 0.06), 0 6px 18px -8px rgb(28 26 23 / 0.18);
   /* A key's lower edge: its bottom border a step darker than the rest. */
-  --shadow-float: 0 0 0 1px rgb(17 24 37 / 0.04), 0 2px 4px rgb(17 24 37 / 0.06), 0 16px 36px -10px rgb(17 24 37 / 0.26);
-  --backdrop: rgb(17 24 37 / 0.3);
+  --shadow-float: 0 0 0 1px rgb(28 26 23 / 0.04), 0 2px 4px rgb(28 26 23 / 0.06), 0 16px 36px -10px rgb(28 26 23 / 0.26);
+  --backdrop: rgb(28 26 23 / 0.3);
 }
 
-/* Dark: graphite in steps, the base darkest, the sheet one step up, cards and keys above it. */
+/* Dark (Ledger): warm graphite in steps, the base darkest, the sheet one step up, cards and keys above it. */
 :root[data-theme='dark'] {
   color-scheme: dark;
-  --bg: #1f232a;
-  --rail: #1a1e25;
-  --panel: #23282f;
-  --raised: #292e37;
-  --field: #1c2028;
-  --overlay: #2d323b;
-  --line: #333840;
-  --line-soft: #2a2f37;
-  --line-strong: #444a54;
-  --line-edge: #7b8390;
-  --ink: #e7ecf0;
-  --ink-2: #b8bec7;
-  --ink-3: #9aa2ad;
-  --hover: rgb(231 236 240 / 0.05);
-  --press: rgb(231 236 240 / 0.09);
-  --rail-hover: rgb(231 236 240 / 0.055);
+  --bg: #262421;
+  --rail: #201e1b;
+  --panel: #2a2825;
+  --raised: #2f2d29;
+  --field: #22201d;
+  --overlay: #34312d;
+  --line: #3a3732;
+  --line-soft: #302d29;
+  --line-strong: #4a463f;
+  --line-edge: #837c72;
+  --ink: #ece8e2;
+  --ink-2: #c2bcb3;
+  --ink-3: #a29c92;
+  --hover: rgb(236 232 226 / 0.05);
+  --press: rgb(236 232 226 / 0.09);
+  --rail-hover: rgb(236 232 226 / 0.055);
 
-  --accent: #6d9df5;
-  --accent-hover: #87b1fd;
-  --accent-ink: #09152c;
-  --accent-text: #9bbeff;
-  --sel: #263a5f;
-  --sel-ink: #dde8fd;
-  --text-sel: #325392;
-  --focus: #6d9df5;
+  --accent: #7fa4f0;
+  --accent-hover: #98b6f4;
+  --accent-ink: #141311;
+  --accent-text: #9ab8f2;
+  --sel: #2b3344;
+  --sel-ink: #e1e8f7;
+  --text-sel: #3a4e78;
+  --focus: #7fa4f0;
 
-  --amber: #e8aa4e;
-  --amber-ink: #f0c374;
-  --amber-soft: #3f2c15;
-  --blue: #4abbdb;
-  --blue-ink: #7ed2ed;
-  --blue-soft: #10323f;
-  --green: #5dc47e;
-  --green-ink: #86db9d;
-  --green-soft: #193521;
-  --red: #f2716a;
-  --red-ink: #fe9b93;
-  --red-soft: #4a2321;
-  --red-on: #200a08;
+  --amber: #e0a24a;
+  --amber-ink: #e8b065;
+  --amber-soft: #3d2f1c;
+  --blue: #5cb3c4;
+  --blue-ink: #6fc0d0;
+  --blue-soft: #1b3539;
+  --green: #6fbb76;
+  --green-ink: #86c98b;
+  --green-soft: #203424;
+  --red: #e5675a;
+  --red-ink: #ee8577;
+  --red-soft: #452824;
+  --violet: #b9a1f0;
+  --violet-ink: #cfbcff;
+  --violet-soft: #2e2838;
+  --red-on: #1a0a08;
 
-  --add-bg: #1b3024;
-  --add-ln: #213a2b;
-  --add-ink: #7fd3a1;
-  --del-bg: #362325;
-  --del-ln: #442a2b;
-  --del-ink: #f78d7e;
-  --hunk-bg: #262b33;
-  --hunk-ink: #a3abb6;
+  --add-bg: #253224;
+  --add-ln: #283325;
+  --add-ink: #8fd193;
+  --del-bg: #3a2725;
+  --del-ln: #3f2a27;
+  --del-ink: #f39a8c;
+  --hunk-bg: #2e2c28;
+  --hunk-ink: #aaa399;
 
   --syn-keyword: #8fb3ff;
   --syn-type: #5cc8cf;
   --syn-function: #e5b567;
   --syn-string: #c4a7ff;
   --syn-number: #f08fbf;
-  --syn-comment: #9aa2ad;
+  --syn-comment: #a29c92;
   --syn-meta: #c99ad9;
 
   --shadow-sheet: 0 0 0 1px rgb(0 0 0 / 0.35), 0 1px 0 rgb(255 255 255 / 0.04) inset, 0 6px 20px -8px rgb(0 0 0 / 0.5);
   --shadow-card: 0 1px 0 rgb(255 255 255 / 0.04) inset, 0 1px 2px rgb(0 0 0 / 0.3);
   --shadow-card-hover: 0 1px 0 rgb(255 255 255 / 0.05) inset, 0 8px 20px -8px rgb(0 0 0 / 0.55);
   --shadow-float: 0 0 0 1px rgb(0 0 0 / 0.4), 0 2px 4px rgb(0 0 0 / 0.3), 0 18px 40px -10px rgb(0 0 0 / 0.6);
-  --backdrop: rgb(6 9 14 / 0.5);
+  --backdrop: rgb(10 9 8 / 0.5);
 }
 
 /* ---------------------------------------------------------------- base */
@@ -479,19 +488,19 @@ button.link:hover:not(:disabled) {
   text-decoration-color: color-mix(in oklab, currentColor 45%, transparent);
 }
 
-/* Fields: an even hairline box that darkens on hover; focus adds an accent ring. */
+/* Fields: an even box in the edge colour (3:1 against the sheet) that darkens on hover; focus adds an accent ring. */
 input,
 select {
   height: var(--ctl);
   padding: 0 var(--s4);
-  border: 1px solid var(--line-strong);
+  border: 1px solid var(--line-edge);
   border-radius: var(--r);
   background: var(--field);
 }
 input:hover,
 select:hover,
 textarea:hover {
-  border-color: var(--line-edge);
+  border-color: var(--ink-3);
   background: color-mix(in oklab, var(--field), var(--ink) 2.5%);
 }
 select {
@@ -502,7 +511,7 @@ select option {
   color: var(--ink);
 }
 textarea {
-  border: 1px solid var(--line-strong);
+  border: 1px solid var(--line-edge);
   border-radius: var(--r);
   background: var(--field);
 }
@@ -756,8 +765,8 @@ ul:focus-visible,
 .dot.operation::before {
   width: 9px;
   height: 9px;
-  background: linear-gradient(90deg, var(--ink-2) 50%, transparent 50%);
-  box-shadow: inset 0 0 0 1.5px var(--ink-2);
+  background: linear-gradient(90deg, var(--violet) 50%, transparent 50%);
+  box-shadow: inset 0 0 0 1.5px var(--violet);
 }
 .dot.unknown::before {
   width: 4px;
@@ -769,7 +778,7 @@ ul:focus-visible,
 .badge {
   padding: 0 1px;
   background: none;
-  font: 600 var(--fs-sm) / 1 var(--font-ui);
+  font: 400 var(--fs-sm) / 1 var(--font-mono);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
@@ -791,7 +800,8 @@ ul:focus-visible,
   height: 100%;
   background: var(--rail);
 }
-/* The sheet: every view sits on one surface laid over the base, with a hairline and a soft edge. */
+/* The sheet: every view sits on one surface beside the base, flush to the window's edges, with one
+   hairline between it and the sidebar. Panes never float. */
 .main {
   /* Placed explicitly: when the splitter is hidden (narrow windows) auto-placement would put the
      sheet in the splitter's 0-wide track. */
@@ -800,11 +810,9 @@ ul:focus-visible,
   flex-direction: column;
   min-width: 0;
   min-height: 0;
-  margin: var(--gap) var(--gap) var(--gap) 0;
   overflow: clip;
-  border-radius: var(--r-sheet);
+  border-left: 1px solid var(--line);
   background: var(--bg);
-  box-shadow: var(--shadow-sheet);
 }
 
 /*
@@ -870,7 +878,7 @@ body.resizing-y * {
   cursor: row-resize !important;
 }
 
-/* Sidebar: brand, Dashboard, the repos by group, Settings. It sits on the window's base, beside the sheet. */
+/* Sidebar: brand and Home, the repos by group, Settings. It sits on the window's base, beside the sheet. */
 .sidebar {
   display: flex;
   flex-direction: column;
@@ -883,9 +891,37 @@ body.resizing-y * {
   gap: var(--s4);
   height: var(--bar);
   flex: none;
-  padding: 0 var(--s6) 0 var(--s7);
+  padding: 0 var(--s4) 0 var(--s7);
   font: 600 var(--fs-md) / 1 var(--font-ui);
   letter-spacing: -0.01em;
+}
+/* Home: the dashboard as an icon at the end of the brand row. Grey at rest, cobalt when open. */
+.brand .nav-label {
+  flex: 1;
+}
+.home-button {
+  position: relative;
+  color: var(--ink-3);
+}
+.home-button.active,
+.home-button.active:hover:not(:disabled) {
+  background: var(--sel);
+  color: var(--accent-text);
+}
+/* Something needs you: a small violet dot on the icon, ringed in the base so it reads on any fill. */
+.home-alert {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--violet);
+  box-shadow: 0 0 0 2px var(--rail);
+}
+/* Clean repos recede to secondary ink; the ones with work in them read first. */
+.repo-item.quiet:not(.active) {
+  color: var(--ink-2);
 }
 /* The mark: a branch merging back, drawn in the accent like the rest of the icon set. */
 .brand-mark {
@@ -922,10 +958,9 @@ body.resizing-y * {
 .nav-item.active:hover:not(:disabled),
 .repo-item.active,
 .repo-item.active:hover:not(:disabled) {
-  background: var(--raised);
-  box-shadow: var(--shadow-card);
-  color: var(--ink);
-  font-weight: 600;
+  background: var(--sel);
+  box-shadow: none;
+  color: var(--sel-ink);
 }
 .nav-item.active::before,
 .repo-item.active::before {
@@ -940,21 +975,6 @@ body.resizing-y * {
 }
 .nav-item.active .ico {
   color: var(--accent-text);
-}
-.nav-count {
-  margin-left: auto;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 var(--s2);
-  border-radius: 9px;
-  display: inline-grid;
-  place-items: center;
-  font: 600 var(--fs-xs) / 1 var(--font-ui);
-  font-variant-numeric: tabular-nums;
-}
-.nav-count.alert {
-  background: var(--red);
-  color: var(--red-on);
 }
 /* Settings and the light/dark toggle share the bottom row. */
 .rail-foot {
@@ -972,7 +992,7 @@ body.resizing-y * {
 .nav-item .unsaved {
   margin-left: auto;
 }
-/* Filter and Add folder share a row under Dashboard. */
+/* Filter and Add folder share a row under the brand. */
 .rail-tools {
   display: flex;
   align-items: center;
@@ -984,7 +1004,7 @@ body.resizing-y * {
   flex: 1;
   min-width: 0;
   height: var(--ctl-sm);
-  border-color: var(--line-strong);
+  border-color: var(--line-edge);
   background: color-mix(in oklab, var(--field) 70%, transparent);
   font-size: var(--fs-sm);
 }
@@ -1434,8 +1454,6 @@ body.resizing-y * {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--s4);
-}
-.th-divergence span:first-child {
   text-align: right;
 }
 .table-body {
@@ -1470,7 +1488,12 @@ body.resizing-y * {
   box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--accent) 55%, transparent);
 }
 .repo-link {
-  font-weight: 600;
+  font-weight: 400;
+}
+/* Clean repos recede to secondary ink; the cursor row keeps its selection ink. */
+.row.quiet:not(.cursor) .repo-link,
+.repo-card.quiet:not(.cursor) .repo-link {
+  color: var(--ink-2);
 }
 .table-body .row.cursor .repo-link {
   color: var(--sel-ink);
@@ -1478,71 +1501,67 @@ body.resizing-y * {
 .branch-cell {
   color: var(--ink-2);
 }
-/* Band headings: what needs you, then each group or everything else. A group reads by its name. */
-.band {
+/* A branch in two tones: the folder path recedes, the branch's own name reads first. */
+.branch-path {
+  color: var(--ink-3);
+}
+/* Band headings: what needs you, then each group or everything else. Small capitals with the count,
+   and for a group a one-line summary at the far end. The only bold in the list. */
+.band,
+.card-band {
   display: flex;
   align-items: flex-end;
-  gap: var(--s3);
+  gap: var(--s4);
+  color: var(--ink-2);
+  font: 600 11px / 1.2 var(--font-ui);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+.band {
   padding: 0 var(--s7) var(--s3);
   border-bottom: 1px solid var(--line);
-  color: var(--ink);
-  font-size: var(--fs-sm);
-  font-weight: 600;
 }
 .band:not(.first) {
   padding-top: var(--s4);
 }
 .band-count {
   color: var(--ink-3);
-  font-weight: 500;
+  font: 400 var(--fs-xs) / 1.2 var(--font-mono);
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+}
+.band-summary {
+  margin-left: auto;
+  color: var(--ink-3);
+  font: 400 var(--fs-xs) / 1.2 var(--font-ui);
+  letter-spacing: 0;
+  text-transform: none;
 }
 
-/* The divergence column: behind grows left of the axis, ahead grows right. */
+/* The divergence column: ↓ behind and ↑ ahead as right-aligned numerals; a zero is an empty cell. */
 .divergence {
   display: grid;
-  grid-template-columns: 1fr 1px 1fr;
+  grid-template-columns: 1fr 1fr;
   align-items: center;
-  gap: var(--s1);
+  gap: var(--s4);
   height: 100%;
 }
 .divergence.none {
   display: block;
 }
-.dv-axis {
-  width: 1px;
-  height: calc(100% + 1px);
-  background: var(--line-strong);
-}
 .dv-side {
   display: flex;
   align-items: center;
-  gap: var(--s2);
+  justify-content: flex-end;
   min-width: 0;
-  font-size: var(--fs-sm);
-  font-weight: 600;
+  font: 400 var(--fs-sm) / 1 var(--font-mono);
+  font-variant-numeric: tabular-nums;
 }
 .dv-behind {
-  justify-content: flex-end;
   color: var(--blue-ink);
 }
 .dv-ahead {
-  justify-content: flex-start;
   color: var(--green-ink);
-}
-.dv-bar {
-  height: 8px;
-  flex: none;
-  border-radius: 1px;
-  background: currentColor;
-  opacity: 0.75;
-}
-.dv-behind .dv-bar {
-  border-radius: 3px 0 0 3px;
-  background: var(--blue);
-}
-.dv-ahead .dv-bar {
-  border-radius: 0 3px 3px 0;
-  background: var(--green);
 }
 
 .num {
@@ -1552,9 +1571,6 @@ body.resizing-y * {
   display: inline-flex;
   justify-content: flex-end;
   gap: var(--s3);
-}
-.counts .none {
-  color: var(--ink-3);
 }
 .status-cell {
   min-width: 0;
@@ -1588,8 +1604,8 @@ body.resizing-y * {
   color: var(--amber-ink);
 }
 .pill.operation {
-  color: var(--ink);
-  font-weight: 600;
+  color: var(--violet-ink);
+  font-weight: 500;
 }
 .pill.operation.conflicted {
   color: var(--red-ink);
@@ -1634,15 +1650,10 @@ body.resizing-y * {
   outline-offset: -2px;
 }
 .card-band {
-  display: flex;
   align-items: center;
-  gap: var(--s3);
   height: 32px;
   margin-top: var(--s6);
   margin-bottom: var(--s2);
-  color: var(--ink);
-  font-size: var(--fs-sm);
-  font-weight: 600;
 }
 .card-band.first {
   margin-top: var(--s4);
@@ -1753,11 +1764,6 @@ button.link.card-name {
   align-items: center;
   gap: var(--s5);
   min-height: 22px;
-}
-.card-mid .divergence {
-  flex: none;
-  width: 104px;
-  height: 16px;
 }
 .card-mid .status-cell {
   flex: 1;
@@ -4024,7 +4030,6 @@ dialog::backdrop {
   .sidebar .repo-name,
   .sidebar .group-name,
   .sidebar .badge,
-  .sidebar .nav-count,
   .group-head .count {
     position: absolute;
     width: 1px;
@@ -4053,6 +4058,9 @@ dialog::backdrop {
     justify-content: center;
     padding: 0;
   }
+  .brand .brand-mark {
+    display: none;
+  }
   .nav-item {
     position: relative;
     justify-content: center;
@@ -4068,8 +4076,7 @@ dialog::backdrop {
     width: auto;
   }
   /* Unsaved settings, repos needing attention: the word moves to screen readers, a dot stays. */
-  .nav-item:has(.unsaved)::after,
-  .nav-item:has(.nav-count.alert)::after {
+  .nav-item:has(.unsaved)::after {
     content: '';
     position: absolute;
     top: 4px;
@@ -4078,9 +4085,6 @@ dialog::backdrop {
     height: 7px;
     border-radius: 50%;
     background: var(--amber);
-  }
-  .nav-item:has(.nav-count.alert)::after {
-    background: var(--red);
   }
   .tree {
     padding: 0 var(--s3) var(--s4);
@@ -4140,24 +4144,4 @@ dialog::backdrop {
   font-size: var(--fs-sm);
 }
 
-/* Sidebar counts sit in two fixed slots, changes then sync, so numerals align down the list. */
-.repo-item .slot {
-  display: inline-flex;
-  justify-content: flex-end;
-  gap: var(--s2);
-  flex: none;
-}
-.repo-item .slot-changes {
-  min-width: 3.2ch;
-}
-.repo-item .slot-sync {
-  min-width: 3ch;
-}
-.repo-item .slot:empty {
-  visibility: hidden;
-}
-@media (max-width: 1099px) {
-  .sidebar .slot {
-    display: none;
-  }
-}
+

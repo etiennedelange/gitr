@@ -10,7 +10,7 @@ const rules = [...css.replace(/\/\*[\s\S]*?\*\//g, '').matchAll(/([^{}]+)\{([^{}
 describe('numerals', () => {
   // The `font:` shorthand resets font-variant-numeric to normal, undoing the root's tabular-nums.
   // Counts and badges that set `font:` must set tabular-nums again, or their digits change width.
-  it.each(['.count', '.badge', '.nav-count'])('%s keeps tabular digits after its font shorthand', (sel) => {
+  it.each(['.count', '.badge'])('%s keeps tabular digits after its font shorthand', (sel) => {
     const own = rules.filter((r) => r.selector.split(',').some((s) => s.trim() === sel) && /(^|;|\s)font:/.test(r.body))
     expect(own.length).toBeGreaterThan(0)
     for (const r of own) expect(r.body).toMatch(/font-variant-numeric:\s*tabular-nums/)

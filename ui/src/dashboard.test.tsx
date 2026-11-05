@@ -110,6 +110,30 @@ describe('dashboard', () => {
     expect(order).toEqual(['Needs attention1', 'beta', 'Everything else2', 'gamma', 'alpha'])
   })
 
+  it('reads like a ledger: numbers not bars, blank zeros, a two-tone branch and quiet clean rows', async () => {
+    useApp.setState({
+      summaries: {
+        'D:/w/alpha': summary('D:/w/alpha', {}),
+        'D:/w/gamma': summary('D:/w/gamma', { branch: 'feature/VA-2905', behind: 12, unstaged: 3 }),
+      },
+    })
+    mount()
+    await screen.findByText('alpha')
+    const row = (name: string) => screen.getByText(name).closest<HTMLElement>('.row')!
+    // Behind and ahead are numerals with their arrows; a zero leaves the cell empty.
+    expect(row('gamma').querySelector('.dv-behind')).toHaveTextContent('↓12')
+    expect(row('gamma').querySelector('.dv-ahead')).toHaveTextContent('')
+    expect(row('gamma').querySelector('.dv-bar, .dv-axis')).toBeNull()
+    expect(row('gamma').querySelector('.counts')).toHaveTextContent('±3')
+    expect(row('alpha').querySelector('.counts')).toHaveTextContent('')
+    // The folder path is set apart from the branch's own name.
+    expect(row('gamma').querySelector('.branch-path')).toHaveTextContent('feature/')
+    expect(row('gamma').querySelector('.branch-cell')).toHaveTextContent('feature/VA-2905')
+    // Clean repos recede; repos with work in them don't.
+    expect(row('alpha')).toHaveClass('quiet')
+    expect(row('gamma')).not.toHaveClass('quiet')
+  })
+
   it('bands the rest by group, told apart by their headings and never by colour, when all groups show', async () => {
     config.groups.push({ id: 'p', name: 'Personal', roots: ['D:/p'] })
     repos.push({ path: 'D:/p/delta', name: 'delta', groupId: 'p' })
@@ -125,7 +149,8 @@ describe('dashboard', () => {
       mount()
       await screen.findByText('alpha')
       const order = () => [...body().querySelectorAll('.band, .row .repo-link')].map((el) => el.textContent)
-      expect(order()).toEqual(['Needs attention1', 'beta', 'Work2', 'gamma', 'alpha', 'Personal1', 'delta'])
+      // A group's band ends with a one-line summary of the repos in it.
+      expect(order()).toEqual(['Needs attention1', 'beta', 'Work21 with changes', 'gamma', 'alpha', 'Personal11 behind', 'delta'])
       const stripe = (name: string) => screen.getByText(name).closest<HTMLElement>('.row')!.style.getPropertyValue('--group')
       expect([stripe('beta'), stripe('gamma'), stripe('delta')]).toEqual(['', '', ''])
       expect(body().querySelectorAll('.group-stripe, .group-swatch')).toHaveLength(0)

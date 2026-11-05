@@ -45,12 +45,9 @@ export function CountChips({ summary, only }: { summary: RepoSummary | undefined
   )
 }
 
-/** Bar length in px: linear for a few commits so 1, 2 and 3 differ, then logarithmic up to a cap. */
-const bar = (n: number) => (n <= 0 ? 0 : n <= 4 ? 4 + 6 * n : Math.round(Math.min(40, 28 + 4 * Math.log2(n / 4))))
-
 /**
- * Behind and ahead on one axis: incoming commits grow to the left of the centre line, outgoing
- * ones to the right. Down a column of repos the shape shows what needs a pull and what a push.
+ * Behind and ahead as two right-aligned numerals with their arrows, ↓ in teal and ↑ in green.
+ * A zero leaves its cell empty, so the columns only carry what needs a pull or a push.
  */
 export function Divergence({ summary }: { summary: RepoSummary | undefined }) {
   const behind = summary?.behind ?? 0
@@ -64,25 +61,33 @@ export function Divergence({ summary }: { summary: RepoSummary | undefined }) {
         {behind ? (
           <>
             <span className="dv-num" aria-hidden>
-              {behind}
+              ↓{behind}
             </span>
-            <span className="dv-bar" style={{ width: bar(behind) }} aria-hidden />
             <span className="sr-only">{behind} behind</span>
           </>
         ) : null}
       </span>
-      <span className="dv-axis" aria-hidden />
       <span className="dv-side dv-ahead" title={ahead ? `${ahead} ahead` : undefined}>
         {ahead ? (
           <>
-            <span className="dv-bar" style={{ width: bar(ahead) }} aria-hidden />
             <span className="dv-num" aria-hidden>
-              {ahead}
+              ↑{ahead}
             </span>
             <span className="sr-only">{ahead} ahead</span>
           </>
         ) : null}
       </span>
     </span>
+  )
+}
+
+/** A branch in two tones: the folder path recedes and the branch's own name reads first. */
+export function BranchName({ name }: { name: string }) {
+  const cut = name.lastIndexOf('/') + 1
+  return (
+    <>
+      {cut > 0 && <span className="branch-path">{name.slice(0, cut)}</span>}
+      {name.slice(cut)}
+    </>
   )
 }

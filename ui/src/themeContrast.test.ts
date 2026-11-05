@@ -34,7 +34,8 @@ const PAIRS: [string[], string[], number][] = [
   [['red-ink'], ['red-soft'], 4.5],
   [['accent-ink'], ['accent'], 4.5],
   [['red-on'], ['red'], 4.5],
-  [['accent', 'focus', 'amber', 'blue', 'green', 'red'], ['bg', 'rail', 'panel', 'raised'], 3],
+  [['violet-ink'], ['violet-soft', 'bg', 'rail', 'panel', 'raised'], 4.5],
+  [['accent', 'focus', 'amber', 'blue', 'green', 'red', 'violet', 'line-edge'], ['bg', 'rail', 'panel', 'raised', 'field'], 3],
 ]
 
 describe('dark theme', () => {
@@ -49,5 +50,16 @@ describe('dark theme', () => {
 
   it('keeps large surfaces well off black, for OLED screens', () => {
     for (const s of ['bg', 'rail', 'panel', 'field']) expect(luminance(t[s]), s).toBeGreaterThan(luminance('#1c1c1c'))
+  })
+})
+
+describe('light theme', () => {
+  const t = tokens(":root[data-theme='light']")
+
+  it('meets WCAG AA contrast for every text and shape colour on the surfaces it sits on', () => {
+    const failures = PAIRS.flatMap(([fgs, bgs, min]) =>
+      fgs.flatMap((fg) => bgs.map((bg) => ({ fg, bg, ratio: contrast(t[fg], t[bg]), min }))),
+    ).filter((p) => !(p.ratio >= p.min))
+    expect(failures.map((f) => `${f.fg} on ${f.bg}: ${f.ratio.toFixed(2)} < ${f.min}`)).toEqual([])
   })
 })

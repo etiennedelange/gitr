@@ -208,15 +208,17 @@ describe('dashboard cards', () => {
     expect(card('alpha')).toHaveAttribute('aria-current', 'true')
   })
 
-  it('shows the axis only when behind or ahead, and says when a card is up to date', async () => {
+  it('shows behind and ahead once, as counts beside the name, and says when a card is up to date', async () => {
     useApp.setState({
       summaries: { 'D:/w/alpha': summary('D:/w/alpha', {}), 'D:/w/beta': summary('D:/w/beta', { behind: 1 }) },
     })
     mount()
     await screen.findByText('alpha')
-    expect(card('alpha').querySelector('.divergence')).toBeNull()
+    expect(card('alpha').querySelector('.badge')).toBeNull()
     expect(card('alpha')).toHaveTextContent('Up to date')
-    expect(card('beta').querySelector('.divergence')).not.toBeNull()
+    // Numbers, not bars: the count beside the name is the only divergence a compact card shows.
+    expect(card('beta').querySelector('.divergence')).toBeNull()
+    expect(card('beta').querySelector('.card-counts')).toHaveTextContent('↓1')
     expect(card('beta')).not.toHaveTextContent('Up to date')
   })
 

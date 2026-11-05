@@ -82,7 +82,7 @@ try {
   await setField('input[aria-label="Group name"]', 'Renamed group')
   await W(`!e.button('Save').disabled`, 'Save enabled')
   check('editing enables Save and Revert', await E(`!e.button('Save').disabled && !e.button('Revert').disabled`))
-  await E(`document.querySelector('.nav-item').click()`) // leave to the dashboard
+  await E(`document.querySelector('.home-button').click()`) // leave to the dashboard
   await W(`!!document.querySelector('.nav-settings .unsaved')`, 'Unsaved marker')
   check('leaving with edits flags Settings as Unsaved in the sidebar', true)
   await openSettings()

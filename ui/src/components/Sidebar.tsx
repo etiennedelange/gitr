@@ -1,16 +1,17 @@
 import { useMemo, useRef, useState, type KeyboardEvent } from 'react'
 import { useConfig, useRepos } from '../hooks'
 import { useApp } from '../store'
-import { ChevronDown, ChevronRight, FolderPlus, GitPullRequest, LayoutGrid, Moon, Settings as SettingsIcon, Sun } from 'lucide-react'
+import { ChevronDown, ChevronRight, FolderPlus, GitPullRequest, House, Moon, Settings as SettingsIcon, Sun } from 'lucide-react'
 import { useRepoMenu } from '../repoMenu'
 import { plainInput } from '../lib/inputProps'
 import { BusyDot } from './Busy'
-import { CountChips, StatusMark } from './Marks'
-import { needsAttention } from '../lib/git'
+import { StatusMark } from './Marks'
+import { needsAttention, statusClass } from '../lib/git'
 import { useAddFolder } from '../lib/addFolder'
 import { groupMenu } from '../lib/menus'
 import { showMenu } from '../nativeMenu'
 import { saveThemePref, useTheme } from '../theme'
+import type { RepoSummary } from '../types'
 
 export function Sidebar() {
   const config = useConfig()
@@ -84,20 +85,18 @@ export function Sidebar() {
       <div className="brand">
         <GitPullRequest className="brand-mark" aria-hidden />
         <span className="nav-label">Gitr</span>
+        {/* Home: the dashboard, as an icon. A dot says something needs you, from anywhere in the app. */}
+        <button
+          className={`icon home-button ${view.kind === 'dashboard' ? 'active' : ''}`}
+          onClick={() => setView({ kind: 'dashboard' })}
+          aria-current={view.kind === 'dashboard' ? 'page' : undefined}
+          aria-label={urgent ? `Dashboard, ${urgent} ${urgent === 1 ? 'repository needs' : 'repositories need'} attention` : 'Dashboard'}
+          title="Dashboard (Ctrl+D)"
+        >
+          <House className="ico" aria-hidden />
+          {urgent > 0 && <span className="home-alert" aria-hidden />}
+        </button>
       </div>
-      <button
-        className={`nav-item ${view.kind === 'dashboard' ? 'active' : ''}`}
-        onClick={() => setView({ kind: 'dashboard' })}
-        title="Dashboard (Ctrl+D)"
-      >
-        <LayoutGrid className="ico" aria-hidden />
-        <span className="nav-label">Dashboard</span>
-        {urgent > 0 && (
-          <span className="nav-count alert" title={`${urgent} ${urgent === 1 ? 'repository needs' : 'repositories need'} attention`}>
-            {urgent}
-          </span>
-        )}
-      </button>
       <div className="rail-tools">
         <input
           {...plainInput}
@@ -167,7 +166,7 @@ export function Sidebar() {
                 return (
                   <button
                     key={r.path}
-                    className={`repo-item ${active ? 'active' : ''}`}
+                    className={`repo-item ${active ? 'active' : ''} ${statusClass(s).split(' ')[1] === 'clean' ? 'quiet' : ''}`}
                     data-key={'r:' + r.path}
                     tabIndex={tabStop === 'r:' + r.path ? 0 : -1}
                     onFocus={() => setFocusKey('r:' + r.path)}
@@ -179,12 +178,8 @@ export function Sidebar() {
                     <StatusMark summary={s} />
                     <span className="repo-name">{r.name}</span>
                     <BusyDot path={r.path} />
-                    <span className="slot slot-changes">
-                      <CountChips summary={s} only="changes" />
-                    </span>
-                    <span className="slot slot-sync">
-                      <CountChips summary={s} only="sync" />
-                    </span>
+                    {/* The rail shows only the mark; the counts stay for screen readers. */}
+                    <SpokenCounts summary={s} />
                   </button>
                 )
               })}
@@ -204,6 +199,18 @@ export function Sidebar() {
         <ThemeToggle />
       </div>
     </nav>
+  )
+}
+
+/** "3 uncommitted", "2 behind", "1 ahead", for screen readers only. */
+function SpokenCounts({ summary: s }: { summary: RepoSummary | undefined }) {
+  const changes = s ? s.staged + s.unstaged + s.conflicted : 0
+  return (
+    <>
+      {changes > 0 && <span className="sr-only">{changes} uncommitted</span>}
+      {!!s?.behind && <span className="sr-only">{s.behind} behind</span>}
+      {!!s?.ahead && <span className="sr-only">{s.ahead} ahead</span>}
+    </>
   )
 }
 
