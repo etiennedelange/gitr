@@ -1,18 +1,10 @@
 # cargo-audit configuration (audit.yml runs `cargo audit --deny warnings` from the repo root).
 # Every entry needs an upstream release to clear. Re-check on each Tauri, syntect or
-# github-copilot-sdk upgrade and drop entries that no longer fire.
+# github-copilot-sdk upgrade and drop entries that no longer fire. (The zip <9 entries went in
+# 0.2.2: tauri-plugin-updater 2.14 and github-copilot-sdk 1.0.28 both use zip 9.)
 
 [advisories]
 ignore = [
-    # zip <9: archive extraction can follow symlinks, mis-handle Unix modes and keep SUID bits.
-    # No release of tauri-plugin-updater (zip ^4, up to 3.0.0-alpha.3) or github-copilot-sdk
-    # (zip 7, a build-dependency) has moved to zip 9 yet. Exposure is small: Gitr's updater gets
-    # an NSIS .exe, not a zip (release.yml), and checks its signature before installing; the SDK
-    # only unpacks its own download at build time. Drop these once both depend on zip >= 9.
-    "RUSTSEC-2026-0367",
-    "RUSTSEC-2026-0368",
-    "RUSTSEC-2026-0369",
-
     # Unmaintained or unsound warnings, not vulnerabilities.
     "RUSTSEC-2025-0141", # bincode 1.3: unmaintained, pulled in by syntect
 

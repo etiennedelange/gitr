@@ -5,6 +5,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Security
+- **Safer update downloads.** Updated the in-app updater (tauri-plugin-updater 2.14.1) and the Copilot SDK (1.0.28), which moves the zip library Gitr uses to 9.3.0. It fixes a crash when a zip archive holds a symbolic link with a very large declared size (RUSTSEC-2026-0429) and three earlier zip advisories. Gitr's own updates are signed installers rather than zip archives, so the risk was small.
+
 ## [0.2.1] - 2026-11-05
 
 ### Changed

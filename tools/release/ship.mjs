@@ -211,7 +211,9 @@ async function main(argv) {
   // Back to main, without the release branch (deleted on GitHub after the merge).
   git('switch', '--quiet', 'main');
   git('merge', '--quiet', '--ff-only', 'origin/main');
-  git('branch', '-D', branch);
+  // A run that resumed after the merge (or the Cut release workflow's fresh checkout) never had the
+  // local branch; deleting a missing branch would fail the run after the tag was already pushed.
+  if (git('branch', '--list', branch)) git('branch', '-D', branch);
 
   await followRelease(tag);
 }
