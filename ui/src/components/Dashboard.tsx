@@ -23,6 +23,7 @@ import { useRepoMenu } from '../repoMenu'
 import { plainInput } from '../lib/inputProps'
 import { useAddFolder } from '../lib/addFolder'
 import { SignInBanner } from './SignInBanner'
+import { AttentionBanner } from './AttentionBanner'
 import { BranchName, CountChips, Divergence, StatusMark } from './Marks'
 import { useLayout, type DashboardView } from '../layout'
 import { DashboardCards, cardAbove, type CardSection } from './DashboardCards'
@@ -87,20 +88,31 @@ export function Dashboard() {
 
   const attention = (r: Row) => needsAttention(r.summary, progress[r.repo.path]?.state === 'error')
 
+  // The attention banner: every repo in the chosen group that needs you, whatever the search or tab.
+  const urgent = useMemo(
+    () =>
+      sortRows(
+        (repos.data ?? [])
+          .filter((repo) => !group || repo.groupId === group)
+          .map((repo) => ({ repo, summary: summaries[repo.path] }))
+          .filter((r) => needsAttention(r.summary, progress[r.repo.path]?.state === 'error')),
+        'name',
+      ),
+    [repos.data, summaries, group, progress],
+  )
+
   // With more than one group, the rest are banded by group (told apart by their headings).
   const groups = useMemo(() => config.data?.groups ?? [], [config.data])
   const grouped = groups.length > 1
 
-  // Sorted by status, the repos that need you get their own band above the rest, and with all
-  // groups showing the rest are banded by group. Held rows keep their places, so the bands only
-  // form when the order is fresh.
+  // Sorted by status with all groups showing, the repos are banded by group. Repos that need you
+  // stay in their group (sorted first) and are also listed in the attention banner above. Held
+  // rows keep their places, so the bands only form when the order is fresh.
   const items = useMemo((): Item[] => {
     const flat = () => rows.map((row): Item => ({ kind: 'row', row }))
     if (sort !== 'status' || holdOrder) return flat()
-    const urgent = filter !== 'attention' ? rows.filter(attention) : []
-    const rest = rows.filter((r) => !urgent.includes(r))
+    const rest = rows
     const bands: { key: string; label: string; group?: boolean; rows: Row[] }[] = []
-    if (urgent.length) bands.push({ key: 'attention', label: 'Needs attention', rows: urgent })
     if (grouped && !group) {
       for (const g of groups) {
         const mine = rest.filter((r) => r.repo.groupId === g.id)
@@ -108,14 +120,13 @@ export function Dashboard() {
       }
       const other = rest.filter((r) => !groups.some((g) => g.id === r.repo.groupId))
       if (other.length) bands.push({ key: 'rest', label: 'Everything else', rows: other })
-    } else if (rest.length) bands.push({ key: 'rest', label: 'Everything else', rows: rest })
+    }
     if (bands.length < 2) return flat()
     return bands.flatMap((b): Item[] => [
       { kind: 'band', key: b.key, label: b.label, count: b.rows.length, group: b.group, summary: b.group ? bandSummary(b.rows) : undefined },
       ...b.rows.map((row): Item => ({ kind: 'row', row })),
     ])
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rows, sort, filter, holdOrder, group, groups, grouped])
+  }, [rows, sort, holdOrder, group, groups, grouped])
 
   // The same bands as the ledger, each a grid of cards.
   const sections = useMemo((): CardSection[] => {
@@ -382,6 +393,15 @@ export function Dashboard() {
         </div>
       )}
 
+      {!noRepos && (
+        <AttentionBanner
+          rows={urgent}
+          progress={progress}
+          running={running}
+          open={(path) => setView({ kind: 'repo', path })}
+          retry={(path, op) => batch.mutate({ op, paths: [path], interactive: true })}
+        />
+      )}
       {!noRepos && !cards && (
         <div className="table-head row" aria-hidden>
           <span />
@@ -444,7 +464,7 @@ export function Dashboard() {
               }
               if (it.kind === 'band') {
                 return (
-                  <div key={'band:' + it.key} className={`band ${v.index === 0 ? 'first' : ''} ${it.key === 'attention' ? 'attention' : ''}`} style={place}>
+                  <div key={'band:' + it.key} className={`band ${v.index === 0 ? 'first' : ''}`} style={place}>
                     <span className="band-label">{it.label}</span>
                     <span className="band-count">{it.count}</span>
                     {it.summary && <span className="band-summary">{it.summary}</span>}

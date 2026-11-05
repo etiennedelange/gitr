@@ -80,7 +80,7 @@ export function DashboardCards({ view, sections, cursor, setCursor, grouped, gro
       {sections.map((sec, i) => (
         <section key={sec.key} className="card-section" aria-label={sec.label}>
           {sec.label && (
-            <div className={`card-band ${i === 0 ? 'first' : ''} ${sec.key === 'attention' ? 'attention' : ''}`}>
+            <div className={`card-band ${i === 0 ? 'first' : ''}`}>
               <span className="band-label">{sec.label}</span>
               <span className="band-count">{sec.count}</span>
               {sec.summary && <span className="band-summary">{sec.summary}</span>}

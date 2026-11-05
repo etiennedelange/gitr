@@ -1505,7 +1505,62 @@ body.resizing-y * {
 .branch-path {
   color: var(--ink-3);
 }
-/* Band headings: what needs you, then each group or everything else. Small capitals with the count,
+/* The attention banner: the repos that need you, above the list, one row each with its next step.
+   Neutral paper; each row's mark carries the colour, so trouble and in-progress read apart. */
+.attention-banner {
+  flex: none;
+  margin: var(--s5) var(--s6) var(--s2) var(--s7);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  background: var(--panel);
+}
+.attention-banner ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.attention-item {
+  display: flex;
+  align-items: center;
+  gap: var(--s4);
+  min-height: 44px;
+  padding: var(--s2) var(--s3) var(--s2) var(--s4);
+}
+.attention-item + .attention-item {
+  border-top: 1px solid var(--line-soft);
+}
+.attention-text {
+  display: flex;
+  flex: 1;
+  align-items: baseline;
+  gap: var(--s4);
+  min-width: 0;
+  white-space: nowrap;
+}
+.attention-name {
+  flex: none;
+  color: var(--ink);
+  font-weight: 500;
+}
+.attention-problem {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--ink-2);
+  font-size: var(--fs-sm);
+}
+.attention-actions {
+  display: flex;
+  flex: none;
+  gap: var(--s2);
+}
+button.link.attention-more {
+  margin: 0 0 var(--s3) calc(var(--s4) + 16px + var(--s4));
+  padding-block: 2px;
+  color: var(--accent-text);
+  font-size: var(--fs-sm);
+}
+/* Band headings: each group, or everything else. Small capitals with the count,
    and for a group a one-line summary at the far end. The only bold in the list. */
 .band,
 .card-band {

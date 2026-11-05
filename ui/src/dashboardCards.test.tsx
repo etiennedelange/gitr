@@ -85,7 +85,7 @@ afterEach(() => {
 describe('dashboard cards', () => {
   it('shows compact cards by default and switches to the table and to detailed cards, remembering the choice', async () => {
     mount()
-    await screen.findByText('alpha')
+    await screen.findByText('alpha', { selector: '.card-name' })
     expect(card('alpha')).toHaveClass('compact')
     expect(document.querySelector('.table-body')).toBeNull()
 
@@ -107,7 +107,7 @@ describe('dashboard cards', () => {
     expect(useLayout.getState().dashboardView).toBe('compact')
   })
 
-  it('keeps the bands, with the repos that need attention first', async () => {
+  it('keeps the repos that need attention in their place, sorted first', async () => {
     useApp.setState({
       summaries: {
         'D:/w/alpha': summary('D:/w/alpha', {}),
@@ -116,9 +116,10 @@ describe('dashboard cards', () => {
       },
     })
     mount()
-    await screen.findByText('alpha')
+    await screen.findByText('alpha', { selector: '.card-name' })
     const order = [...list().querySelectorAll('.card-band, .card-name')].map((el) => el.textContent)
-    expect(order).toEqual(['Needs attention1', 'beta', 'Everything else2', 'gamma', 'alpha'])
+    expect(order).toEqual(['beta', 'gamma', 'alpha'])
+    expect(screen.getByRole('region', { name: 'Needs attention' })).toHaveTextContent('betaboom')
   })
 
   it('shows counts, the last commit and a Pull for what is behind on a detailed card', async () => {
@@ -135,7 +136,7 @@ describe('dashboard cards', () => {
       },
     })
     mount()
-    await screen.findByText('alpha')
+    await screen.findByText('alpha', { selector: '.card-name' })
     const c = card('alpha')
     expect(c).toHaveTextContent('±3')
     expect(c).toHaveTextContent('↓3')
@@ -149,7 +150,7 @@ describe('dashboard cards', () => {
   it('pushes what is ahead from the card', async () => {
     useApp.setState({ summaries: { 'D:/w/alpha': summary('D:/w/alpha', { ahead: 2 }) } })
     mount()
-    await screen.findByText('alpha')
+    await screen.findByText('alpha', { selector: '.card-name' })
     await act(async () => fireEvent.click(screen.getByRole('button', { name: /Push ↑2/ })))
     expect(api.push).toHaveBeenCalledWith('D:/w/alpha', false)
     expect(useApp.getState().toasts.at(-1)?.message).toBe('Pushed')
@@ -163,7 +164,7 @@ describe('dashboard cards', () => {
       },
     })
     mount()
-    await screen.findByText('alpha')
+    await screen.findByText('alpha', { selector: '.card-name' })
     expect(card('alpha').querySelector('.next')).toBeNull()
     expect([...card('beta').querySelectorAll('.next')].map((b) => b.textContent)).toEqual(['Pull ↓2', 'Push ↑1'])
   })
@@ -173,7 +174,7 @@ describe('dashboard cards', () => {
     vi.mocked(api.push).mockRejectedValueOnce(err)
     useApp.setState({ summaries: { 'D:/w/alpha': summary('D:/w/alpha', { ahead: 1 }) } })
     mount()
-    await screen.findByText('alpha')
+    await screen.findByText('alpha', { selector: '.card-name' })
     await act(async () => fireEvent.click(screen.getByRole('button', { name: /Push ↑1/ })))
     const toast = useApp.getState().toasts.at(-1)!
     expect(toast.kind).toBe('error')
@@ -184,28 +185,34 @@ describe('dashboard cards', () => {
   })
 
   it('moves down and up to the card below and above, across the bands', async () => {
-    useApp.setState({
-      summaries: {
-        'D:/w/alpha': summary('D:/w/alpha', { error: 'boom' }),
-        'D:/w/beta': summary('D:/w/beta', {}),
-        'D:/w/gamma': summary('D:/w/gamma', {}),
-      },
-    })
-    mount()
-    await screen.findByText('alpha')
-    // Three cards a row: "Needs attention" holds alpha, "Everything else" beta and gamma.
-    for (const g of document.querySelectorAll<HTMLElement>('.card-grid')) g.style.gridTemplateColumns = '1fr 1fr 1fr'
-    fireEvent.keyDown(list(), { key: 'ArrowDown' })
-    expect(card('alpha')).toHaveAttribute('aria-current', 'true')
-    fireEvent.keyDown(list(), { key: 'ArrowRight' })
-    expect(card('beta')).toHaveAttribute('aria-current', 'true')
-    fireEvent.keyDown(list(), { key: 'ArrowLeft' })
-    fireEvent.keyDown(list(), { key: 'ArrowDown' })
-    expect(card('beta')).toHaveAttribute('aria-current', 'true')
-    fireEvent.keyDown(list(), { key: 'ArrowRight' })
-    expect(card('gamma')).toHaveAttribute('aria-current', 'true')
-    fireEvent.keyDown(list(), { key: 'ArrowUp' })
-    expect(card('alpha')).toHaveAttribute('aria-current', 'true')
+    config.groups.push({ id: 'p', name: 'Personal', roots: ['D:/p'] })
+    repos.push({ path: 'D:/p/delta', name: 'delta', groupId: 'p' })
+    try {
+      useApp.setState({
+        summaries: {
+          'D:/w/alpha': summary('D:/w/alpha', { error: 'boom' }),
+          'D:/w/beta': summary('D:/w/beta', {}),
+          'D:/w/gamma': summary('D:/w/gamma', {}),
+          'D:/p/delta': summary('D:/p/delta', {}),
+        },
+      })
+      mount()
+      await screen.findByText('delta', { selector: '.card-name' })
+      // Three cards a row: "Work" holds alpha (sorted first), beta and gamma; "Personal" holds delta.
+      for (const g of document.querySelectorAll<HTMLElement>('.card-grid')) g.style.gridTemplateColumns = '1fr 1fr 1fr'
+      fireEvent.keyDown(list(), { key: 'ArrowDown' })
+      expect(card('alpha')).toHaveAttribute('aria-current', 'true')
+      fireEvent.keyDown(list(), { key: 'ArrowRight' })
+      expect(card('beta')).toHaveAttribute('aria-current', 'true')
+      fireEvent.keyDown(list(), { key: 'ArrowLeft' })
+      fireEvent.keyDown(list(), { key: 'ArrowDown' })
+      expect(card('delta')).toHaveAttribute('aria-current', 'true')
+      fireEvent.keyDown(list(), { key: 'ArrowUp' })
+      expect(card('alpha')).toHaveAttribute('aria-current', 'true')
+    } finally {
+      config.groups.pop()
+      repos.pop()
+    }
   })
 
   it('shows behind and ahead once, as counts beside the name, and says when a card is up to date', async () => {
@@ -213,7 +220,7 @@ describe('dashboard cards', () => {
       summaries: { 'D:/w/alpha': summary('D:/w/alpha', {}), 'D:/w/beta': summary('D:/w/beta', { behind: 1 }) },
     })
     mount()
-    await screen.findByText('alpha')
+    await screen.findByText('alpha', { selector: '.card-name' })
     expect(card('alpha').querySelector('.badge')).toBeNull()
     expect(card('alpha')).toHaveTextContent('Up to date')
     // Numbers, not bars: the count beside the name is the only divergence a compact card shows.
@@ -225,7 +232,7 @@ describe('dashboard cards', () => {
   it('offers no Pull or Push on a repo with an error', async () => {
     useApp.setState({ summaries: { 'D:/w/alpha': summary('D:/w/alpha', { behind: 2, ahead: 1, error: 'boom' }) } })
     mount()
-    await screen.findByText('alpha')
+    await screen.findByText('alpha', { selector: '.card-name' })
     expect(card('alpha').querySelector('.next')).toBeNull()
   })
 
@@ -239,7 +246,7 @@ describe('dashboard cards', () => {
       },
     })
     mount()
-    await screen.findByText('alpha')
+    await screen.findByText('alpha', { selector: '.card-name' })
     expect(card('alpha').textContent!.split('Couldn’t reach the remote').length - 1).toBe(1)
     expect([...card('beta').querySelectorAll('.card-stat b')].map((b) => b.textContent)).toEqual(['–', '–', '–'])
     expect(card('beta').querySelector('.card-mix')).toBeNull()
@@ -260,14 +267,15 @@ describe('dashboard cards', () => {
         },
       })
       mount()
-      await screen.findByText('delta')
+      await screen.findByText('delta', { selector: '.card-name' })
+      // Every card sits under its group's heading, even one that needs attention.
+      for (const n of ['alpha', 'beta', 'delta']) expect(card(n).querySelector('.card-group')).toBeNull()
+      // Sorted by name there are no headings, so each card names its group (by name, not colour).
+      act(() => useApp.getState().setDashboard({ sort: 'name' }))
       expect(card('alpha').querySelector('.card-group')).toHaveTextContent('Work')
-      expect(card('beta').querySelector('.card-group')).toBeNull()
-      expect(card('delta').querySelector('.card-group')).toBeNull()
-      // Compact cards name it on the same terms (groups are told apart by name, not colour).
+      expect(card('delta').querySelector('.card-group')).toHaveTextContent('Personal')
       fireEvent.click(screen.getByRole('button', { name: 'Cards' }))
       expect(card('alpha').querySelector('.card-group')).toHaveTextContent('Work')
-      expect(card('beta').querySelector('.card-group')).toBeNull()
       expect(card('alpha').querySelector('.group-swatch')).toBeNull()
     } finally {
       config.groups.pop()
@@ -277,7 +285,7 @@ describe('dashboard cards', () => {
 
   it('moves across the cards with the arrow keys and opens one with Enter', async () => {
     mount()
-    await screen.findByText('alpha')
+    await screen.findByText('alpha', { selector: '.card-name' })
     fireEvent.keyDown(list(), { key: 'ArrowDown' })
     expect(card('alpha')).toHaveAttribute('aria-current', 'true')
     fireEvent.keyDown(list(), { key: 'ArrowRight' })
@@ -292,7 +300,7 @@ describe('dashboard cards', () => {
 describe('new changes on the cards', () => {
   it('flashes nothing for the first status of a repo', async () => {
     mount()
-    await screen.findByText('alpha')
+    await screen.findByText('alpha', { selector: '.card-name' })
     act(() => useApp.getState().setSummary(summary('D:/w/alpha', { behind: 2 })))
     expect(card('alpha').querySelector('.card-flash')).toBeNull()
     expect(card('alpha').querySelector('.fresh-dot')).toBeNull()
@@ -301,7 +309,7 @@ describe('new changes on the cards', () => {
   it('flashes once in the hue of what went up and keeps a dot until the card is hovered', async () => {
     useApp.setState({ summaries: { 'D:/w/alpha': summary('D:/w/alpha', {}) } })
     mount()
-    await screen.findByText('alpha')
+    await screen.findByText('alpha', { selector: '.card-name' })
     act(() => useApp.getState().setSummary(summary('D:/w/alpha', { behind: 2 })))
     const flash = card('alpha').querySelector('.card-flash')
     expect(flash).toHaveClass('behind')
@@ -316,7 +324,7 @@ describe('new changes on the cards', () => {
   it('does not play the flash again on a later render', async () => {
     useApp.setState({ summaries: { 'D:/w/alpha': summary('D:/w/alpha', {}) } })
     mount()
-    await screen.findByText('alpha')
+    await screen.findByText('alpha', { selector: '.card-name' })
     act(() => useApp.getState().setSummary(summary('D:/w/alpha', { unstaged: 1 })))
     expect(card('alpha').querySelector('.card-flash.dirty')).not.toBeNull()
 
@@ -332,7 +340,7 @@ describe('new changes on the cards', () => {
   it('counts opening the repo from anywhere as seeing it', async () => {
     useApp.setState({ summaries: { 'D:/w/alpha': summary('D:/w/alpha', {}) } })
     mount()
-    await screen.findByText('alpha')
+    await screen.findByText('alpha', { selector: '.card-name' })
     act(() => useApp.getState().setSummary(summary('D:/w/alpha', { behind: 1 })))
     // The sidebar and Ctrl+P open a repo without touching its card.
     act(() => useApp.getState().setView({ kind: 'repo', path: 'D:/w/alpha' }))
@@ -342,7 +350,7 @@ describe('new changes on the cards', () => {
   it('does not mark as new what happened while the repo was open', async () => {
     useApp.setState({ summaries: { 'D:/w/alpha': summary('D:/w/alpha', {}) } })
     mount()
-    await screen.findByText('alpha')
+    await screen.findByText('alpha', { selector: '.card-name' })
     // A commit made in the repo view: the user saw it happen.
     act(() => useApp.getState().setView({ kind: 'repo', path: 'D:/w/alpha' }))
     act(() => useApp.getState().setSummary(summary('D:/w/alpha', { ahead: 1 })))
@@ -358,7 +366,7 @@ describe('new changes on the cards', () => {
   it('drops the mark once what it pointed at is gone', async () => {
     useApp.setState({ summaries: { 'D:/w/alpha': summary('D:/w/alpha', {}) } })
     mount()
-    await screen.findByText('alpha')
+    await screen.findByText('alpha', { selector: '.card-name' })
     act(() => useApp.getState().setSummary(summary('D:/w/alpha', { behind: 1 })))
     act(() => useApp.getState().setSummary(summary('D:/w/alpha', { behind: 0 })))
     expect(useApp.getState().fresh['D:/w/alpha']).toBeUndefined()
