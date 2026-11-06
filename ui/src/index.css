@@ -829,7 +829,8 @@ ul:focus-visible,
   right: 0;
   z-index: 30;
   display: flex;
-  height: var(--strip);
+  /* The height of the first bar, so the glyphs centre on the same line as the toolbar's icons. */
+  height: var(--bar);
 }
 .caption-button {
   width: 46px;
@@ -857,6 +858,10 @@ ul:focus-visible,
 .main > .banner:first-child,
 .main > :first-child > .toolbar:first-child {
   padding-right: calc(var(--caption-w) + var(--s4));
+}
+/* A banner on top is as tall as a toolbar, so the caption buttons fit it too. */
+.main > .banner:first-child {
+  min-height: var(--bar);
 }
 .brand,
 .toolbar,
