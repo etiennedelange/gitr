@@ -1,3 +1,4 @@
+import css from './index.css?raw'
 import { afterEach, describe, expect, it, vi } from 'vite-plus/test'
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
 
@@ -69,5 +70,13 @@ describe('dragging the window', () => {
     fireEvent.mouseDown(el('home'), { button: 0, detail: 1 })
     expect(win.startDragging).toHaveBeenCalledOnce()
     off()
+  })
+})
+
+describe('caption layout', () => {
+  it('is as tall as the first bar, so its glyphs line up with the toolbar icons', () => {
+    const rule = (sel: string) => css.match(new RegExp(`\\n${sel.replace('.', '\\.')} \\{([^}]*)\\}`))?.[1] ?? ''
+    expect(rule('.caption')).toContain('height: var(--bar)')
+    expect(rule('.toolbar')).toContain('min-height: var(--bar)')
   })
 })
