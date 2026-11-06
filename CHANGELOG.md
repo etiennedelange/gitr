@@ -5,6 +5,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Changed
+- **One surface, no title bar.** The Windows title bar is gone: the sidebar and the main area now run to the top of the window, and Minimise, Maximise and Close sit at the top right, beside the toolbar. Drag the window by the top bar (beside "Gitr" or the page title), and double-click it to maximise or restore.
+
 ## [0.2.1] - 2026-11-05
 
 ### Changed
