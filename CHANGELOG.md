@@ -5,11 +5,16 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
-### Changed
-- **One surface, no title bar.** The Windows title bar is gone: the sidebar and the main area now run to the top of the window, and Minimise, Maximise and Close sit at the top right, in line with the toolbar icons. Drag the window by the top bar (beside "Gitr" or the page title), and double-click it to maximise or restore.
+### Fixed
+- **The window buttons line up with the toolbar.** Minimise, Maximise and Close are now centred on the same line as the toolbar icons beside them.
 
 ### Security
 - **The updater no longer includes a zip library.** Gitr's updates are a signed installer, never a zip file, so the zip code (which had an advisory, RUSTSEC-2026-0429) is gone from the app.
+
+## [0.2.2] - 2026-11-06
+
+### Changed
+- **One surface, no title bar.** The Windows title bar is gone: the sidebar and the main area now run to the top of the window, and Minimise, Maximise and Close sit at the top right, beside the toolbar. Drag the window by the top bar (beside "Gitr" or the page title), and double-click it to maximise or restore.
 
 ## [0.2.1] - 2026-11-05
 

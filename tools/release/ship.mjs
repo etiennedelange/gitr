@@ -208,10 +208,11 @@ async function main(argv) {
   console.log(git('log', '-1', '--format=%h %s', commit));
   git('tag', tag, commit);
   git('push', '--quiet', 'origin', tag);
-  // Back to main, without the release branch (deleted on GitHub after the merge).
+  // Back to main, without the release branch (deleted on GitHub after the merge). A run that
+  // resumes after the merge, such as a fresh CI checkout, never had the branch locally.
   git('switch', '--quiet', 'main');
   git('merge', '--quiet', '--ff-only', 'origin/main');
-  git('branch', '-D', branch);
+  if (spawnSync('git', ['show-ref', '--verify', '--quiet', `refs/heads/${branch}`], { cwd: root }).status === 0) git('branch', '-D', branch);
 
   await followRelease(tag);
 }
