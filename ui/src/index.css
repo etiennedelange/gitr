@@ -816,6 +816,55 @@ ul:focus-visible,
 }
 
 /*
+ * Caption buttons: Minimise, Maximise, Close, drawn by Gitr because the window has no native title
+ * bar. They sit in the sheet's top-right corner over the first bar, which leaves them room; the
+ * bars at the top (brand, toolbars, a banner on top) drag the window.
+ */
+:root {
+  --caption-w: 138px;
+}
+.caption {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 30;
+  display: flex;
+  height: var(--strip);
+}
+.caption-button {
+  width: 46px;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--ink-2);
+}
+.caption-button:hover:not(:disabled) {
+  background: var(--hover);
+  color: var(--ink);
+}
+.caption-button:active:not(:disabled) {
+  background: var(--press);
+}
+/* Close turns the Windows caption red. */
+.caption-button.close:hover:not(:disabled),
+.caption-button.close:active:not(:disabled) {
+  background: #c42b1c;
+  color: #ffffff;
+}
+.main > .banner:first-child,
+.main > :first-child > .toolbar:first-child {
+  padding-right: calc(var(--caption-w) + var(--s4));
+}
+.brand,
+.toolbar,
+.main > .banner {
+  user-select: none;
+}
+
+/*
  * Splitters: a 0-wide (or 0-tall) item between two panes with an 8px grab area over their shared
  * hairline. The hairline turns cobalt while hovered, dragged or focused.
  */
