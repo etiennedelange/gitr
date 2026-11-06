@@ -5,6 +5,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.2.3] - 2026-11-06
+
 ### Fixed
 - **The window buttons line up with the toolbar.** Minimise, Maximise and Close are now centred on the same line as the toolbar icons beside them.
 
