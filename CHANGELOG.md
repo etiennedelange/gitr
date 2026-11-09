@@ -5,6 +5,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Changed
+- **New files show A, not ?.** An untracked file now has the same green **A** as a staged new file, so it keeps its letter when you stage it. Its tooltip says "New file (untracked)".
+
 ## [0.2.4] - 2026-11-09
 
 ### Changed
