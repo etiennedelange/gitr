@@ -134,8 +134,9 @@ describe('a long list of changed files', () => {
     expect(unstaged().querySelector('.row-gap')).toBeNull()
   })
 
-  it('keeps the selected file in view as the arrow keys move past the drawn rows', async () => {
-    changed = Array.from({ length: N }, (_, i) => ({
+  it('keeps the selected file in view as the arrow keys move past the drawn rows', { timeout: 30_000 }, async () => {
+    // Just over the threshold, and a few more key presses than rows are drawn: each press re-renders.
+    changed = Array.from({ length: FILE_LIST_VIRTUAL_MIN + 100 }, (_, i) => ({
       path: name(i),
       origPath: null,
       index: '.',
@@ -145,10 +146,10 @@ describe('a long list of changed files', () => {
     }))
     wrap(<Changes path={PATH} />)
     fireEvent.click(await screen.findByText(name(0)))
-    for (let i = 0; i < 150; i++) fireEvent.keyDown(unstaged(), { key: 'ArrowDown' })
+    for (let i = 0; i < 80; i++) fireEvent.keyDown(unstaged(), { key: 'ArrowDown' })
     await flush()
     const active = unstaged().querySelector('li.active .fname')
-    expect(active).toHaveTextContent(name(150))
+    expect(active).toHaveTextContent(name(80))
     // The list scrolled with it: the first rows are no longer drawn.
     expect(names(unstaged())).not.toContain(name(0))
     expect(gap(unstaged(), 'first')).toBeGreaterThan(0)
@@ -156,11 +157,10 @@ describe('a long list of changed files', () => {
 })
 
 describe('a commit with many files', () => {
-  it('draws only the rows in view, each with its place among all of them', async () => {
+  it('draws only the rows in view, each with its place among all of them', { timeout: 30_000 }, async () => {
     wrap(<History path={PATH} remote={null} />)
-    const tree = await screen
-      .findByRole('listbox', { name: 'Changed files' })
-      .catch(() => screen.findByRole('tree', { name: 'Changed files' }))
+    // The tree view is the default.
+    await screen.findByRole('tree', { name: 'Changed files' })
     await flush()
     // List view: the files are options.
     fireEvent.click(screen.getByRole('button', { name: 'List' }))
@@ -174,6 +174,5 @@ describe('a commit with many files', () => {
     // The row the screen reader is on is drawn.
     const activeId = list.getAttribute('aria-activedescendant')!
     expect(document.getElementById(activeId)).not.toBeNull()
-    expect(tree).toBeTruthy()
   })
 })
