@@ -161,12 +161,12 @@ describe('conflicts', () => {
     expect(api.stage).toHaveBeenCalledWith(A, ['both.ts'])
   })
 
-  it('show untracked files with git’s ?, not U', async () => {
+  it('show untracked files as a new file (A), not ? or U', async () => {
     files = [file('new.ts', { untracked: true, worktree: '?' })]
     wrap(<Changes path={A} />)
     await screen.findByText('new.ts')
     const list = screen.getByRole('list', { name: 'Unstaged files' })
-    expect(within(list).getByTitle('Untracked')).toHaveTextContent('?')
+    expect(within(list).getByTitle('New file (untracked)')).toHaveTextContent('A')
   })
 })
 

@@ -1,11 +1,23 @@
-import { useEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent, type ReactNode, type RefObject } from 'react'
+import {
+  Fragment,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+  type KeyboardEvent,
+  type ReactNode,
+  type RefObject,
+} from 'react'
 import { useQuery } from '@tanstack/react-query'
+import { ChevronDown, ChevronUp, Search, X } from 'lucide-react'
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { api, errorMessage } from '../api'
 import { dirName, fileName, toSplitRows } from '../lib/git'
 import type { DiffLine, DiffSyntax, FileDiff, Span } from '../types'
 import { diffMenu } from '../lib/menus'
 import { copyText, showMenu } from '../nativeMenu'
+import { plainInput } from '../lib/inputProps'
 import { createWheelZoomAccumulator, DEFAULT_ZOOM, stepZoom, ZOOM_PRESETS } from '../lib/zoom'
 
 type Mode = 'unified' | 'split'
@@ -168,6 +180,38 @@ export function DiffView({ repo, source, note, conflicted }: { repo: string; sou
   const text = useTextZoom(root)
   const body = useRef<HTMLDivElement>(null)
 
+  // Find in the diff. Ctrl+F opens it from anywhere in the view; Enter and Shift+Enter step through.
+  const [find, setFind] = useState({ open: false, query: '', caseSensitive: false })
+  const [current, setCurrent] = useState(0)
+  const [count, setCount] = useState(0)
+  const findInput = useRef<HTMLInputElement>(null)
+  const openFind = () => {
+    setFind((f) => ({ ...f, open: true }))
+    // Already open: just take the focus back. Newly open: the input isn't drawn until the next render.
+    setTimeout(() => {
+      findInput.current?.focus()
+      findInput.current?.select()
+    }, 0)
+  }
+  const closeFind = () => {
+    setFind((f) => ({ ...f, open: false }))
+    body.current?.focus()
+  }
+  useEffect(() => {
+    const onKey = (e: globalThis.KeyboardEvent) => {
+      if (!(e.ctrlKey || e.metaKey) || e.shiftKey || e.altKey || e.key.toLowerCase() !== 'f') return
+      // Views kept mounted but hidden (another tab) must not answer.
+      if (!root.current || root.current.checkVisibility?.() === false) return
+      e.preventDefault()
+      openFind()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [])
+  const step = (d: number) => setCurrent((c) => (count ? (c + d + count) % count : 0))
+  const path = source.path
+  useEffect(() => setCurrent(0), [path])
+
   const changeMode = (m: Mode) => {
     remember('diffMode', m)
     setMode(m)
@@ -193,6 +237,16 @@ export function DiffView({ repo, source, note, conflicted }: { repo: string; sou
         </span>
         {note && <span className="diff-note">{note}</span>}
         <div className="spacer" />
+        <button
+          className="icon"
+          title="Find in diff (Ctrl+F)"
+          aria-label="Find in diff"
+          aria-keyshortcuts="Control+F"
+          aria-pressed={find.open}
+          onClick={() => (find.open ? closeFind() : openFind())}
+        >
+          <Search className="ico" aria-hidden />
+        </button>
         {text.zoom !== DEFAULT_ZOOM && (
           <button className="diff-zoom-level" title="Diff text size (Ctrl + scroll). Click to reset." onClick={text.reset}>
             {text.zoom}%
@@ -220,6 +274,65 @@ export function DiffView({ repo, source, note, conflicted }: { repo: string; sou
           </button>
         </div>
       </div>
+      {find.open && (
+        <div className="diff-find" role="search">
+          <span className="search-field">
+            <Search className="ico" aria-hidden />
+            <input
+              {...plainInput}
+              ref={findInput}
+              placeholder="Find in diff…"
+              aria-label="Find in diff"
+              value={find.query}
+              onChange={(e) => {
+                setFind({ ...find, query: e.target.value })
+                setCurrent(0)
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault()
+                  step(e.shiftKey ? -1 : 1)
+                } else if (e.key === 'Escape') {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  closeFind()
+                }
+              }}
+            />
+          </span>
+          <button
+            className={find.caseSensitive ? 'find-case on' : 'find-case'}
+            title="Match case"
+            aria-label="Match case"
+            aria-pressed={find.caseSensitive}
+            onClick={() => {
+              setFind({ ...find, caseSensitive: !find.caseSensitive })
+              setCurrent(0)
+            }}
+          >
+            Aa
+          </button>
+          <span className="find-count" role="status" aria-live="polite">
+            {find.query && (count ? `${current + 1} of ${count >= MAX_MATCHES ? `${MAX_MATCHES}+` : count}` : 'No results')}
+          </span>
+          <button
+            className="icon small"
+            title="Previous (Shift+Enter)"
+            aria-label="Previous match"
+            disabled={!count}
+            onClick={() => step(-1)}
+          >
+            <ChevronUp className="ico" aria-hidden />
+          </button>
+          <button className="icon small" title="Next (Enter)" aria-label="Next match" disabled={!count} onClick={() => step(1)}>
+            <ChevronDown className="ico" aria-hidden />
+          </button>
+          <div className="spacer" />
+          <button className="icon small" title="Close (Esc)" aria-label="Close find" onClick={closeFind}>
+            <X className="ico" aria-hidden />
+          </button>
+        </div>
+      )}
       <div
         className="diff-body"
         ref={body}
@@ -247,7 +360,19 @@ export function DiffView({ repo, source, note, conflicted }: { repo: string; sou
               : 'No textual changes'}
           </div>
         )}
-        {hasLines && <Rows key={shown} diff={diff.data} mode={shown} syntax={colours} header={!full} body={body} zoom={text.zoom} />}
+        {hasLines && (
+          <Rows
+            key={shown}
+            diff={diff.data}
+            mode={shown}
+            syntax={colours}
+            header={!full}
+            body={body}
+            zoom={text.zoom}
+            find={find.open ? { query: find.query, caseSensitive: find.caseSensitive, current } : null}
+            onCount={setCount}
+          />
+        )}
         {diff.data?.truncated && <div className="banner">Diff truncated: the file is too large to show completely.</div>}
       </div>
     </div>
@@ -262,23 +387,48 @@ function spansOf(line: DiffLine | null, syntax: DiffSyntax | undefined): Span[] 
   return line.newNo == null ? undefined : syntax.new[line.newNo]
 }
 
-/** A line's text with its coloured pieces. */
-function Code({ text, spans }: { text: string; spans: Span[] | undefined }) {
-  if (!spans?.length) return <>{text}</>
-  const out: ReactNode[] = []
+/** A found piece of a line, `current` for the one the next/previous buttons are on. */
+interface Mark {
+  start: number
+  end: number
+  current: boolean
+}
+
+/** A line's text with its coloured pieces, and the found pieces marked. */
+function Code({ text, spans, marks }: { text: string; spans: Span[] | undefined; marks?: Mark[] }) {
+  // The text as runs of one colour each.
+  const runs: { start: number; end: number; token: string | null }[] = []
   let at = 0
-  for (const [start, end, token] of spans) {
+  for (const [start, end, token] of spans ?? []) {
     // Colours from before a refresh can be for older text; past the text's end they are dropped.
     if (start < at || end > text.length) break
-    if (start > at) out.push(text.slice(at, start))
-    out.push(
-      <span key={start} className={`tk-${token}`}>
-        {text.slice(start, end)}
-      </span>,
-    )
+    if (start > at) runs.push({ start: at, end: start, token: null })
+    runs.push({ start, end, token })
     at = end
   }
-  out.push(text.slice(at))
+  runs.push({ start: at, end: text.length, token: null })
+  if (!marks?.length && runs.length === 1) return <>{text}</>
+
+  const out: ReactNode[] = []
+  for (const run of runs) {
+    const piece = (from: number, to: number, mark?: Mark) => {
+      if (from >= to) return
+      let node: ReactNode = text.slice(from, to)
+      if (mark) node = <mark className={mark.current ? 'find-hit cur' : 'find-hit'}>{node}</mark>
+      if (run.token) node = <span className={`tk-${run.token}`}>{node}</span>
+      out.push(<Fragment key={`${run.start}:${from}`}>{node}</Fragment>)
+    }
+    let cursor = run.start
+    for (const m of marks ?? []) {
+      if (m.end <= run.start || m.start >= run.end) continue
+      const from = Math.max(m.start, run.start)
+      const to = Math.min(m.end, run.end)
+      piece(cursor, from)
+      piece(from, to, m)
+      cursor = to
+    }
+    piece(cursor, run.end)
+  }
   return <>{out}</>
 }
 
@@ -301,6 +451,40 @@ export function diffItems(diff: FileDiff, mode: Mode, header: boolean): Item[] {
     else for (const r of toSplitRows(h)) items.push({ kind: 'pair', left: r.left, right: r.right })
   })
   return items
+}
+
+/** Most matches kept: a pattern like "e" in a huge file would otherwise mark every line. */
+export const MAX_MATCHES = 2000
+
+/** One place the search text was found: the row, which side of it (0, or 1 for a split's right), and where. */
+export interface Match {
+  item: number
+  slot: number
+  start: number
+  end: number
+}
+
+const itemTexts = (item: Item): (string | null)[] =>
+  item.kind === 'line' ? [item.line.text] : item.kind === 'pair' ? [item.left?.text ?? null, item.right?.text ?? null] : []
+
+/** Every place `query` appears in the code of the rows, in reading order. Headers aren't searched. */
+export function findMatches(items: Item[], query: string, caseSensitive: boolean): Match[] {
+  if (!query) return []
+  const needle = caseSensitive ? query : query.toLowerCase()
+  const out: Match[] = []
+  for (let item = 0; item < items.length; item++) {
+    const texts = itemTexts(items[item])
+    for (let slot = 0; slot < texts.length; slot++) {
+      const text = texts[slot]
+      if (text == null) continue
+      const hay = caseSensitive ? text : text.toLowerCase()
+      for (let i = hay.indexOf(needle); i >= 0; i = hay.indexOf(needle, i + needle.length)) {
+        out.push({ item, slot, start: i, end: i + needle.length })
+        if (out.length >= MAX_MATCHES) return out
+      }
+    }
+  }
+  return out
 }
 
 /** The widest line, counting a tab as up to 8 columns (the default tab size). */
@@ -329,6 +513,8 @@ function Rows({
   header,
   body,
   zoom,
+  find,
+  onCount,
 }: {
   diff: FileDiff
   mode: Mode
@@ -337,8 +523,24 @@ function Rows({
   body: RefObject<HTMLDivElement | null>
   /** The diff's text zoom in percent: rows not yet drawn are estimated at that size. */
   zoom: number
+  /** What to mark, or null while the find bar is closed. */
+  find: { query: string; caseSensitive: boolean; current: number } | null
+  onCount: (n: number) => void
 }) {
   const items = useMemo(() => diffItems(diff, mode, header), [diff, mode, header])
+  const query = find?.query ?? ''
+  const caseSensitive = find?.caseSensitive ?? false
+  const matches = useMemo(() => findMatches(items, query, caseSensitive), [items, query, caseSensitive])
+  const current = find?.current ?? -1
+  const marks = useMemo(() => {
+    const by = new Map<string, Mark[]>()
+    matches.forEach((m, i) => {
+      const key = `${m.item}:${m.slot}`
+      by.set(key, [...(by.get(key) ?? []), { start: m.start, end: m.end, current: i === current }])
+    })
+    return by
+  }, [matches, current])
+  useEffect(() => onCount(matches.length), [matches, onCount])
   const virtual = items.length > VIRTUAL_MIN_ROWS
   const rowH = (ROW_H * zoom) / 100
   const rows = useVirtualizer({
@@ -356,6 +558,14 @@ function Rows({
   useEffect(() => {
     rows.measure?.()
   }, [rows, zoom])
+  // Bring the current match into view; a long diff draws only the rows in view, so scroll by row.
+  useEffect(() => {
+    const m = matches[current]
+    if (!m) return
+    if (virtual) rows.scrollToIndex(m.item, { align: 'center' })
+    else body.current?.querySelector(`tr[data-index="${m.item}"]`)?.scrollIntoView?.({ block: 'center' })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [matches, current])
   const cols = mode === 'unified' ? 3 : 4
   const draw = (item: Item, key: number, measure?: boolean) => {
     const ref = measure ? rows.measureElement : undefined
@@ -379,15 +589,15 @@ function Rows({
             <td className="ln">{item.line.newNo ?? ''}</td>
             <td className="code selectable">
               <span className="sign">{sign[item.line.kind]}</span>
-              <Code text={item.line.text} spans={spansOf(item.line, syntax)} />
+              <Code text={item.line.text} spans={spansOf(item.line, syntax)} marks={marks.get(`${key}:0`)} />
             </td>
           </tr>
         )
       case 'pair':
         return (
           <tr key={key} ref={ref} data-index={key}>
-            <Side line={item.left} no={item.left?.oldNo} syntax={syntax} />
-            <Side line={item.right} no={item.right?.newNo} syntax={syntax} />
+            <Side line={item.left} no={item.left?.oldNo} syntax={syntax} marks={marks.get(`${key}:0`)} />
+            <Side line={item.right} no={item.right?.newNo} syntax={syntax} marks={marks.get(`${key}:1`)} />
           </tr>
         )
     }
@@ -460,12 +670,22 @@ function Sizer({ diff }: { diff: FileDiff }) {
   )
 }
 
-function Side({ line, no, syntax }: { line: DiffLine | null; no: number | null | undefined; syntax: DiffSyntax | undefined }) {
+function Side({
+  line,
+  no,
+  syntax,
+  marks,
+}: {
+  line: DiffLine | null
+  no: number | null | undefined
+  syntax: DiffSyntax | undefined
+  marks?: Mark[]
+}) {
   return (
     <>
       <td className={`ln ${line?.kind ?? 'empty'}`}>{no ?? ''}</td>
       <td className={`code selectable ${line?.kind ?? 'empty'}`}>
-        <Code text={line?.text ?? ''} spans={spansOf(line, syntax)} />
+        <Code text={line?.text ?? ''} spans={spansOf(line, syntax)} marks={marks} />
       </td>
     </>
   )

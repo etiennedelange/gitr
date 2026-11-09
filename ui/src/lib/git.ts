@@ -14,18 +14,19 @@ export function splitChanges(files: FileEntry[]) {
 
 /**
  * Single status letter shown next to a file, for the given side. The letters are git's own
- * (`git status --short`): U is unmerged (a conflict), ? is untracked.
+ * (`git status --short`), except that an untracked file shows A like any other new file, so it
+ * doesn't change letter when staged. U is unmerged (a conflict).
  */
 export function statusLetter(f: FileEntry, staged: boolean): string {
   if (f.conflicted) return 'U'
-  if (f.untracked) return '?'
+  if (f.untracked) return 'A'
   const c = staged ? f.index : f.worktree
   return c === '.' ? ' ' : c
 }
 
 const STATUS: Record<string, { kind: string; label: string }> = {
   U: { kind: 'conflict', label: 'Conflicted' },
-  '?': { kind: 'untracked', label: 'Untracked' },
+  '?': { kind: 'untracked', label: 'New file (untracked)' },
   M: { kind: 'modified', label: 'Modified' },
   A: { kind: 'added', label: 'Added' },
   D: { kind: 'deleted', label: 'Deleted' },
@@ -44,7 +45,8 @@ export interface FileStatus {
 
 export const letterStatus = (letter: string): FileStatus => ({ letter, ...(STATUS[letter] ?? { kind: 'none', label: 'Changed' }) })
 
-export const fileStatus = (f: FileEntry, staged: boolean): FileStatus => letterStatus(statusLetter(f, staged))
+export const fileStatus = (f: FileEntry, staged: boolean): FileStatus =>
+  f.untracked && !f.conflicted ? { letter: 'A', ...STATUS['?'] } : letterStatus(statusLetter(f, staged))
 
 export interface SplitRow {
   left: DiffLine | null

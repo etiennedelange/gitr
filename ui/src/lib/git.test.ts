@@ -50,7 +50,8 @@ describe('splitChanges', () => {
     const f = file({ index: 'A', worktree: 'M' })
     expect(statusLetter(f, true)).toBe('A')
     expect(statusLetter(f, false)).toBe('M')
-    expect(statusLetter(file({ untracked: true }), false)).toBe('?')
+    expect(statusLetter(file({ untracked: true }), false)).toBe('A')
+    expect(fileStatus(file({ untracked: true }), false)).toEqual({ letter: 'A', kind: 'untracked', label: 'New file (untracked)' })
   })
 
   it("marks a conflict with git's U for unmerged, not C (which is a copy)", () => {

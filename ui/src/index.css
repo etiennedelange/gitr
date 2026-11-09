@@ -2651,6 +2651,43 @@ button.ai.generating .ico {
 .diff-zoom-level:hover {
   color: var(--ink);
 }
+.diff-find {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  flex: none;
+  padding: var(--s3) var(--s5);
+  border-bottom: 1px solid var(--line-soft);
+  background: var(--panel);
+}
+.diff-find .search-field input {
+  width: 240px;
+}
+.diff-find .find-case {
+  height: var(--ctl-sm);
+  padding: 0 var(--s3);
+  font: 600 var(--fs-xs) / 1 var(--font-mono);
+}
+.diff-find .find-case.on {
+  border-color: var(--accent);
+  color: var(--accent-text);
+}
+.diff-find .find-count {
+  min-width: 64px;
+  color: var(--ink-2);
+  font: 500 var(--fs-xs) / 1.3 var(--font-ui);
+  font-variant-numeric: tabular-nums;
+}
+/* A found piece of code. The current one also has an outline, so it doesn't rest on colour alone. */
+mark.find-hit {
+  border-radius: 2px;
+  background: color-mix(in oklab, var(--amber) 35%, transparent);
+  color: inherit;
+}
+mark.find-hit.cur {
+  background: color-mix(in oklab, var(--amber) 70%, transparent);
+  outline: 1.5px solid var(--ink);
+}
 .diff-empty {
   display: flex;
   align-items: center;

@@ -10,9 +10,9 @@ serde.workspace = true
 thiserror.workspace = true
 tokio.workspace = true
 async-trait = "0.1"
-github-copilot-sdk = { version = "1.0.16", default-features = false, features = ["runtime"] }
+github-copilot-sdk = { version = "1.0.16", default-features = false, features = ["local-runtime"] }
 
 [dev-dependencies]
-github-copilot-sdk = { version = "1.0.16", default-features = false, features = ["runtime"] }
+github-copilot-sdk = { version = "1.0.16", default-features = false, features = ["local-runtime"] }
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 
