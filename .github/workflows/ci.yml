@@ -67,6 +67,11 @@ jobs:
     env:
       # No debug info: faster compiling and linking, and a smaller cache.
       CARGO_PROFILE_DEV_DEBUG: 0
+      # The Copilot SDK's build script would download a Copilot CLI from GitHub's release CDN into
+      # the build machine's cache. Gitr never uses it: it starts the user's own `copilot` through an
+      # explicit path (crates/gitr-ai/src/copilot.rs), and the installer embeds nothing from it. When
+      # the CDN answers 504, the download fails the whole build, so skip it.
+      COPILOT_SKIP_CLI_DOWNLOAD: '1'
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
