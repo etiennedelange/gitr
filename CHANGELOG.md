@@ -5,6 +5,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Changed
+- **Long file lists stay fast.** The Staged and Unstaged lists and a commit's file list now draw only the files in view, so a change or commit with thousands of files opens at once and the arrow keys no longer lag. Short lists look and work as before.
+
 ## [0.2.3] - 2026-11-06
 
 ### Fixed

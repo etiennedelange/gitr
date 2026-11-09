@@ -2361,6 +2361,12 @@ button.icon .count {
 .file-list li:hover {
   background: var(--hover);
 }
+/* The room of the rows a long list doesn't draw (see lib/rowWindow). */
+.file-list li.row-gap {
+  display: block;
+  padding: 0;
+  pointer-events: none;
+}
 .file-list li.active,
 .file-list li.active:hover {
   background: var(--sel);
