@@ -5,6 +5,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.2.5] - 2026-11-09
+
 ### Added
 - **Find in the diff.** Press **Ctrl+F** (or the magnifier above the diff) to search the file's diff. Every match is highlighted, the current one outlined, and **Enter** / **Shift+Enter** step to the next and previous (it scrolls there, even in a very long diff). **Aa** matches case; **Esc** closes. Works in Unified and Split, in Changes and History.
 
