@@ -1,4 +1,14 @@
-import { Fragment, useEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent, type ReactNode, type RefObject } from 'react'
+import {
+  Fragment,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+  type KeyboardEvent,
+  type ReactNode,
+  type RefObject,
+} from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { ChevronDown, ChevronUp, Search, X } from 'lucide-react'
 import { useVirtualizer } from '@tanstack/react-virtual'
@@ -305,7 +315,13 @@ export function DiffView({ repo, source, note, conflicted }: { repo: string; sou
           <span className="find-count" role="status" aria-live="polite">
             {find.query && (count ? `${current + 1} of ${count >= MAX_MATCHES ? `${MAX_MATCHES}+` : count}` : 'No results')}
           </span>
-          <button className="icon small" title="Previous (Shift+Enter)" aria-label="Previous match" disabled={!count} onClick={() => step(-1)}>
+          <button
+            className="icon small"
+            title="Previous (Shift+Enter)"
+            aria-label="Previous match"
+            disabled={!count}
+            onClick={() => step(-1)}
+          >
             <ChevronUp className="ico" aria-hidden />
           </button>
           <button className="icon small" title="Next (Enter)" aria-label="Next match" disabled={!count} onClick={() => step(1)}>
