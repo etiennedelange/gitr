@@ -5,6 +5,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+- **Find in the diff.** Press **Ctrl+F** (or the magnifier above the diff) to search the file's diff. Every match is highlighted, the current one outlined, and **Enter** / **Shift+Enter** step to the next and previous (it scrolls there, even in a very long diff). **Aa** matches case; **Esc** closes. Works in Unified and Split, in Changes and History.
+
 ### Changed
 - **New files show A, not ?.** An untracked file now has the same green **A** as a staged new file, so it keeps its letter when you stage it. Its tooltip says "New file (untracked)".
 
