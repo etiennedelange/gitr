@@ -48,4 +48,23 @@ describe('diff line wrapping', () => {
     fireEvent.click(btn)
     expect(table().classList.contains('wrap')).toBe(false)
   })
+
+  it('scrolls each side of an unwrapped split on its own, and has no bars when wrapped', async () => {
+    localStorage.setItem('diffMode', 'split')
+    const { container } = show()
+    await waitFor(() => expect(container.querySelector('table.hunk.split')).not.toBeNull())
+    const bars = () => container.querySelectorAll('.split-bar')
+    expect(bars()).toHaveLength(2)
+    const frame = container.querySelector('.split-frame') as HTMLElement
+    const [left, right] = Array.from(bars()) as HTMLElement[]
+    left.scrollLeft = 40
+    fireEvent.scroll(left)
+    expect(frame.style.getPropertyValue('--sx-l')).toBe('-40px')
+    expect(frame.style.getPropertyValue('--sx-r')).toBe('')
+    right.scrollLeft = 7
+    fireEvent.scroll(right)
+    expect(frame.style.getPropertyValue('--sx-r')).toBe('-7px')
+    fireEvent.click(screen.getByRole('button', { name: 'Wrap long lines' }))
+    expect(bars()).toHaveLength(0)
+  })
 })

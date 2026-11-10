@@ -9,6 +9,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - **Empty side in Split.** The empty side of a row is a flat, slightly deeper fill instead of diagonal stripes, which looked harsh in dark mode and did not line up from row to row.
 
 ### Fixed
+- **Split diff with wrapping off.** One long line no longer pushes both halves out of the pane: each side scrolls sideways on its own, with its own scrollbar at the bottom, and the line numbers stay in place.
 - **Split diff with wrapping off clipped tab-indented lines.** The columns were sized as if a tab were one character, so lines indented with tabs ran past their half. They are now sized by the columns a tab really takes.
 
 ## [0.2.6] - 2026-11-10

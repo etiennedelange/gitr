@@ -2864,6 +2864,41 @@ mark.find-hit.cur {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
+/* Unwrapped split: each half clips its own code and slides it with its own scrollbar below
+   (the bars set --sx-l and --sx-r on the frame). */
+.hunk.split:not(.wrap) .clip {
+  overflow: hidden;
+}
+.hunk.split:not(.wrap) .slide {
+  display: inline-block;
+  will-change: transform;
+}
+.hunk.split:not(.wrap) .slide.l {
+  transform: translateX(var(--sx-l, 0px));
+}
+.hunk.split:not(.wrap) .slide.r {
+  transform: translateX(var(--sx-r, 0px));
+}
+.split-bars {
+  position: sticky;
+  bottom: 0;
+  display: grid;
+  grid-template-columns: calc(52px * var(--diff-zoom, 1)) minmax(0, 1fr) calc(52px * var(--diff-zoom, 1)) minmax(0, 1fr);
+  font-family: var(--font-mono);
+  font-size: calc(var(--fs-mono) * var(--diff-zoom, 1));
+  background: var(--panel);
+  border-top: 1px solid var(--line);
+}
+.split-bar {
+  overflow-x: auto;
+  overflow-y: hidden;
+  min-width: 0;
+  /* Room for the scrollbar itself (12px, see ::-webkit-scrollbar), where it is not an overlay. */
+  height: 12px;
+}
+.split-bars > span {
+  background: var(--code-gutter);
+}
 .hunk.split .hunk-header td {
   overflow: hidden;
   text-overflow: ellipsis;

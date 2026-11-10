@@ -8,6 +8,7 @@ import {
   type KeyboardEvent,
   type ReactNode,
   type RefObject,
+  type UIEvent,
 } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { ChevronDown, ChevronUp, Search, WrapText, X } from 'lucide-react'
@@ -630,8 +631,8 @@ function Rows({
       case 'pair':
         return (
           <tr key={key} ref={ref} data-index={key}>
-            <Side line={item.left} no={item.left?.oldNo} syntax={syntax} marks={marks.get(`${key}:0`)} />
-            <Side line={item.right} no={item.right?.newNo} syntax={syntax} marks={marks.get(`${key}:1`)} />
+            <Side line={item.left} no={item.left?.oldNo} syntax={syntax} marks={marks.get(`${key}:0`)} slide="l" />
+            <Side line={item.right} no={item.right?.newNo} syntax={syntax} marks={marks.get(`${key}:1`)} slide="r" />
           </tr>
         )
     }
@@ -654,28 +655,53 @@ function Rows({
     )
   }
 
-  // Split without wrapping: both halves are as wide as the longest line, so the table scrolls
-  // sideways and a long line is never clipped, whichever rows are drawn.
+  // Split without wrapping: each half keeps to its own width and scrolls sideways on its own, with
+  // a scrollbar under it (see SideScrollbars), so one side's long line never pushes the other out.
   const wide = useMemo(() => (mode === 'split' && !wrap ? textCols(widestLine(diff)) + 4 : 0), [diff, mode, wrap])
+  const frame = useRef<HTMLDivElement>(null)
 
-  return mode === 'unified' ? (
-    <table className={wrap ? 'hunk unified wrap' : 'hunk unified'}>
-      <tbody>{drawn}</tbody>
-    </table>
-  ) : (
-    // Fixed column widths, so both sides get half whatever their lines are.
-    <table
-      className={wrap ? 'hunk split wrap' : 'hunk split'}
-      style={wrap ? undefined : { width: `calc(${2 * wide}ch + 2 * 52px * var(--diff-zoom, 1))`, minWidth: '100%' }}
-    >
-      <colgroup>
-        <col className="ln-col" />
-        <col style={wrap ? undefined : { width: `${wide}ch` }} />
-        <col className="ln-col" />
-        <col style={wrap ? undefined : { width: `${wide}ch` }} />
-      </colgroup>
-      <tbody>{drawn}</tbody>
-    </table>
+  if (mode === 'unified')
+    return (
+      <table className={wrap ? 'hunk unified wrap' : 'hunk unified'}>
+        <tbody>{drawn}</tbody>
+      </table>
+    )
+  return (
+    <div ref={frame} className="split-frame">
+      {/* Fixed column widths, so both sides get half whatever their lines are. */}
+      <table className={wrap ? 'hunk split wrap' : 'hunk split'}>
+        <colgroup>
+          <col className="ln-col" />
+          <col />
+          <col className="ln-col" />
+          <col />
+        </colgroup>
+        <tbody>{drawn}</tbody>
+      </table>
+      {!wrap && <SideScrollbars frame={frame} wide={wide} />}
+    </div>
+  )
+}
+
+/**
+ * The two sideways scrollbars of an unwrapped split diff, stuck to the bottom of the pane. Each
+ * one slides the code of its own side (through a CSS variable on the frame), the line numbers stay.
+ */
+function SideScrollbars({ frame, wide }: { frame: RefObject<HTMLDivElement | null>; wide: number }) {
+  const slide = (name: '--sx-l' | '--sx-r') => (e: UIEvent<HTMLDivElement>) =>
+    frame.current?.style.setProperty(name, `${-e.currentTarget.scrollLeft}px`)
+  const inner = <div style={{ width: `calc(${wide}ch + 24px * var(--diff-zoom, 1))`, height: 1 }} />
+  return (
+    <div className="split-bars">
+      <span />
+      <div className="split-bar" aria-label="Scroll the old side sideways" onScroll={slide('--sx-l')}>
+        {inner}
+      </div>
+      <span />
+      <div className="split-bar" aria-label="Scroll the new side sideways" onScroll={slide('--sx-r')}>
+        {inner}
+      </div>
+    </div>
   )
 }
 
@@ -716,18 +742,25 @@ function Side({
   no,
   syntax,
   marks,
+  slide,
 }: {
   line: DiffLine | null
   no: number | null | undefined
   syntax: DiffSyntax | undefined
   marks?: Mark[]
+  /** Which side this is: its code slides sideways with that side's scrollbar (unwrapped split). */
+  slide: 'l' | 'r'
 }) {
   return (
     <>
       <td className={`ln ${line?.kind ?? 'empty'}`}>{no ?? ''}</td>
       <td className={`code selectable ${line?.kind ?? 'empty'}`}>
         {line && line.kind !== 'context' && <span className="sign">{sign[line.kind]}</span>}
-        <Code text={line?.text ?? ''} spans={spansOf(line, syntax)} marks={marks} />
+        <div className="clip">
+          <span className={`slide ${slide}`}>
+            <Code text={line?.text ?? ''} spans={spansOf(line, syntax)} marks={marks} />
+          </span>
+        </div>
       </td>
     </>
   )
