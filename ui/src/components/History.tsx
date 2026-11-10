@@ -19,6 +19,7 @@ import { FileViewToggle } from './FileViewToggle'
 import { Splitter } from './Splitter'
 import { useLayout } from '../layout'
 import { buildTree, listRows, treeRows } from '../lib/fileTree'
+import { RowGap, useRowWindow } from '../lib/rowWindow'
 
 const PAGE = 200
 const ROW_H = 44
@@ -408,6 +409,12 @@ function CommitPane({
   const pane = useRef<HTMLDivElement>(null)
   const filesBox = useRef<HTMLDivElement>(null)
   const tree = fileView === 'tree'
+  // A file's place among all of them: its element id, and its position for a screen reader when the
+  // rows out of view aren't drawn. A map, so a commit of thousands of files stays quick.
+  const fileNo = useMemo(() => new Map(files.map((f, i) => [f, i])), [files])
+  // A long list draws only the rows in view; the selected file's row stays among them.
+  const activeRow = useMemo(() => (file ? rows.findIndex((r) => r.kind === 'file' && r.file === file) : -1), [rows, file])
+  const fileWindow = useRowWindow(rows.length, filesRef, activeRow, 0)
 
   const onFilesKey = (e: React.KeyboardEvent) => {
     if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
@@ -470,9 +477,10 @@ function CommitPane({
             ref={filesRef}
             onKeyDown={onFilesKey}
             aria-label="Changed files"
-            aria-activedescendant={file && fi >= 0 ? `file-${files.indexOf(file)}` : undefined}
+            aria-activedescendant={file && fi >= 0 ? `file-${fileNo.get(file)}` : undefined}
           >
-            {rows.map((r) =>
+            <RowGap height={fileWindow.before} />
+            {rows.slice(fileWindow.from, fileWindow.to).map((r) =>
               r.kind === 'folder' ? (
                 <li
                   key={`dir:${r.path}`}
@@ -493,14 +501,16 @@ function CommitPane({
               ) : (
                 <FileRow
                   key={r.file.path}
-                  id={`file-${files.indexOf(r.file)}`}
+                  id={`file-${fileNo.get(r.file)}`}
                   f={r.file}
+                  place={tree ? null : { no: (fileNo.get(r.file) ?? 0) + 1, of: files.length }}
                   depth={tree ? r.depth : null}
                   active={r.file === file}
                   onSelect={() => setSelPath(r.file.path)}
                 />
               ),
             )}
+            <RowGap height={fileWindow.after} />
           </ul>
         )}
         {details.data?.truncated && <div className="banner small">Too many files to list them all.</div>}
@@ -593,8 +603,15 @@ function Totals({ files }: { files: CommitFile[] }) {
 }
 
 /** A changed file; `depth` is its level in the tree view, null in the list view. */
-function FileRow(props: { id: string; f: CommitFile; depth: number | null; active: boolean; onSelect: () => void }) {
-  const { id, f, depth, active, onSelect } = props
+function FileRow(props: {
+  id: string
+  f: CommitFile
+  depth: number | null
+  place: { no: number; of: number } | null
+  active: boolean
+  onSelect: () => void
+}) {
+  const { id, f, depth, place, active, onSelect } = props
   const st = letterStatus(f.status.charAt(0) || 'M')
   const tree = depth !== null
   return (
@@ -602,6 +619,8 @@ function FileRow(props: { id: string; f: CommitFile; depth: number | null; activ
       id={id}
       role={tree ? 'treeitem' : 'option'}
       aria-level={tree ? depth + 1 : undefined}
+      aria-posinset={place?.no}
+      aria-setsize={place?.of}
       aria-selected={active}
       className={active ? 'active' : ''}
       style={depth ? ({ '--depth': depth } as CSSProperties) : undefined}
