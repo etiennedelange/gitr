@@ -6,7 +6,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [Unreleased]
 
 ### Changed
-- **The diff looks like code.** The diff now sits on its own surface (white in light, near-black in dark) apart from the app's warm chrome, with a tinted line-number gutter, a darker file header, blue-tinted hunk headers, a coloured edge bar on added and removed lines, and a hatched filler for the empty side in Split.
+- **The diff looks like code.** The diff now sits on its own surface (warm grey in light, near-black in dark) apart from the app's warm chrome, with a tinted line-number gutter, a darker file header, blue-tinted hunk headers, a coloured edge bar on added and removed lines, and a hatched filler for the empty side in Split.
 
 ## [0.2.5] - 2026-11-09
 
