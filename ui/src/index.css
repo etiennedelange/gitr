@@ -150,9 +150,9 @@
   --hunk-bg: #e7e9ec;
   --hunk-ink: #46567a;
   /* The code surface: the diff is its own paper, apart from the app's warm chrome. */
-  --code-bg: #eeebe5;
-  --code-gutter: #e3dfd8;
-  --code-head: #e4e1da;
+  --code-bg: #f6f4ef;
+  --code-gutter: #ebe8e1;
+  --code-head: #e9e6df;
 
   /* Syntax colours in diffs: no green or red, which mean added and removed there. */
   --syn-keyword: #2a4fc4;
