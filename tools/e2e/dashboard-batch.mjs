@@ -109,7 +109,7 @@ try {
   const W = (expr, what, ms) => app.waitFor(`(() => { const e = window.__e2e; return ${expr} })()`, what, ms)
   const rowText = (name) => E(`(() => { const r = e.dashRow('${name}'); return r ? e.text(r) : null })()`)
 
-  await E(`document.querySelector('.nav-item').click()`)
+  await E(`document.querySelector('.home-button').click()`)
   await W(`document.querySelectorAll('.table-body .row').length >= 5`, 'dashboard rows', 20000)
 
   // ---- Fetch all ----

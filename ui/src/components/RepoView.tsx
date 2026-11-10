@@ -6,6 +6,7 @@ import { api } from '../api'
 import { splitChanges } from '../lib/git'
 import { canContinue, canSkip, operationNoun, operationTitle } from '../lib/operation'
 import { reportOutcome, runIntegrate } from '../lib/integrate'
+import { abortOperation as abortOp } from '../lib/abortOperation'
 import { runPush } from '../lib/send'
 import { notifyError, useAction, useBusy, useRepos } from '../hooks'
 import { useApp } from '../store'
@@ -13,7 +14,7 @@ import type { LinkTarget } from '../types'
 import { Changes } from './Changes'
 import { Branches } from './Branches'
 import { History } from './History'
-import { StopButton } from './Busy'
+import { BusyChip } from './Busy'
 import { HookPanel } from './HookPanel'
 import { DropMenu, type DropMenuItem } from './DropMenu'
 
@@ -64,22 +65,7 @@ export function RepoView({ path }: { path: string }) {
   }
 
   const abortOperation = async () => {
-    if (!s?.operation) return
-    const bisect = s.operation === 'bisecting'
-    const noun = operationNoun(s.operation)
-    const ok = await ask(
-      bisect
-        ? 'End the bisect? You go back to the branch and commit you started it from.'
-        : `Abort the ${noun}? Your branch goes back to how it was before the ${noun} started.`,
-      { title: bisect ? 'End bisect' : `Abort ${noun}`, kind: 'warning' },
-    )
-    if (!ok) return
-    try {
-      await api.abortOperation(path)
-      useApp.getState().toast('info', bisect ? 'Bisect ended' : `${noun.charAt(0).toUpperCase()}${noun.slice(1)} aborted`)
-    } catch (e) {
-      notifyError(e)
-    }
+    if (s?.operation) await abortOp(path, s.operation)
   }
 
   // Skip throws away the commit it stopped on and any conflict resolutions made for it.
@@ -169,14 +155,7 @@ export function RepoView({ path }: { path: string }) {
           </span>
         </div>
         <div className="spacer" />
-        {busyOp && (
-          <>
-            <span className="pill running busy" role="status">
-              {busyOp}…
-            </span>
-            <StopButton path={path} op={busyOp} label />
-          </>
-        )}
+        <BusyChip path={path} />
         <div className="head-actions">
           <div className="icon-group" role="group" aria-label="Sync">
             <button
@@ -186,7 +165,7 @@ export function RepoView({ path }: { path: string }) {
               aria-label={busyOp === 'fetching' ? 'Fetching…' : 'Fetch'}
               title="Fetch from the remote"
             >
-              <RefreshCw className={`ico ${busyOp === 'fetching' ? 'spin' : ''}`} aria-hidden />
+              <RefreshCw className="ico" aria-hidden />
             </button>
             <button
               className={`icon ${s?.behind ? 'counted next next-behind' : ''}`}

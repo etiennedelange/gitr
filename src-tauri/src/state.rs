@@ -222,6 +222,8 @@ pub struct RepoSummary {
     pub operation: Option<Operation>,
     /// The commit HEAD points at (None on an unborn branch); the History tab reloads when it moves.
     pub head: Option<String>,
+    /// The HEAD commit's subject and time, for the dashboard's detailed cards.
+    pub last_commit: Option<gitr_core::info::LastCommit>,
 }
 
 pub async fn summarize(git: &Git, path: &Path) -> RepoSummary {
@@ -246,6 +248,7 @@ pub async fn summarize(git: &Git, path: &Path) -> RepoSummary {
             error: None,
             operation: info.operation,
             head: st.oid.clone(),
+            last_commit: info.last_commit,
         },
         Err(e) => RepoSummary {
             path: path_str,
@@ -261,6 +264,7 @@ pub async fn summarize(git: &Git, path: &Path) -> RepoSummary {
             error: Some(CmdError::from(e).message),
             operation: info.operation,
             head: None,
+            last_commit: info.last_commit,
         },
     }
 }

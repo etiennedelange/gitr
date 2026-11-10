@@ -58,6 +58,26 @@ describe('branches', () => {
     expect(screen.getByRole('button', { name: /Create/ })).toBeEnabled()
   })
 
+  it('keeps Create enabled with no name, and says what is missing when pressed', async () => {
+    wrap()
+    await screen.findByText('feature')
+    const create = screen.getByRole('button', { name: /Create/ })
+    expect(create).toBeEnabled()
+    fireEvent.click(create)
+    expect(screen.getByRole('alert').textContent).toBe('Type a name for the new branch.')
+    expect(document.activeElement).toBe(screen.getByRole('textbox', { name: 'New branch name' }))
+    expect(api.createBranch).not.toHaveBeenCalled()
+    fireEvent.change(screen.getByRole('textbox', { name: 'New branch name' }), { target: { value: 'x' } })
+    expect(screen.queryByRole('alert')).toBeNull()
+  })
+
+  it('labels the filter and new-name fields beyond their placeholders', async () => {
+    wrap()
+    await screen.findByText('feature')
+    expect(screen.getByRole('textbox', { name: 'Filter branches' })).toBeInTheDocument()
+    expect(screen.getByRole('textbox', { name: 'New branch name' })).toBeInTheDocument()
+  })
+
   it('names the current branch for assistive technology', async () => {
     wrap()
     await screen.findByText('feature')
@@ -71,6 +91,7 @@ describe('branches', () => {
     await act(async () => fireEvent.click(screen.getByRole('button', { name: 'Delete' })))
     await flush()
     expect(ask.mock.calls[0][0]).toMatch(/3 commits not pushed/)
+    expect(ask.mock.calls[0][1]).toMatchObject({ okLabel: 'Delete branch', cancelLabel: 'Cancel' })
     expect(api.deleteBranch).toHaveBeenCalled()
     expect(api.repoSummary).toHaveBeenCalledWith(PATH)
   })

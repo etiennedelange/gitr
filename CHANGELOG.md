@@ -5,6 +5,79 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+- **Experiments in Settings.** A new Experiments section holds beta features, off by default. The first is **Spotlight diff**: unchanged lines fade so the changes stand out, removed code is struck through, and the line under the pointer lights up.
+
+### Added
+- **Wrap long lines in the diff.** Lines no longer wrap by default, in Unified or Split: long ones scroll sideways. The wrap button above the diff turns wrapping on and off, and Gitr remembers the choice.
+- **+ and − in Split.** Added and removed lines carry their sign in Split too.
+
+### Changed
+- **The diff looks like code.** The diff now sits on its own surface (warm grey in light, near-black in dark) apart from the app's warm chrome, with a tinted line-number gutter, a darker file header, blue-tinted hunk headers, a coloured edge bar on added and removed lines, and a hatched filler for the empty side in Split.
+
+## [0.2.5] - 2026-11-09
+
+### Added
+- **Find in the diff.** Press **Ctrl+F** (or the magnifier above the diff) to search the file's diff. Every match is highlighted, the current one outlined, and **Enter** / **Shift+Enter** step to the next and previous (it scrolls there, even in a very long diff). **Aa** matches case; **Esc** closes. Works in Unified and Split, in Changes and History.
+
+### Changed
+- **New files show A, not ?.** An untracked file now has the same green **A** as a staged new file, so it keeps its letter when you stage it. Its tooltip says "New file (untracked)".
+
+## [0.2.4] - 2026-11-09
+
+### Changed
+- **Long file lists stay fast.** The Staged and Unstaged lists and a commit's file list now draw only the files in view, so a change or commit with thousands of files opens at once and the arrow keys no longer lag. Short lists look and work as before.
+
+## [0.2.3] - 2026-11-06
+
+### Fixed
+- **The window buttons line up with the toolbar.** Minimise, Maximise and Close are now centred on the same line as the toolbar icons beside them.
+
+### Security
+- **The updater no longer includes a zip library.** Gitr's updates are a signed installer, never a zip file, so the zip code (which had an advisory, RUSTSEC-2026-0429) is gone from the app.
+
+## [0.2.2] - 2026-11-06
+
+### Changed
+- **One surface, no title bar.** The Windows title bar is gone: the sidebar and the main area now run to the top of the window, and Minimise, Maximise and Close sit at the top right, beside the toolbar. Drag the window by the top bar (beside "Gitr" or the page title), and double-click it to maximise or restore.
+
+## [0.2.1] - 2026-11-05
+
+### Changed
+- **Ledger: a quieter, warmer look.** Gitr has its own design system, Ledger, and the whole app now follows it.
+  - **Colours.** Both themes use warm neutrals instead of cool blue-greys, with a calmer cobalt. The colours for changes, behind, ahead, in progress (now violet) and trouble were retuned to match, and differ in lightness too, so they stay apart with red–green colour blindness. Text-field and dropdown borders are darker, so they're easier to see.
+  - **No floating pane.** The main area now runs to the window's edges, with one thin line between it and the sidebar.
+  - **Home.** The **Dashboard** entry is now a home icon beside "Gitr", with a small violet dot when a repository needs attention.
+  - **The dashboard reads like a ledger.** Names are regular weight and clean repositories are shown in softer grey. Behind and ahead are plain numbers (↓12 ↑1) instead of bars, a zero leaves the cell empty instead of showing a dash, and branch names show their folder path dimmed so the branch's own name reads first. Each group's heading ends with a one-line summary, such as "2 with changes · 1 behind".
+  - **What needs you, in a banner.** Repositories with a merge or rebase waiting, conflicts or a failed fetch are listed in a banner above the dashboard, each with its next step: **Abort** (after asking), **Retry** for a failed fetch, and **Open**. They no longer move to a separate "Needs attention" section; they stay in their own group, sorted first. More than three fold under **Show N more**.
+  - **A quieter sidebar.** The sidebar shows each repository's mark and name; the counts are on the dashboard, and screen readers still hear them.
+- **A tidier "Fetching" indicator.** While a repository fetches, pulls, pushes or commits, the top of the repository view and the dashboard now show a small spinner and the operation's name ("Fetching") with a Stop button beside it, instead of lower-case pulsing text and a separate **Stop** button. The Fetch button no longer spins as well, and a quick operation no longer flashes the indicator on and off.
+
+### Fixed
+- **Numbers in the dashboard kept shifting.** Counts and badges now use even-width digits, so a column of numbers stays aligned as they change.
+- **Card names are easier to click.** Their click area is now at least 24 pixels tall.
+- **The dashboard search box** reads "Search name or branch…"; its Ctrl+F shortcut is in the tooltip and announced to screen readers.
+
+## [0.2.0] - 2026-10-26
+
+### Added
+- **Dashboard cards.** The dashboard now shows each repository as a card by default. The table is still there: a **Table / Cards / Details** switch next to the group and sort menus changes between the table, compact cards and detailed cards, and Gitr remembers your choice. Cards show the branch, counts, behind and ahead, and the status, with **Pull** when commits are waiting and **Push** when you have commits to send. If a hook rejects a push, the message offers to show the hook's output. Detailed cards also show the remote, the upstream branch, staged and unstaged files, and the last commit's subject and age.
+- **New changes stand out.** When a repository gets new changes, incoming or outgoing commits, or an error, its card briefly lights up in that colour and a small dot stays beside its counts until you hover over or open it. With animations turned off in Windows, only the dot shows.
+
+### Changed
+- **A calmer, clearer look.** Every view now sits on one sheet beside the sidebar, with a cobalt accent, larger controls and more room between rows. Cards lift off the page, and their Open in VS Code, terminal and More buttons appear when you point at a card. Incoming commits are now shown in cyan, so they are never confused with the selection. The mark beside the name at the top of the sidebar is now a branch merging back, drawn in the accent.
+- **Settings, reorganised.** Settings now sits centred on the page. Each setting is a row with a short explanation under its name and the control on the right, grouped per section. On and off settings are switches, the theme is a three-way switch (Match Windows, Light, Dark), and each workspace group shows how many repositories it holds. Keyboard shortcuts are grouped by where they work and drawn as keys. The bar at the top says when you have unsaved changes.
+- **Groups no longer have colours.** The coloured stripes and squares beside workspace groups in the sidebar, the dashboard table and the cards are gone, and so is the colour choice in **Settings → Workspaces**; a colour saved by an earlier version is dropped the next time settings are saved. Groups are told apart by their headings and the space between them; a card outside its group's heading names the group instead.
+
+### Fixed
+- **Windows narrower than 1100 pixels showed nothing.** With the window between its minimum width and 1100 pixels, the dashboard, a repository and Settings all came up blank beside the sidebar's icon strip. They now show as they do in a wider window.
+- **Buttons looked cut off in the dark theme.** Their bottom edge disappeared against the panel behind them. Buttons and text boxes now have an even border all round, in both themes.
+- **Clearer for screen readers in Settings.** Each workspace group's buttons now say which group they act on (for example "Remove group Work").
+- **Clearer confirmations.** Deleting a branch, discarding files that can't go to the Recycle Bin, aborting a merge or rebase, ending a bisect, removing a stale lock and trusting a folder now ask with buttons that say what they do (for example **Delete branch** / **Cancel**) instead of Yes / No.
+- **Better with a screen reader.** Info messages such as "Deleted feature" are now read out, the Stage, Unstage and Discard buttons in Changes say which file they act on, and the branch filter, new-branch name and Ctrl+P fields have labels. Those row buttons are also a little bigger to hit.
+- **Create & checkout explains an empty name.** The button no longer sits disabled until you type; pressing it with no name says what's missing.
+- **Dates in your format.** Commit dates and times follow your Windows region settings (for example "Oct 3, 2026, 2:02 PM" in the US), and "5 min ago" no longer wraps between the number and "min".
+
 ### Security
 - **Safer connections.** Updated the TLS library Gitr uses for updates and AI requests (rustls 0.23.46, rustls-webpki 0.103.16, webpki-root-certs 1.0.10). The fixes stop a forged server reply from weakening later connections, close a way for certificates from distrusted authorities to be accepted, and remove distrusted root certificates.
 

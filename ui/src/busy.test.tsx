@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test'
+import { useLayout } from './layout'
 import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import type React from 'react'
@@ -89,7 +90,7 @@ const { api } = await import('./api')
 const { Dashboard } = await import('./components/Dashboard')
 const { Sidebar } = await import('./components/Sidebar')
 const { RepoView } = await import('./components/RepoView')
-const { BUSY_DISPLAY_DELAY, notifyError } = await import('./hooks')
+const { BUSY_DISPLAY_DELAY, BUSY_MIN_VISIBLE, notifyError } = await import('./hooks')
 const { ask } = await import('@tauri-apps/plugin-dialog')
 
 const wrap = (ui: React.ReactNode) =>
@@ -99,6 +100,8 @@ const setBusy = (op: string | null) => act(() => useApp.getState().setRepoBusy(P
 const sleep = (ms: number) => act(() => new Promise((r) => setTimeout(r, ms)))
 const button = (name: RegExp | string) => screen.getByRole('button', { name })
 
+// These tests read the ledger table; the cards have their own tests.
+beforeEach(() => useLayout.setState({ dashboardView: 'table' }))
 describe('busy repositories', () => {
   beforeEach(() => {
     useApp.setState({ busy: {}, batch: {}, summaries: { [PATH]: summary }, toasts: [] })
@@ -106,15 +109,18 @@ describe('busy repositories', () => {
   })
   afterEach(cleanup)
 
-  it('dashboard row shows the operation as a pill after the display delay, and clears when idle', async () => {
+  it('dashboard row shows the operation with a spinner after the display delay, and clears when idle', async () => {
     wrap(<Dashboard />)
     const row = (await screen.findByRole('button', { name: 'repo' })).closest('.row') as HTMLElement
     setBusy('committing')
-    expect(within(row).queryByText('committing…')).toBeNull()
+    expect(within(row).queryByRole('status')).toBeNull()
     await sleep(BUSY_DISPLAY_DELAY + 50)
-    expect(within(row).getByText('committing…')).toHaveClass('pill', 'running')
+    expect(within(row).getByRole('status')).toHaveTextContent('Committing…')
+    // A quick operation stays on screen for the minimum time instead of flashing off.
     setBusy(null)
-    expect(within(row).queryByText('committing…')).toBeNull()
+    expect(within(row).getByRole('status')).toBeInTheDocument()
+    await sleep(BUSY_MIN_VISIBLE)
+    expect(within(row).queryByRole('status')).toBeNull()
   })
 
   it('sidebar repo shows a busy indicator with the operation', async () => {
@@ -123,7 +129,7 @@ describe('busy repositories', () => {
     expect(within(item).queryByRole('status')).toBeNull()
     setBusy('pulling')
     await sleep(BUSY_DISPLAY_DELAY + 50)
-    expect(within(item).getByRole('status')).toHaveAttribute('title', 'pulling…')
+    expect(within(item).getByRole('status')).toHaveAttribute('title', 'Pulling…')
   })
 
   it('repo view disables every write while busy and shows the operation', async () => {
@@ -145,7 +151,7 @@ describe('busy repositories', () => {
 
     setBusy('committing')
     await sleep(BUSY_DISPLAY_DELAY + 50)
-    expect(screen.getByRole('status')).toHaveTextContent('committing…')
+    expect(screen.getByRole('status')).toHaveTextContent('Committing')
     expect(button('Committing…')).toBeDisabled()
     writes().forEach((b) => expect(b).toBeDisabled())
 
@@ -212,6 +218,7 @@ describe('busy repositories', () => {
     expect(api.cancelOperation).toHaveBeenCalledWith(PATH)
     expect(row).not.toHaveClass('cursor')
     setBusy(null)
+    await sleep(BUSY_MIN_VISIBLE)
     expect(within(row).queryByRole('button', { name: /Stop/ })).toBeNull()
   })
 

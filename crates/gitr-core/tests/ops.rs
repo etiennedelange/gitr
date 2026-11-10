@@ -201,3 +201,20 @@ async fn summary_status_does_not_walk_untracked_folders() {
     assert_eq!(paths(g.status_summary(&dir).await.unwrap()), ["build/", "loose.txt"]);
     assert_eq!(paths(g.status(&dir).await.unwrap()), ["build/a.o", "build/deep/b.o", "loose.txt"]);
 }
+
+#[test]
+fn read_info_gives_the_head_commit_subject_and_time() {
+    let tmp = tempfile::tempdir().unwrap();
+    let dir = tmp.path().join("repo");
+    std::fs::create_dir_all(&dir).unwrap();
+    init(&dir);
+    assert_eq!(info::read_info(&dir).last_commit, None, "unborn branch");
+
+    write(&dir, "a.txt", "one\n");
+    git(&dir, &["add", "."]);
+    git(&dir, &["commit", "-q", "-m", "Export invoices as CSV\n\nWith a header row."]);
+    let last = info::read_info(&dir).last_commit.unwrap();
+    assert_eq!(last.subject, "Export invoices as CSV");
+    // The committer date the test environment pins (2000-01-02), not the author date.
+    assert_eq!(last.time, 946_771_200);
+}

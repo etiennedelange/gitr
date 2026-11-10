@@ -20,13 +20,15 @@ const contrast = (a: string, b: string) => {
   return (hi + 0.05) / (lo + 0.05)
 }
 
-const SURFACES = ['bg', 'rail', 'panel', 'raised', 'field', 'overlay', 'hunk-bg']
+const SURFACES = ['bg', 'rail', 'panel', 'raised', 'field', 'overlay', 'hunk-bg', 'code-bg']
 const SYNTAX = ['syn-keyword', 'syn-type', 'syn-function', 'syn-string', 'syn-number', 'syn-comment', 'syn-meta']
 // [text tokens, the backgrounds they sit on, minimum ratio]
 const PAIRS: [string[], string[], number][] = [
   [['ink', 'ink-2', 'ink-3', 'accent-text', 'amber-ink', 'blue-ink', 'green-ink', 'red-ink', 'hunk-ink', ...SYNTAX], SURFACES, 4.5],
   [['ink', 'ink-3', 'add-ink', ...SYNTAX], ['add-bg', 'add-ln'], 4.5],
   [['ink', 'ink-3', 'del-ink', ...SYNTAX], ['del-bg', 'del-ln'], 4.5],
+  // The gutter and file header hold only line numbers, the path and the + / - signs.
+  [['ink', 'ink-2', 'ink-3', 'add-ink', 'del-ink'], ['code-gutter', 'code-head'], 4.5],
   [['sel-ink', 'ink', 'ink-2'], ['sel'], 4.5],
   [['amber-ink'], ['amber-soft'], 4.5],
   [['blue-ink'], ['blue-soft'], 4.5],
@@ -34,11 +36,8 @@ const PAIRS: [string[], string[], number][] = [
   [['red-ink'], ['red-soft'], 4.5],
   [['accent-ink'], ['accent'], 4.5],
   [['red-on'], ['red'], 4.5],
-  [
-    ['accent', 'focus', 'amber', 'blue', 'green', 'red', 'g-teal', 'g-rose', 'g-ochre', 'g-slate', 'g-olive', 'g-plum'],
-    ['bg', 'rail', 'panel', 'raised'],
-    3,
-  ],
+  [['violet-ink'], ['violet-soft', 'bg', 'rail', 'panel', 'raised'], 4.5],
+  [['accent', 'focus', 'amber', 'blue', 'green', 'red', 'violet', 'line-edge'], ['bg', 'rail', 'panel', 'raised', 'field'], 3],
 ]
 
 describe('dark theme', () => {
@@ -53,5 +52,16 @@ describe('dark theme', () => {
 
   it('keeps large surfaces well off black, for OLED screens', () => {
     for (const s of ['bg', 'rail', 'panel', 'field']) expect(luminance(t[s]), s).toBeGreaterThan(luminance('#1c1c1c'))
+  })
+})
+
+describe('light theme', () => {
+  const t = tokens(":root[data-theme='light']")
+
+  it('meets WCAG AA contrast for every text and shape colour on the surfaces it sits on', () => {
+    const failures = PAIRS.flatMap(([fgs, bgs, min]) =>
+      fgs.flatMap((fg) => bgs.map((bg) => ({ fg, bg, ratio: contrast(t[fg], t[bg]), min }))),
+    ).filter((p) => !(p.ratio >= p.min))
+    expect(failures.map((f) => `${f.fg} on ${f.bg}: ${f.ratio.toFixed(2)} < ${f.min}`)).toEqual([])
   })
 })

@@ -8,13 +8,12 @@
 //   pnpm screenshots repo            # just the named scene(s)
 //
 // Writes, for each theme × scene, to tools/screenshots/out/ (not committed), for looking at:
-//   raw/<scene>-<theme>.png   client area only, 2800×1736
-//   <scene>-<theme>.webp      window with a drawn title bar, on a backdrop
+//   raw/<scene>-<theme>.png   the window's content, 2800×1800
+//   <scene>-<theme>.webp      the window on a backdrop
 // and copies the framed shots the README shows (PUBLISHED) to docs/screenshots/, which is
 // committed.
 //
-// Gitr uses the native Windows title bar, which a browser can't render, so the framed shots
-// draw a Windows 11 style one (icon, "Gitr", caption buttons) in the theme's colours.
+// Gitr has no native title bar: it draws its own caption buttons, so the shot is the whole window.
 //
 // First run needs a browser: `pnpm exec playwright install chromium`
 // (add `--with-deps` on a fresh Linux box).
@@ -29,13 +28,10 @@ const ROOT = join(HERE, '..', '..')
 const UI = join(ROOT, 'ui')
 const DOCS = join(ROOT, 'docs', 'screenshots')
 const OUT = join(HERE, 'out')
-const ICON = readFileSync(join(ROOT, 'src-tauri', 'icons', 'icon.svg'), 'utf8')
 
 // Window size in CSS px (the default from tauri.conf.json); captured at 2x.
 const W = 1400
 const H = 900
-const TITLE_H = 32
-const CLIENT_H = H - TITLE_H
 
 const THEMES = ['light', 'dark']
 
@@ -47,13 +43,23 @@ const WEBP_QUALITY = 0.95
 // Preview URL parameters per scene; see the table in ui/src/preview/README.md.
 const SCENES = {
   dashboard: { scenario: 'default' },
+  // `layout` is not a preview parameter: it sets the remembered dashboard layout (compact cards by default).
+  'dashboard-detailed': { scenario: 'default', layout: 'detailed' },
+  'dashboard-table': { scenario: 'default', layout: 'table' },
   repo: { scenario: 'default', view: 'repo', repo: 'billing-service', file: 'InvoiceExporter.cs', message: 'Export invoices as CSV and PDF' },
   history: { scenario: 'default', view: 'repo', repo: 'billing-service', tab: 'history' },
   // `diff` is not a preview parameter: it sets the remembered diff mode before the page loads.
   split: { scenario: 'default', view: 'repo', repo: 'billing-service', file: 'InvoiceExporter.cs', diff: 'split' },
   // `extent` is not a preview parameter either: it sets the remembered Hunks / Full file choice.
+  // `find` is not a preview parameter: it opens Find in diff (Ctrl+F) and types that text.
+  find: { scenario: 'default', view: 'repo', repo: 'billing-service', file: 'InvoiceExporter.cs', find: 'writers' },
   'full-file': { scenario: 'default', view: 'repo', repo: 'billing-service', file: 'InvoiceExporter.cs', extent: 'full' },
   conflict: { scenario: 'default', view: 'repo', repo: 'identity-server' },
+  busy: { scenario: 'many', view: 'repo', repo: 'scheduler' },
+  settings: { scenario: 'default', view: 'settings' },
+  // `section` is not a preview parameter: it scrolls Settings to that section before the shot.
+  'settings-experiments': { scenario: 'default', view: 'settings', section: 'experiments' },
+  'settings-appearance': { scenario: 'default', view: 'settings', section: 'appearance' },
   'first-run': { scenario: 'empty' },
   // `wait` is not a preview parameter: the update check runs 5 s after startup.
   update: { scenario: 'default', update: 'available', wait: 5800 },
@@ -64,14 +70,15 @@ const FONTS = 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500&displ
 
 // Title bar colours (Windows 11 defaults) and backdrop: two glows and a base, from the app palette.
 const LOOK = {
-  light: { bar: '#f3f3f3', ink: '#1a1a1a', glows: ['#9fb59a', '#8c9bd8'], base: '#e8eae3' },
-  dark: { bar: '#202020', ink: '#ffffff', glows: ['#3d4a3c', '#3a4380'], base: '#101210' },
+  light: { glows: ['#9fb59a', '#8c9bd8'], base: '#e8eae3' },
+  dark: { glows: ['#3d4a3c', '#3a4380'], base: '#101210' },
 }
 
-async function captureRaw(browser, url, theme, { diff, extent, wait, ...params }, out) {
-  const ctx = await browser.newContext({ viewport: { width: W, height: CLIENT_H }, deviceScaleFactor: 2 })
+async function captureRaw(browser, url, theme, { diff, extent, layout, section, find, wait, ...params }, out) {
+  const ctx = await browser.newContext({ viewport: { width: W, height: H }, deviceScaleFactor: 2 })
   if (diff) await ctx.addInitScript((mode) => localStorage.setItem('diffMode', mode), diff)
   if (extent) await ctx.addInitScript((e) => localStorage.setItem('diffExtent', e), extent)
+  if (layout) await ctx.addInitScript((v) => localStorage.setItem('layout', JSON.stringify({ dashboardView: v })), layout)
   const page = await ctx.newPage()
   const q = new URLSearchParams({ chrome: '0', theme, ...params })
   await page.goto(`${url}preview.html?${q}`)
@@ -80,17 +87,21 @@ async function captureRaw(browser, url, theme, { diff, extent, wait, ...params }
   await page.waitForSelector('#root > *')
   // The preview selects the file and fills the commit box after 400 ms; let that and the diff land.
   await page.waitForTimeout(wait ?? (params.view === 'repo' ? 1200 : 600))
-  await page.mouse.move(W - 5, CLIENT_H - 5)
+  if (section) await page.evaluate((id) => document.getElementById(`settings-${id}`)?.scrollIntoView({ block: 'start' }), section)
+  if (find) {
+    await page.keyboard.press('Control+f')
+    await page.keyboard.type(find)
+    await page.keyboard.press('Enter')
+    await page.waitForTimeout(300)
+  }
+  await page.mouse.move(W - 5, H - 5)
   await page.screenshot({ path: out })
   await ctx.close()
 }
 
-const glyph = (d) => `<svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1">${d}</svg>`
-
 async function frame(page, theme, rawPath, out) {
-  const { bar, ink, glows: [a, b], base } = LOOK[theme]
+  const { glows: [a, b], base } = LOOK[theme]
   const img = readFileSync(rawPath).toString('base64')
-  const icon = Buffer.from(ICON).toString('base64')
   await page.setContent(`<!doctype html><link rel="stylesheet" href="${FONTS}"><style>
     html, body { margin: 0; height: 100%; }
     body {
@@ -104,22 +115,9 @@ async function frame(page, theme, rawPath, out) {
       width: ${W}px; height: ${H}px; border-radius: 8px; overflow: hidden;
       box-shadow: 0 0 0 1px rgba(0,0,0,.25), 0 2px 6px rgba(0,0,0,.18), 0 30px 80px rgba(0,0,0,.40);
     }
-    .bar {
-      height: ${TITLE_H}px; display: flex; align-items: center; background: ${bar}; color: ${ink};
-      font: 12px/1 Inter, 'Segoe UI', sans-serif;
-    }
-    .bar img { width: 16px; height: 16px; margin: 0 10px 0 14px; }
-    .bar span { flex: 1; }
-    .bar i { width: 46px; height: 100%; display: grid; place-items: center; }
-    .win > img { display: block; width: ${W}px; height: ${CLIENT_H}px; }
+    .win > img { display: block; width: ${W}px; height: ${H}px; }
   </style>
   <div class="win">
-    <div class="bar">
-      <img src="data:image/svg+xml;base64,${icon}"><span>Gitr</span>
-      <i>${glyph('<path d="M0 5.5h10"/>')}</i>
-      <i>${glyph('<rect x=".5" y=".5" width="9" height="9" rx="1"/>')}</i>
-      <i>${glyph('<path d="M.5 .5l9 9M9.5 .5l-9 9"/>')}</i>
-    </div>
     <img src="data:image/png;base64,${img}">
   </div>`)
   await page.evaluate(() => document.fonts.ready)

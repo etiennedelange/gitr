@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { listen } from '@tauri-apps/api/event'
 import { useIsMutating, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api, asCmdError, errorDetail, errorMessage } from './api'
@@ -100,25 +100,39 @@ export function useRescan() {
 
 /** How long a repo must be busy before the UI shows it (avoids flicker on fast writes). */
 export const BUSY_DISPLAY_DELAY = 200
+/** Once shown, a busy indicator stays at least this long, so it never flashes on and off. */
+export const BUSY_MIN_VISIBLE = 400
 
 /**
  * The operation running on `path` (e.g. "committing") once it has lasted BUSY_DISPLAY_DELAY,
  * else null. The backend queues writes regardless, so a click during the delay is safe.
+ * Indicators pass `minVisible` (BUSY_MIN_VISIBLE) so a quick operation doesn't flash off;
+ * controls leave it at 0, so they re-enable the moment the operation ends.
  */
-export function useBusy(path: string): string | null {
+export function useBusy(path: string, minVisible = 0): string | null {
   const op = useApp((s) => s.busy[path] ?? null)
   const [shown, setShown] = useState<string | null>(null)
+  const shownAt = useRef(0)
   useEffect(() => {
     if (!op) {
-      setShown(null)
-      return
+      if (!shown) return
+      const left = minVisible - (Date.now() - shownAt.current)
+      if (left <= 0) {
+        setShown(null)
+        return
+      }
+      const t = setTimeout(() => setShown(null), left)
+      return () => clearTimeout(t)
     }
     // Already showing: switch the label right away (e.g. fetching → pulling).
     if (shown) {
       setShown(op)
       return
     }
-    const t = setTimeout(() => setShown(op), BUSY_DISPLAY_DELAY)
+    const t = setTimeout(() => {
+      shownAt.current = Date.now()
+      setShown(op)
+    }, BUSY_DISPLAY_DELAY)
     return () => clearTimeout(t)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [op])

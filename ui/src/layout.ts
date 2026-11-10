@@ -3,6 +3,10 @@ import { create } from 'zustand'
 /** How changed files are listed: as a folder tree, or flat with each file's folder beside it. */
 export type FileView = 'tree' | 'list'
 
+/** How the dashboard shows repositories: the ledger table, compact cards or detailed cards. */
+export type DashboardView = 'table' | 'compact' | 'detailed'
+const DASHBOARD_VIEWS: DashboardView[] = ['table', 'compact', 'detailed']
+
 /** Pane sizes the user dragged, in CSS pixels; absent means the pane's default. */
 export interface PaneSizes {
   /** Width of the sidebar. */
@@ -22,6 +26,8 @@ export type Pane = keyof PaneSizes
 interface LayoutStore extends PaneSizes {
   fileView: FileView
   setFileView: (v: FileView) => void
+  dashboardView: DashboardView
+  setDashboardView: (v: DashboardView) => void
   /** `undefined` puts the pane back to its default size. */
   setPane: (pane: Pane, size: number | undefined) => void
 }
@@ -30,7 +36,9 @@ const KEY = 'layout'
 const PANES: Pane[] = ['sidebar', 'changesList', 'changesSplit', 'historyList', 'historyFiles']
 
 /** The saved layout; anything missing or malformed falls back to the default. */
-function load(): PaneSizes & { fileView: FileView } {
+type Saved = PaneSizes & { fileView: FileView; dashboardView: DashboardView }
+
+function load(): Saved {
   let saved: Record<string, unknown> = {}
   try {
     const v: unknown = JSON.parse(localStorage.getItem(KEY) ?? '{}')
@@ -38,7 +46,10 @@ function load(): PaneSizes & { fileView: FileView } {
   } catch {
     // Unreadable storage: start from the defaults.
   }
-  const out: PaneSizes & { fileView: FileView } = { fileView: saved.fileView === 'list' ? 'list' : 'tree' }
+  const out: Saved = {
+    fileView: saved.fileView === 'list' ? 'list' : 'tree',
+    dashboardView: DASHBOARD_VIEWS.find((v) => v === saved.dashboardView) ?? 'compact',
+  }
   for (const p of PANES) {
     const n = saved[p]
     if (typeof n === 'number' && Number.isFinite(n) && n > 0) out[p] = n
@@ -47,7 +58,7 @@ function load(): PaneSizes & { fileView: FileView } {
 }
 
 function save(s: LayoutStore) {
-  const out: Record<string, unknown> = { fileView: s.fileView }
+  const out: Record<string, unknown> = { fileView: s.fileView, dashboardView: s.dashboardView }
   for (const p of PANES) if (s[p] !== undefined) out[p] = s[p]
   try {
     localStorage.setItem(KEY, JSON.stringify(out))
@@ -59,6 +70,7 @@ function save(s: LayoutStore) {
 export const useLayout = create<LayoutStore>((set) => ({
   ...load(),
   setFileView: (fileView) => set({ fileView }),
+  setDashboardView: (dashboardView) => set({ dashboardView }),
   setPane: (pane, size) => set({ [pane]: size }),
 }))
 useLayout.subscribe(save)

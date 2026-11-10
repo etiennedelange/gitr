@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test'
-import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
+import { useLayout } from './layout'
+import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 import { useApp, initialDashboard } from './store'
@@ -15,6 +16,7 @@ vi.mock('@tanstack/react-virtual', () => ({
   }),
 }))
 vi.mock('./nativeMenu', () => ({ showMenu: vi.fn(), copyText: vi.fn() }))
+vi.mock('@tauri-apps/plugin-dialog', () => ({ ask: vi.fn(() => Promise.resolve(true)), open: vi.fn() }))
 
 const config = { groups: [{ id: 'g', name: 'Work', roots: ['D:/w'] }], zoom: 100 } as unknown as Config
 const repos = ['alpha', 'beta', 'gamma'].map((n) => ({ path: `D:/w/${n}`, name: n, groupId: 'g' }))
@@ -27,6 +29,7 @@ vi.mock('./api', () => ({
     refreshAll: vi.fn(() => new Promise<void>((r) => (finishRefresh = r))),
     rescanRepos: vi.fn(() => Promise.resolve(repos)),
     runBatch: vi.fn(() => Promise.resolve([])),
+    abortOperation: vi.fn(() => Promise.resolve()),
   },
   errorMessage: (e: unknown) => String(e),
   errorDetail: () => null,
@@ -63,6 +66,8 @@ beforeEach(() => {
 })
 afterEach(cleanup)
 
+// These tests read the ledger table; the cards have their own tests.
+beforeEach(() => useLayout.setState({ dashboardView: 'table' }))
 describe('dashboard', () => {
   it('shows Refresh as busy until the refresh finishes', async () => {
     mount()
@@ -93,7 +98,9 @@ describe('dashboard', () => {
       expect(screen.getByRole('button', { name: new RegExp(`^${name}\\s*${n}$`) })).toBeInTheDocument()
   })
 
-  it('puts the repos that need attention in their own band first', async () => {
+  it('lists the repos that need you in a banner above, and keeps them in their place in the list', async () => {
+    const { api } = await import('./api')
+    const { ask } = await import('@tauri-apps/plugin-dialog')
     useApp.setState({
       summaries: {
         'D:/w/alpha': summary('D:/w/alpha', {}),
@@ -103,11 +110,81 @@ describe('dashboard', () => {
     })
     mount()
     await screen.findByText('alpha')
+    // No separate band: beta sorts first in the list, where it belongs.
     const order = [...body().querySelectorAll('.band, .row .repo-link')].map((el) => el.textContent)
-    expect(order).toEqual(['Needs attention1', 'beta', 'Everything else2', 'gamma', 'alpha'])
+    expect(order).toEqual(['beta', 'gamma', 'alpha'])
+    const banner = screen.getByRole('region', { name: 'Needs attention' })
+    expect(banner).toHaveTextContent('betaMerge in progress · 1 conflict')
+    expect(banner.querySelectorAll('li')).toHaveLength(1)
+    // Abort asks first, then aborts; Open goes to the repo.
+    await act(async () => fireEvent.click(within(banner).getByRole('button', { name: 'Abort' })))
+    expect(ask).toHaveBeenCalled()
+    expect(api.abortOperation).toHaveBeenCalledWith('D:/w/beta')
+    fireEvent.click(within(banner).getByRole('button', { name: 'Open beta' }))
+    expect(useApp.getState().view).toEqual({ kind: 'repo', path: 'D:/w/beta' })
   })
 
-  it('bands the rest by group, with each repo striped in its group colour, when all groups show', async () => {
+  it('offers Retry for a failed fetch in the banner, and folds a long list under "Show N more"', async () => {
+    const { api } = await import('./api')
+    useApp.setState({
+      summaries: {
+        'D:/w/alpha': summary('D:/w/alpha', {}),
+        'D:/w/beta': summary('D:/w/beta', {}),
+        'D:/w/gamma': summary('D:/w/gamma', {}),
+      },
+      batch: { 'D:/w/alpha': { path: 'D:/w/alpha', op: 'fetch', state: 'error', message: 'Could not reach the remote', signIn: false } },
+    } as never)
+    mount()
+    await screen.findByText('gamma')
+    const banner = screen.getByRole('region', { name: 'Needs attention' })
+    expect(banner).toHaveTextContent('alphaFetch failed · Could not reach the remote')
+    await act(async () => fireEvent.click(within(banner).getByRole('button', { name: 'Retry' })))
+    expect(api.runBatch).toHaveBeenCalledWith('fetch', ['D:/w/alpha'], true)
+    cleanup()
+
+    // Four repos in trouble: three show, the fourth folds away.
+    repos.push({ path: 'D:/w/delta', name: 'delta', groupId: 'g' })
+    try {
+      useApp.setState({
+        batch: {},
+        summaries: Object.fromEntries(repos.map((r) => [r.path, summary(r.path, { error: 'boom' })])),
+      })
+      mount()
+      await screen.findByText('Show 1 more')
+      const list = () => screen.getByRole('region', { name: 'Needs attention' }).querySelectorAll('li')
+      expect(list()).toHaveLength(3)
+      fireEvent.click(screen.getByRole('button', { name: 'Show 1 more' }))
+      expect(list()).toHaveLength(4)
+    } finally {
+      repos.pop()
+    }
+  })
+
+  it('reads like a ledger: numbers not bars, blank zeros, a two-tone branch and quiet clean rows', async () => {
+    useApp.setState({
+      summaries: {
+        'D:/w/alpha': summary('D:/w/alpha', {}),
+        'D:/w/gamma': summary('D:/w/gamma', { branch: 'feature/VA-2905', behind: 12, unstaged: 3 }),
+      },
+    })
+    mount()
+    await screen.findByText('alpha')
+    const row = (name: string) => screen.getByText(name).closest<HTMLElement>('.row')!
+    // Behind and ahead are numerals with their arrows; a zero leaves the cell empty.
+    expect(row('gamma').querySelector('.dv-behind')).toHaveTextContent('↓12')
+    expect(row('gamma').querySelector('.dv-ahead')).toHaveTextContent('')
+    expect(row('gamma').querySelector('.dv-bar, .dv-axis')).toBeNull()
+    expect(row('gamma').querySelector('.counts')).toHaveTextContent('±3')
+    expect(row('alpha').querySelector('.counts')).toHaveTextContent('')
+    // The folder path is set apart from the branch's own name.
+    expect(row('gamma').querySelector('.branch-path')).toHaveTextContent('feature/')
+    expect(row('gamma').querySelector('.branch-cell')).toHaveTextContent('feature/VA-2905')
+    // Clean repos recede; repos with work in them don't.
+    expect(row('alpha')).toHaveClass('quiet')
+    expect(row('gamma')).not.toHaveClass('quiet')
+  })
+
+  it('bands the rest by group, told apart by their headings and never by colour, when all groups show', async () => {
     config.groups.push({ id: 'p', name: 'Personal', roots: ['D:/p'] })
     repos.push({ path: 'D:/p/delta', name: 'delta', groupId: 'p' })
     try {
@@ -122,14 +199,16 @@ describe('dashboard', () => {
       mount()
       await screen.findByText('alpha')
       const order = () => [...body().querySelectorAll('.band, .row .repo-link')].map((el) => el.textContent)
-      expect(order()).toEqual(['Needs attention1', 'beta', 'Work2', 'gamma', 'alpha', 'Personal1', 'delta'])
-      const stripe = (name: string) => screen.getByText(name).closest<HTMLElement>('.row')!.style.getPropertyValue('--group')
-      expect([stripe('beta'), stripe('gamma'), stripe('delta')]).toEqual(['var(--g-teal)', 'var(--g-teal)', 'var(--g-rose)'])
-      expect(body().querySelectorAll('.row .group-stripe')).toHaveLength(4)
+      // A group's band ends with a one-line summary of the repos in it.
+      expect(order()).toEqual(['Work31 with changes', 'beta', 'gamma', 'alpha', 'Personal11 behind', 'delta'])
+      const stripe = (name: string) =>
+        screen.getByText(name, { selector: '.repo-link' }).closest<HTMLElement>('.row')!.style.getPropertyValue('--group')
+      expect([stripe('beta'), stripe('gamma'), stripe('delta')]).toEqual(['', '', ''])
+      expect(body().querySelectorAll('.group-stripe, .group-swatch')).toHaveLength(0)
 
-      // One group chosen: back to attention, then everything else.
+      // One group chosen: one list, no bands.
       act(() => useApp.getState().setDashboard({ group: 'g' }))
-      expect(order()).toEqual(['Needs attention1', 'beta', 'Everything else2', 'gamma', 'alpha'])
+      expect(order()).toEqual(['beta', 'gamma', 'alpha'])
     } finally {
       config.groups.pop()
       repos.pop()

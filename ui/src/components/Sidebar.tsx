@@ -1,17 +1,17 @@
 import { useMemo, useRef, useState, type KeyboardEvent } from 'react'
 import { useConfig, useRepos } from '../hooks'
 import { useApp } from '../store'
-import { ChevronDown, ChevronRight, FolderPlus, LayoutGrid, Moon, Settings as SettingsIcon, Sun } from 'lucide-react'
+import { ChevronDown, ChevronRight, FolderPlus, GitPullRequest, House, Moon, Settings as SettingsIcon, Sun } from 'lucide-react'
 import { useRepoMenu } from '../repoMenu'
 import { plainInput } from '../lib/inputProps'
 import { BusyDot } from './Busy'
-import { CountChips, StatusMark } from './Marks'
-import { needsAttention } from '../lib/git'
+import { StatusMark } from './Marks'
+import { needsAttention, statusClass } from '../lib/git'
 import { useAddFolder } from '../lib/addFolder'
 import { groupMenu } from '../lib/menus'
-import { groupColors, groupStyle } from '../lib/groupColor'
 import { showMenu } from '../nativeMenu'
 import { saveThemePref, useTheme } from '../theme'
+import type { RepoSummary } from '../types'
 
 export function Sidebar() {
   const config = useConfig()
@@ -46,11 +46,6 @@ export function Sidebar() {
       }))
       .filter((g) => !q || g.repos.length > 0)
   }, [config.data, repos.data, filter])
-  // With more than one group, each carries its colour: a swatch on its heading and a stripe down
-  // its repos, matching the stripes on the dashboard.
-  const colors = useMemo(() => groupColors(config.data?.groups ?? []), [config.data])
-  const colored = (config.data?.groups.length ?? 0) > 1
-
   // The tree is one Tab stop; arrow keys move within it (like a Windows tree view). The stop is the
   // item last focused, else the open repo, else the first group.
   const treeRef = useRef<HTMLDivElement>(null)
@@ -88,33 +83,25 @@ export function Sidebar() {
   return (
     <nav className="sidebar" aria-label="Repositories">
       <div className="brand">
-        {/* Two commits on a line; the newest in accent. */}
-        <svg className="brand-mark" viewBox="0 0 18 18" aria-hidden>
-          <rect width="18" height="18" rx="4" className="bm-ground" />
-          <path d="M5 9h8" className="bm-line" />
-          <circle cx="5" cy="9" r="2.2" className="bm-old" />
-          <circle cx="13" cy="9" r="2.6" className="bm-new" />
-        </svg>
+        <GitPullRequest className="brand-mark" aria-hidden />
         <span className="nav-label">Gitr</span>
+        {/* Home: the dashboard, as an icon. A dot says something needs you, from anywhere in the app. */}
+        <button
+          className={`icon home-button ${view.kind === 'dashboard' ? 'active' : ''}`}
+          onClick={() => setView({ kind: 'dashboard' })}
+          aria-current={view.kind === 'dashboard' ? 'page' : undefined}
+          aria-label={urgent ? `Dashboard, ${urgent} ${urgent === 1 ? 'repository needs' : 'repositories need'} attention` : 'Dashboard'}
+          title="Dashboard (Ctrl+D)"
+        >
+          <House className="ico" aria-hidden />
+          {urgent > 0 && <span className="home-alert" aria-hidden />}
+        </button>
       </div>
-      <button
-        className={`nav-item ${view.kind === 'dashboard' ? 'active' : ''}`}
-        onClick={() => setView({ kind: 'dashboard' })}
-        title="Dashboard (Ctrl+D)"
-      >
-        <LayoutGrid className="ico" aria-hidden />
-        <span className="nav-label">Dashboard</span>
-        {urgent > 0 && (
-          <span className="nav-count alert" title={`${urgent} ${urgent === 1 ? 'repository needs' : 'repositories need'} attention`}>
-            {urgent}
-          </span>
-        )}
-      </button>
       <div className="rail-tools">
         <input
           {...plainInput}
           className="search"
-          placeholder="Filter repositories"
+          placeholder="Filter repositories…"
           aria-label="Filter repositories in the sidebar"
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
@@ -148,7 +135,7 @@ export function Sidebar() {
           </div>
         )}
         {groups.map((g) => (
-          <div key={g.id} className="group" style={colored ? groupStyle(colors.get(g.id)) : undefined}>
+          <div key={g.id} className="group">
             <button
               className="group-head"
               data-key={'g:' + g.id}
@@ -169,7 +156,6 @@ export function Sidebar() {
               ) : (
                 <ChevronDown className="chevron" aria-hidden />
               )}
-              {colored && <span className="group-swatch" aria-hidden />}
               <span className="group-name">{g.name}</span>
               <span className="count">{g.repos.length}</span>
             </button>
@@ -180,7 +166,7 @@ export function Sidebar() {
                 return (
                   <button
                     key={r.path}
-                    className={`repo-item ${active ? 'active' : ''}`}
+                    className={`repo-item ${active ? 'active' : ''} ${statusClass(s).split(' ')[1] === 'clean' ? 'quiet' : ''}`}
                     data-key={'r:' + r.path}
                     tabIndex={tabStop === 'r:' + r.path ? 0 : -1}
                     onFocus={() => setFocusKey('r:' + r.path)}
@@ -189,16 +175,11 @@ export function Sidebar() {
                     onContextMenu={repoMenu(r.path)}
                     title={`${r.name}\n${r.path}`}
                   >
-                    {colored && <span className="group-stripe" aria-hidden />}
                     <StatusMark summary={s} />
                     <span className="repo-name">{r.name}</span>
                     <BusyDot path={r.path} />
-                    <span className="slot slot-changes">
-                      <CountChips summary={s} only="changes" />
-                    </span>
-                    <span className="slot slot-sync">
-                      <CountChips summary={s} only="sync" />
-                    </span>
+                    {/* The rail shows only the mark; the counts stay for screen readers. */}
+                    <SpokenCounts summary={s} />
                   </button>
                 )
               })}
@@ -218,6 +199,18 @@ export function Sidebar() {
         <ThemeToggle />
       </div>
     </nav>
+  )
+}
+
+/** "3 uncommitted", "2 behind", "1 ahead", for screen readers only. */
+function SpokenCounts({ summary: s }: { summary: RepoSummary | undefined }) {
+  const changes = s ? s.staged + s.unstaged + s.conflicted : 0
+  return (
+    <>
+      {changes > 0 && <span className="sr-only">{changes} uncommitted</span>}
+      {!!s?.behind && <span className="sr-only">{s.behind} behind</span>}
+      {!!s?.ahead && <span className="sr-only">{s.ahead} ahead</span>}
+    </>
   )
 }
 

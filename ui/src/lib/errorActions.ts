@@ -42,7 +42,7 @@ export function errorActions(
           run: async () => {
             const ok = await ask(
               `Remove the lock file ${lock}?\n\nOnly do this if no other git tool (IDE, terminal, another git client) is working in this repository. Close them first.`,
-              { title: 'Remove stale lock', kind: 'warning' },
+              { title: 'Remove stale lock', kind: 'warning', okLabel: 'Remove lock', cancelLabel: 'Cancel' },
             )
             if (!ok) return false
             await api.removeStaleLock(repo, lock)
@@ -58,7 +58,7 @@ export function errorActions(
           run: async () => {
             const ok = await ask(
               `Trust ${repo}?\n\nThis adds the folder to safe.directory in your global git config, so git works in it even though another user owns it.`,
-              { title: 'Trust this folder', kind: 'warning' },
+              { title: 'Trust this folder', kind: 'warning', okLabel: 'Trust folder', cancelLabel: 'Cancel' },
             )
             if (!ok) return false
             await api.trustFolder(repo)

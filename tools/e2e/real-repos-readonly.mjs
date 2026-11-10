@@ -128,7 +128,7 @@ try {
   await app.evaluate(`window.addEventListener('error', (ev) => (window.__errs = (window.__errs || []).concat(String(ev.message))))`)
 
   // ---- dashboard vs raw git ----
-  await E(`document.querySelector('.nav-item').click()`)
+  await E(`document.querySelector('.home-button').click()`)
   await W(`document.querySelectorAll('.table-body .row').length >= ${repoPaths.length}`, 'dashboard rows', 60000)
   await sleep(4000) // let the startup refresh finish
   await app.screenshot(join(SHOTS, 'dashboard.png'))

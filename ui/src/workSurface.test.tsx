@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test'
+import { useLayout } from './layout'
 import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import type React from 'react'
@@ -129,6 +130,8 @@ beforeEach(() => {
 })
 afterEach(cleanup)
 
+// These tests read the ledger table; the cards have their own tests.
+beforeEach(() => useLayout.setState({ dashboardView: 'table' }))
 describe('split diff', () => {
   it('gives both sides fixed columns, so a long line cannot take the other side’s room', async () => {
     localStorage.setItem('diffMode', 'split')
@@ -158,12 +161,12 @@ describe('conflicts', () => {
     expect(api.stage).toHaveBeenCalledWith(A, ['both.ts'])
   })
 
-  it('show untracked files with git’s ?, not U', async () => {
+  it('show untracked files as a new file (A), not ? or U', async () => {
     files = [file('new.ts', { untracked: true, worktree: '?' })]
     wrap(<Changes path={A} />)
     await screen.findByText('new.ts')
     const list = screen.getByRole('list', { name: 'Unstaged files' })
-    expect(within(list).getByTitle('Untracked')).toHaveTextContent('?')
+    expect(within(list).getByTitle('New file (untracked)')).toHaveTextContent('A')
   })
 })
 
@@ -225,6 +228,7 @@ describe('Ctrl+P', () => {
     await screen.findAllByText('alpha')
     fireEvent.keyDown(window, { key: 'p', ctrlKey: true })
     const box = await screen.findByPlaceholderText('Go to repository…')
+    expect(box.getAttribute('aria-label')).toBe('Go to repository')
     fireEvent.change(box, { target: { value: 'zet' } })
     fireEvent.keyDown(box, { key: 'Enter' })
     expect(useApp.getState().view).toEqual({ kind: 'repo', path: Z })

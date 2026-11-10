@@ -60,6 +60,16 @@ describe('sidebar', () => {
     expect(head).toHaveAttribute('aria-expanded', 'false')
   })
 
+  it('opens the dashboard from a home icon that says when something needs attention', async () => {
+    useApp.setState({ summaries: { [PATH]: { ...summary, operation: 'merging' } }, view: { kind: 'settings' } })
+    wrap(<Sidebar />)
+    const home = await screen.findByRole('button', { name: 'Dashboard, 1 repository needs attention' })
+    expect(home.querySelector('.home-alert')).not.toBeNull()
+    fireEvent.click(home)
+    expect(useApp.getState().view).toEqual({ kind: 'dashboard' })
+    expect(home).toHaveAttribute('aria-current', 'page')
+  })
+
   it('spells out the repo badges in text for screen readers', async () => {
     wrap(<Sidebar />)
     await screen.findByText('alpha')

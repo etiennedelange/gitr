@@ -15,6 +15,7 @@ import { buildTree, listRows, treeRows, type TreeRow } from '../lib/fileTree'
 import { useLayout, type FileView } from '../layout'
 import { FileViewToggle } from './FileViewToggle'
 import { Splitter } from './Splitter'
+import { RowGap, useRowWindow, type RowWindow } from '../lib/rowWindow'
 
 interface Selection {
   path: string
@@ -56,7 +57,7 @@ export function Changes({ path }: { path: string }) {
     const question =
       `Couldn't move ${n} file${n === 1 ? '' : 's'} to the Recycle Bin: ${failed[0].reason}. ` +
       `Discard ${n === 1 ? 'it' : 'them'} permanently?`
-    if (!(await ask(question, { title: 'Discard permanently?', kind: 'warning' }))) return
+    if (!(await ask(question, { title: 'Discard permanently?', kind: 'warning', okLabel: 'Discard', cancelLabel: 'Keep changes' }))) return
     await api.discard(
       path,
       failed.filter((f) => !f.untracked).map((f) => f.path),
@@ -95,6 +96,11 @@ export function Changes({ path }: { path: string }) {
 
   const unstagedList = useRef<HTMLUListElement>(null)
   const stagedList = useRef<HTMLUListElement>(null)
+  // A long list draws only the rows in view; the selected file's row stays among them.
+  const rowOf = (rows: TreeRow<FileEntry>[], isStaged: boolean) =>
+    current && current.staged === isStaged ? rows.findIndex((r) => r.kind === 'file' && r.file.path === current.path) : -1
+  const unstagedWindow = useRowWindow(unstagedRows.length, unstagedList, rowOf(unstagedRows, false))
+  const stagedWindow = useRowWindow(stagedRows.length, stagedList, rowOf(stagedRows, true))
 
   // The file to select once the selected one leaves `list`: the next one, else the previous one.
   const neighbour = (list: FileEntry[], leaving: Set<string>): FileEntry | undefined => {
@@ -174,7 +180,7 @@ export function Changes({ path }: { path: string }) {
   const changesRoot = useRef<HTMLDivElement>(null)
   const left = useRef<HTMLDivElement>(null)
 
-  const fileList = (title: string, list: FileEntry[], rows: TreeRow<FileEntry>[], isStaged: boolean) => (
+  const fileList = (title: string, list: FileEntry[], rows: TreeRow<FileEntry>[], win: RowWindow, isStaged: boolean) => (
     <section
       className={`file-section ${isStaged ? 'staged' : 'unstaged'}`}
       ref={isStaged ? stagedSection : unstagedSection}
@@ -213,7 +219,8 @@ export function Changes({ path }: { path: string }) {
         ref={isStaged ? stagedList : unstagedList}
         onKeyDown={(e) => onListKey(e, isStaged ? shownStaged : shownUnstaged, isStaged)}
       >
-        {rows.map((r) => {
+        <RowGap height={win.before} />
+        {rows.slice(win.from, win.to).map((r) => {
           if (r.kind === 'folder') {
             const key = (isStaged ? 's:' : 'u:') + r.path
             return (
@@ -230,7 +237,14 @@ export function Changes({ path }: { path: string }) {
                 </button>
                 <span className="row-actions">
                   {!isStaged && (
-                    <button className="icon" title="Discard folder" tabIndex={-1} disabled={busy} onClick={() => confirmDiscard(r.files)}>
+                    <button
+                      className="icon"
+                      title="Discard folder"
+                      aria-label={`Discard folder ${r.name}`}
+                      tabIndex={-1}
+                      disabled={busy}
+                      onClick={() => confirmDiscard(r.files)}
+                    >
                       <Undo2 className="ico" aria-hidden />
                     </button>
                   )}
@@ -239,6 +253,7 @@ export function Changes({ path }: { path: string }) {
                     tabIndex={-1}
                     disabled={busy}
                     title={isStaged ? 'Unstage folder' : 'Stage folder'}
+                    aria-label={`${isStaged ? 'Unstage' : 'Stage'} folder ${r.name}`}
                     onClick={() => toggleFolderFiles(r.files, isStaged)}
                   >
                     {isStaged ? <Minus className="ico" aria-hidden /> : <Plus className="ico" aria-hidden />}
@@ -291,6 +306,7 @@ export function Changes({ path }: { path: string }) {
                   <button
                     className="icon"
                     title="Discard"
+                    aria-label={`Discard ${f.path}`}
                     tabIndex={active ? 0 : -1}
                     disabled={busy}
                     onClick={(e) => (e.stopPropagation(), confirmDiscard([f]))}
@@ -303,6 +319,7 @@ export function Changes({ path }: { path: string }) {
                   tabIndex={active ? 0 : -1}
                   disabled={busy}
                   title={isStaged ? 'Unstage' : 'Stage'}
+                  aria-label={`${isStaged ? 'Unstage' : 'Stage'} ${f.path}`}
                   onClick={(e) => (e.stopPropagation(), toggle(f, isStaged))}
                 >
                   {isStaged ? <Minus className="ico" aria-hidden /> : <Plus className="ico" aria-hidden />}
@@ -311,6 +328,7 @@ export function Changes({ path }: { path: string }) {
             </li>
           )
         })}
+        <RowGap height={win.after} />
       </ul>
     </section>
   )
@@ -327,7 +345,7 @@ export function Changes({ path }: { path: string }) {
     >
       <div className="changes-left" ref={left}>
         {status.isError && <div className="banner error selectable">Could not read status: {errorMessage(status.error)}</div>}
-        {fileList('Unstaged', unstaged, unstagedRows, false)}
+        {fileList('Unstaged', unstaged, unstagedRows, unstagedWindow, false)}
         <Splitter
           axis="y"
           label="Resize the unstaged and staged lists"
@@ -340,7 +358,7 @@ export function Changes({ path }: { path: string }) {
           }}
           onReset={() => layout.setPane('changesSplit', undefined)}
         />
-        {fileList('Staged', staged, stagedRows, true)}
+        {fileList('Staged', staged, stagedRows, stagedWindow, true)}
         <CommitBox path={path} stagedCount={staged.length} branch={status.data?.branch ?? null} />
       </div>
       <Splitter
