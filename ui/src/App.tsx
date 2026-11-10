@@ -19,6 +19,8 @@ import { RepoSwitcher } from './components/RepoSwitcher'
 import { cyclePane } from './lib/panes'
 import { Splitter } from './components/Splitter'
 import { useLayout } from './layout'
+import { WindowControls } from './components/WindowControls'
+import { installWindowDrag } from './lib/windowDrag'
 
 const SIDEBAR_MIN = 180
 const SIDEBAR_MAX = 480
@@ -48,6 +50,8 @@ export default function App() {
     window.addEventListener('unhandledrejection', onRejection)
     return () => window.removeEventListener('unhandledrejection', onRejection)
   }, [])
+
+  useEffect(() => installWindowDrag(document), [])
 
   useEffect(() => {
     api.devtoolsAvailable().then(useApp.getState().setDevtools, () => {})
@@ -138,6 +142,7 @@ export default function App() {
           {view.kind === 'repo' && <RepoView key={view.path} path={view.path} />}
         </ErrorBoundary>
       </main>
+      <WindowControls />
       <Toasts />
       {switcher && <RepoSwitcher onClose={() => setSwitcher(false)} />}
     </div>

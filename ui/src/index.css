@@ -141,14 +141,18 @@
   --violet-soft: #f2eef6;
   --red-on: #ffffff;
 
-  --add-bg: #ecf4e6;
-  --add-ln: #dbebd2;
+  --add-bg: #d0e8c4;
+  --add-ln: #d2e7c8;
   --add-ink: #2f6b35;
-  --del-bg: #fbece8;
-  --del-ln: #f6e0da;
+  --del-bg: #f8dbd4;
+  --del-ln: #f5dbd4;
   --del-ink: #a3372b;
-  --hunk-bg: #f1eee9;
-  --hunk-ink: #57524b;
+  --hunk-bg: #e7e9ec;
+  --hunk-ink: #46567a;
+  /* The code surface: the diff is its own paper, apart from the app's warm chrome. */
+  --code-bg: #f6f4ef;
+  --code-gutter: #ebe8e1;
+  --code-head: #e9e6df;
 
   /* Syntax colours in diffs: no green or red, which mean added and removed there. */
   --syn-keyword: #2a4fc4;
@@ -214,14 +218,17 @@
   --violet-soft: #2e2838;
   --red-on: #1a0a08;
 
-  --add-bg: #253224;
-  --add-ln: #283325;
+  --add-bg: #233a26;
+  --add-ln: #283928;
   --add-ink: #8fd193;
-  --del-bg: #3a2725;
-  --del-ln: #3f2a27;
+  --del-bg: #4d2020;
+  --del-ln: #512a27;
   --del-ink: #f39a8c;
-  --hunk-bg: #2e2c28;
-  --hunk-ink: #aaa399;
+  --hunk-bg: #242a3b;
+  --hunk-ink: #9fadcf;
+  --code-bg: #171614;
+  --code-gutter: #1e1c1a;
+  --code-head: #211f1c;
 
   --syn-keyword: #8fb3ff;
   --syn-type: #5cc8cf;
@@ -813,6 +820,60 @@ ul:focus-visible,
   overflow: clip;
   border-left: 1px solid var(--line);
   background: var(--bg);
+}
+
+/*
+ * Caption buttons: Minimise, Maximise, Close, drawn by Gitr because the window has no native title
+ * bar. They sit in the sheet's top-right corner over the first bar, which leaves them room; the
+ * bars at the top (brand, toolbars, a banner on top) drag the window.
+ */
+:root {
+  --caption-w: 138px;
+}
+.caption {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 30;
+  display: flex;
+  /* The height of the first bar, so the glyphs centre on the same line as the toolbar's icons. */
+  height: var(--bar);
+}
+.caption-button {
+  width: 46px;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--ink-2);
+}
+.caption-button:hover:not(:disabled) {
+  background: var(--hover);
+  color: var(--ink);
+}
+.caption-button:active:not(:disabled) {
+  background: var(--press);
+}
+/* Close turns the Windows caption red. */
+.caption-button.close:hover:not(:disabled),
+.caption-button.close:active:not(:disabled) {
+  background: #c42b1c;
+  color: #ffffff;
+}
+.main > .banner:first-child,
+.main > :first-child > .toolbar:first-child {
+  padding-right: calc(var(--caption-w) + var(--s4));
+}
+/* A banner on top is as tall as a toolbar, so the caption buttons fit it too. */
+.main > .banner:first-child {
+  min-height: var(--bar);
+}
+.brand,
+.toolbar,
+.main > .banner {
+  user-select: none;
 }
 
 /*
@@ -2307,6 +2368,12 @@ button.icon .count {
 .file-list li:hover {
   background: var(--hover);
 }
+/* The room of the rows a long list doesn't draw (see lib/rowWindow). */
+.file-list li.row-gap {
+  display: block;
+  padding: 0;
+  pointer-events: none;
+}
 .file-list li.active,
 .file-list li.active:hover {
   background: var(--sel);
@@ -2545,15 +2612,19 @@ button.ai.generating .ico {
   flex-direction: column;
   height: 100%;
   min-height: 0;
+  background: var(--code-bg);
+  /* A soft inner shadow on the left edge makes the pane read as a recessed code surface. */
+  box-shadow: inset 8px 0 8px -8px rgb(0 0 0 / 0.28);
 }
 .diff-head {
   display: flex;
   align-items: center;
   gap: var(--s4);
   flex: none;
-  height: 34px;
+  height: 36px;
   padding: 0 var(--s3) 0 var(--s5);
-  border-bottom: 1px solid var(--line-soft);
+  border-bottom: 1px solid var(--line-strong);
+  background: var(--code-head);
 }
 .diff-path {
   min-width: 0;
@@ -2591,6 +2662,43 @@ button.ai.generating .ico {
 .diff-zoom-level:hover {
   color: var(--ink);
 }
+.diff-find {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  flex: none;
+  padding: var(--s3) var(--s5);
+  border-bottom: 1px solid var(--line-soft);
+  background: var(--panel);
+}
+.diff-find .search-field input {
+  width: 240px;
+}
+.diff-find .find-case {
+  height: var(--ctl-sm);
+  padding: 0 var(--s3);
+  font: 600 var(--fs-xs) / 1 var(--font-mono);
+}
+.diff-find .find-case.on {
+  border-color: var(--accent);
+  color: var(--accent-text);
+}
+.diff-find .find-count {
+  min-width: 64px;
+  color: var(--ink-2);
+  font: 500 var(--fs-xs) / 1.3 var(--font-ui);
+  font-variant-numeric: tabular-nums;
+}
+/* A found piece of code. The current one also has an outline, so it doesn't rest on colour alone. */
+mark.find-hit {
+  border-radius: 2px;
+  background: color-mix(in oklab, var(--amber) 35%, transparent);
+  color: inherit;
+}
+mark.find-hit.cur {
+  background: color-mix(in oklab, var(--amber) 70%, transparent);
+  outline: 1.5px solid var(--ink);
+}
 .diff-empty {
   display: flex;
   align-items: center;
@@ -2618,6 +2726,11 @@ button.ai.generating .ico {
   text-align: right;
   white-space: nowrap;
   user-select: none;
+  background: var(--code-gutter);
+  border-right: 1px solid var(--line);
+}
+.hunk .ln + .ln {
+  border-left: 1px solid var(--line-soft);
 }
 .hunk .code {
   white-space: pre;
@@ -2686,11 +2799,25 @@ button.ai.generating .ico {
 .hunk td.remove {
   background: var(--del-bg);
 }
-.hunk tr.add .sign {
+.hunk .sign {
+  font-weight: 700;
+}
+.hunk tr.add .sign,
+.hunk td.add .sign {
   color: var(--add-ink);
 }
-.hunk tr.remove .sign {
+.hunk tr.remove .sign,
+.hunk td.remove .sign {
   color: var(--del-ink);
+}
+/* Split has no sign column: the + or - hangs in the left padding of the code cell. */
+.hunk.split td.code {
+  position: relative;
+  padding-left: calc(24px * var(--diff-zoom, 1));
+}
+.hunk.split td.code .sign {
+  position: absolute;
+  left: calc(8px * var(--diff-zoom, 1));
 }
 .hunk tr.add .ln,
 .hunk td.ln.add {
@@ -2702,12 +2829,22 @@ button.ai.generating .ico {
   background: var(--del-ln);
   color: var(--del-ink);
 }
+/* A bar on the gutter's edge marks changed lines without relying on colour fill alone. */
+.hunk tr.add .ln:last-of-type,
+.hunk td.ln.add {
+  box-shadow: inset -4px 0 0 var(--add-ink);
+}
+.hunk tr.remove .ln:last-of-type,
+.hunk td.ln.remove {
+  box-shadow: inset -4px 0 0 var(--del-ink);
+}
 .hunk tr.nonewline {
   color: var(--ink-2);
   font-style: italic;
 }
 .hunk td.empty {
-  background: var(--panel);
+  background: repeating-linear-gradient(135deg, transparent 0 5px, color-mix(in oklab, var(--ink) 11%, transparent) 5px 6px)
+    var(--code-gutter);
 }
 /* Split: fixed halves; long lines wrap inside their half so nothing is clipped. */
 .hunk.split {
@@ -2720,7 +2857,7 @@ button.ai.generating .ico {
   width: auto;
   min-width: 0;
 }
-.hunk.split .code {
+.hunk.wrap .code {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
@@ -4197,4 +4334,36 @@ dialog::backdrop {
   padding: var(--s4) var(--s5);
   color: var(--ink-3);
   font-size: var(--fs-sm);
+}
+
+/* ---------------------------------------------------------------- experiment: spotlight
+   Settings → Experiments. Unchanged context recedes so the changes glow; removed code is struck
+   through softly; the row under the pointer becomes a reading ruler and brightens back to full. */
+.diff.spotlight .hunk tr:not(.add):not(.remove):not(.hunk-header):not(.hunk-gap):not(.spacer):not(.sizer) .code {
+  opacity: 0.72;
+  transition: opacity var(--t) var(--ease);
+}
+.diff.spotlight .hunk tr.remove .code {
+  text-decoration: line-through;
+  text-decoration-color: color-mix(in oklab, var(--del-ink) 55%, transparent);
+  text-decoration-thickness: 1px;
+}
+.diff.spotlight .hunk tr.add .code {
+  box-shadow: inset 0 0 24px -10px color-mix(in oklab, var(--add-ink) 45%, transparent);
+}
+.diff.spotlight .hunk tr:hover .code {
+  opacity: 1;
+  text-decoration-color: transparent;
+}
+.diff.spotlight .hunk tr:not(.hunk-header):not(.spacer):not(.sizer):not(.hunk-gap):hover > td {
+  filter: brightness(1.06);
+}
+.diff.spotlight .hunk tr:not(.hunk-header):not(.spacer):not(.sizer):not(.hunk-gap):hover > td.ln {
+  color: var(--accent-text);
+  font-weight: 600;
+}
+@media (prefers-reduced-motion: reduce) {
+  .diff.spotlight .hunk tr .code {
+    transition: none;
+  }
 }

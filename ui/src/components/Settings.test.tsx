@@ -68,7 +68,7 @@ describe('Settings zoom display', () => {
   it('lists every section in the nav', async () => {
     renderSettings()
     const nav = await screen.findByRole('navigation', { name: 'Settings sections' })
-    expect(nav.querySelectorAll('button')).toHaveLength(8)
+    expect(nav.querySelectorAll('button')).toHaveLength(9)
   })
 
   it('shows the current zoom and updates live without touching unsaved edits', async () => {

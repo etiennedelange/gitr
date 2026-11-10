@@ -5,6 +5,7 @@ import { open } from '@tauri-apps/plugin-dialog'
 import { api, errorMessage } from '../api'
 import { notifyError, useConfig, useRepos, useRescan } from '../hooks'
 import { useApp } from '../store'
+import { setDiffSpotlight, useDiffSpotlight } from '../experiments'
 import type { Config, Group } from '../types'
 import { plainInput } from '../lib/inputProps'
 import { saveThemePref, useTheme, type ThemePref } from '../theme'
@@ -17,6 +18,7 @@ const SECTIONS = [
   { id: 'copilot', label: 'Copilot' },
   { id: 'appearance', label: 'Appearance' },
   { id: 'updates', label: 'Updates' },
+  { id: 'experiments', label: 'Experiments' },
   { id: 'developer', label: 'Developer' },
   { id: 'shortcuts', label: 'Shortcuts' },
 ]
@@ -250,6 +252,7 @@ function SettingsForm({ saved }: { saved: Config }) {
   const models = useQuery({ queryKey: ['models'], queryFn: api.listModels, staleTime: Infinity })
   const gitInfo = useQuery({ queryKey: ['gitInfo'], queryFn: api.gitInfo })
   const zoom = useApp((s) => s.zoom)
+  const spotlight = useDiffSpotlight()
   // The theme applies immediately and is kept per machine, like zoom; not part of Save. The
   // sidebar's toggle changes it too.
   const theme = useTheme().pref
@@ -696,6 +699,20 @@ function SettingsForm({ saved }: { saved: Config }) {
             </Section>
 
             <UpdatesSection />
+
+            <Section
+              id="experiments"
+              title="Experiments"
+              intro="Beta features, off by default. They apply right away on this computer, without Save, and may change or go away."
+            >
+              <div className="set-list">
+                <Row
+                  label="Spotlight diff"
+                  hint="Unchanged lines fade so the changes stand out, removed code is struck through, and the line under the pointer lights up."
+                  control={(ids) => <Switch {...ids} checked={spotlight} onChange={setDiffSpotlight} />}
+                />
+              </div>
+            </Section>
 
             <Section id="developer" title="Developer">
               <div className="set-list">
