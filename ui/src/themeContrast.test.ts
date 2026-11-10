@@ -20,13 +20,15 @@ const contrast = (a: string, b: string) => {
   return (hi + 0.05) / (lo + 0.05)
 }
 
-const SURFACES = ['bg', 'rail', 'panel', 'raised', 'field', 'overlay', 'hunk-bg']
+const SURFACES = ['bg', 'rail', 'panel', 'raised', 'field', 'overlay', 'hunk-bg', 'code-bg']
 const SYNTAX = ['syn-keyword', 'syn-type', 'syn-function', 'syn-string', 'syn-number', 'syn-comment', 'syn-meta']
 // [text tokens, the backgrounds they sit on, minimum ratio]
 const PAIRS: [string[], string[], number][] = [
   [['ink', 'ink-2', 'ink-3', 'accent-text', 'amber-ink', 'blue-ink', 'green-ink', 'red-ink', 'hunk-ink', ...SYNTAX], SURFACES, 4.5],
   [['ink', 'ink-3', 'add-ink', ...SYNTAX], ['add-bg', 'add-ln'], 4.5],
   [['ink', 'ink-3', 'del-ink', ...SYNTAX], ['del-bg', 'del-ln'], 4.5],
+  // The gutter and file header hold only line numbers, the path and the + / - signs.
+  [['ink', 'ink-2', 'ink-3', 'add-ink', 'del-ink'], ['code-gutter', 'code-head'], 4.5],
   [['sel-ink', 'ink', 'ink-2'], ['sel'], 4.5],
   [['amber-ink'], ['amber-soft'], 4.5],
   [['blue-ink'], ['blue-soft'], 4.5],

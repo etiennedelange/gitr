@@ -10,7 +10,7 @@ serde_json.workspace = true
 thiserror.workspace = true
 tokio.workspace = true
 tracing = "0.1"
-gix = { version = "0.88", default-features = false, features = ["sha1"] }
+gix = { version = "0.89", default-features = false, features = ["sha1"] }
 # Diff syntax colours: syntect with bat's grammars (two-face) on Oniguruma, which compiles and
 # searches the grammars several times faster than the pure-Rust fancy-regex.
 syntect = { version = "5.3", default-features = false, features = ["parsing", "regex-onig"] }
