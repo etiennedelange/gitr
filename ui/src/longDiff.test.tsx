@@ -9,7 +9,7 @@ vi.mock('./api', () => ({
   errorMessage: (e: unknown) => String(e),
 }))
 const { api } = await import('./api')
-const { DiffView, VIRTUAL_MIN_ROWS, diffItems, widestLine } = await import('./components/DiffView')
+const { DiffView, VIRTUAL_MIN_ROWS, diffItems, widestLine, textCols } = await import('./components/DiffView')
 
 const wrap = (ui: React.ReactNode) =>
   render(<QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}>{ui}</QueryClientProvider>)
@@ -89,5 +89,10 @@ describe('diff rows', () => {
   it('finds the widest line, counting tabs to the next tab stop', () => {
     const diff = { ...two, hunks: [{ ...two.hunks[0], lines: [context(1, 'abcdefghij'), context(2, '\t\tx')] }] }
     expect(widestLine(diff)).toBe('\t\tx')
+  })
+
+  it('counts a tab as the columns it draws, so split columns fit tab-indented lines', () => {
+    expect(textCols('\t\tx')).toBe(17)
+    expect(textCols('ab\tc')).toBe(9)
   })
 })

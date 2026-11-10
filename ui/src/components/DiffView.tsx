@@ -514,14 +514,20 @@ export function findMatches(items: Item[], query: string, caseSensitive: boolean
 }
 
 /** The widest line, counting a tab as up to 8 columns (the default tab size). */
+/** The columns a line takes when drawn: a tab runs to the next multiple of 8. */
+export function textCols(text: string): number {
+  let cols = 0
+  for (const ch of text) cols = ch === '\t' ? cols + 8 - (cols % 8) : cols + 1
+  return cols
+}
+
 export function widestLine(diff: FileDiff): string {
   let best = ''
   let bestCols = -1
   for (const h of diff.hunks)
     for (const l of h.lines) {
       if (l.text.length * 8 <= bestCols) continue
-      let cols = 0
-      for (const ch of l.text) cols = ch === '\t' ? cols + 8 - (cols % 8) : cols + 1
+      const cols = textCols(l.text)
       if (cols > bestCols) [best, bestCols] = [l.text, cols]
     }
   return best
@@ -650,7 +656,7 @@ function Rows({
 
   // Split without wrapping: both halves are as wide as the longest line, so the table scrolls
   // sideways and a long line is never clipped, whichever rows are drawn.
-  const wide = useMemo(() => (mode === 'split' && !wrap ? widestLine(diff).length + 4 : 0), [diff, mode, wrap])
+  const wide = useMemo(() => (mode === 'split' && !wrap ? textCols(widestLine(diff)) + 4 : 0), [diff, mode, wrap])
 
   return mode === 'unified' ? (
     <table className={wrap ? 'hunk unified wrap' : 'hunk unified'}>

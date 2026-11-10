@@ -152,6 +152,7 @@
   /* The code surface: the diff is its own paper, apart from the app's warm chrome. */
   --code-bg: #f6f4ef;
   --code-gutter: #ebe8e1;
+  --empty-stripe: 11%;
   --code-head: #e9e6df;
 
   /* Syntax colours in diffs: no green or red, which mean added and removed there. */
@@ -228,6 +229,7 @@
   --hunk-ink: #9fadcf;
   --code-bg: #171614;
   --code-gutter: #1e1c1a;
+  --empty-stripe: 4%;
   --code-head: #211f1c;
 
   --syn-keyword: #8fb3ff;
@@ -2843,7 +2845,7 @@ mark.find-hit.cur {
   font-style: italic;
 }
 .hunk td.empty {
-  background: repeating-linear-gradient(135deg, transparent 0 5px, color-mix(in oklab, var(--ink) 11%, transparent) 5px 6px)
+  background: repeating-linear-gradient(135deg, transparent 0 5px, color-mix(in oklab, var(--ink) var(--empty-stripe), transparent) 5px 6px)
     var(--code-gutter);
 }
 /* Split: fixed halves; long lines wrap inside their half so nothing is clipped. */
