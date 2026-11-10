@@ -5,6 +5,42 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+- **Experiments in Settings.** A new Experiments section holds beta features, off by default. The first is **Spotlight diff**: unchanged lines fade so the changes stand out, removed code is struck through, and the line under the pointer lights up.
+
+### Added
+- **Wrap long lines in the diff.** Lines no longer wrap by default, in Unified or Split: long ones scroll sideways. The wrap button above the diff turns wrapping on and off, and Gitr remembers the choice.
+- **+ and − in Split.** Added and removed lines carry their sign in Split too.
+
+### Changed
+- **The diff looks like code.** The diff now sits on its own surface (warm grey in light, near-black in dark) apart from the app's warm chrome, with a tinted line-number gutter, a darker file header, blue-tinted hunk headers, a coloured edge bar on added and removed lines, and a hatched filler for the empty side in Split.
+
+## [0.2.5] - 2026-11-09
+
+### Added
+- **Find in the diff.** Press **Ctrl+F** (or the magnifier above the diff) to search the file's diff. Every match is highlighted, the current one outlined, and **Enter** / **Shift+Enter** step to the next and previous (it scrolls there, even in a very long diff). **Aa** matches case; **Esc** closes. Works in Unified and Split, in Changes and History.
+
+### Changed
+- **New files show A, not ?.** An untracked file now has the same green **A** as a staged new file, so it keeps its letter when you stage it. Its tooltip says "New file (untracked)".
+
+## [0.2.4] - 2026-11-09
+
+### Changed
+- **Long file lists stay fast.** The Staged and Unstaged lists and a commit's file list now draw only the files in view, so a change or commit with thousands of files opens at once and the arrow keys no longer lag. Short lists look and work as before.
+
+## [0.2.3] - 2026-11-06
+
+### Fixed
+- **The window buttons line up with the toolbar.** Minimise, Maximise and Close are now centred on the same line as the toolbar icons beside them.
+
+### Security
+- **The updater no longer includes a zip library.** Gitr's updates are a signed installer, never a zip file, so the zip code (which had an advisory, RUSTSEC-2026-0429) is gone from the app.
+
+## [0.2.2] - 2026-11-06
+
+### Changed
+- **One surface, no title bar.** The Windows title bar is gone: the sidebar and the main area now run to the top of the window, and Minimise, Maximise and Close sit at the top right, beside the toolbar. Drag the window by the top bar (beside "Gitr" or the page title), and double-click it to maximise or restore.
+
 ## [0.2.1] - 2026-11-05
 
 ### Changed

@@ -21,7 +21,9 @@ tokio.workspace = true
 tauri = { version = "2", features = ["devtools"] }
 tauri-plugin-opener = "2"
 tauri-plugin-dialog = "2"
-tauri-plugin-updater = "2"
+# No "zip": updates are a signed NSIS .exe (createUpdaterArtifacts: true), never a zip, and
+# zip <9 has open advisories (RUSTSEC-2026-0367..0369, 0429).
+tauri-plugin-updater = { version = "2", default-features = false, features = ["rustls-tls", "system-proxy"] }
 # Remembers the window's size, position and maximised state between runs.
 tauri-plugin-window-state = "2"
 toml = "1.1"
