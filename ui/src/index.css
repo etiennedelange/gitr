@@ -4335,3 +4335,35 @@ dialog::backdrop {
   color: var(--ink-3);
   font-size: var(--fs-sm);
 }
+
+/* ---------------------------------------------------------------- experiment: spotlight
+   Settings → Experiments. Unchanged context recedes so the changes glow; removed code is struck
+   through softly; the row under the pointer becomes a reading ruler and brightens back to full. */
+.diff.spotlight .hunk tr:not(.add):not(.remove):not(.hunk-header):not(.hunk-gap):not(.spacer):not(.sizer) .code {
+  opacity: 0.72;
+  transition: opacity var(--t) var(--ease);
+}
+.diff.spotlight .hunk tr.remove .code {
+  text-decoration: line-through;
+  text-decoration-color: color-mix(in oklab, var(--del-ink) 55%, transparent);
+  text-decoration-thickness: 1px;
+}
+.diff.spotlight .hunk tr.add .code {
+  box-shadow: inset 0 0 24px -10px color-mix(in oklab, var(--add-ink) 45%, transparent);
+}
+.diff.spotlight .hunk tr:hover .code {
+  opacity: 1;
+  text-decoration-color: transparent;
+}
+.diff.spotlight .hunk tr:not(.hunk-header):not(.spacer):not(.sizer):not(.hunk-gap):hover > td {
+  filter: brightness(1.06);
+}
+.diff.spotlight .hunk tr:not(.hunk-header):not(.spacer):not(.sizer):not(.hunk-gap):hover > td.ln {
+  color: var(--accent-text);
+  font-weight: 600;
+}
+@media (prefers-reduced-motion: reduce) {
+  .diff.spotlight .hunk tr .code {
+    transition: none;
+  }
+}

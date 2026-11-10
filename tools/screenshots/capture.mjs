@@ -58,6 +58,7 @@ const SCENES = {
   busy: { scenario: 'many', view: 'repo', repo: 'scheduler' },
   settings: { scenario: 'default', view: 'settings' },
   // `section` is not a preview parameter: it scrolls Settings to that section before the shot.
+  'settings-experiments': { scenario: 'default', view: 'settings', section: 'experiments' },
   'settings-appearance': { scenario: 'default', view: 'settings', section: 'appearance' },
   'first-run': { scenario: 'empty' },
   // `wait` is not a preview parameter: the update check runs 5 s after startup.
