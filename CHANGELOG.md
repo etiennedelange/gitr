@@ -5,6 +5,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+- **Wrap long lines in the diff.** Lines no longer wrap by default, in Unified or Split: long ones scroll sideways. The wrap button above the diff turns wrapping on and off, and Gitr remembers the choice.
+- **+ and − in Split.** Added and removed lines carry their sign in Split too.
+
 ### Changed
 - **The diff looks like code.** The diff now sits on its own surface (warm grey in light, near-black in dark) apart from the app's warm chrome, with a tinted line-number gutter, a darker file header, blue-tinted hunk headers, a coloured edge bar on added and removed lines, and a hatched filler for the empty side in Split.
 

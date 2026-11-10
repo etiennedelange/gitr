@@ -141,13 +141,13 @@
   --violet-soft: #f2eef6;
   --red-on: #ffffff;
 
-  --add-bg: #dcebd3;
-  --add-ln: #cbe1c0;
+  --add-bg: #d0e8c4;
+  --add-ln: #d2e7c8;
   --add-ink: #2f6b35;
-  --del-bg: #f6dbd4;
-  --del-ln: #eecbc2;
+  --del-bg: #f8dbd4;
+  --del-ln: #f5dbd4;
   --del-ink: #a3372b;
-  --hunk-bg: #dbe2ef;
+  --hunk-bg: #e7e9ec;
   --hunk-ink: #46567a;
   /* The code surface: the diff is its own paper, apart from the app's warm chrome. */
   --code-bg: #eeebe5;
@@ -218,11 +218,11 @@
   --violet-soft: #2e2838;
   --red-on: #1a0a08;
 
-  --add-bg: #253224;
-  --add-ln: #283325;
+  --add-bg: #233a26;
+  --add-ln: #283928;
   --add-ink: #8fd193;
-  --del-bg: #3a2725;
-  --del-ln: #3f2a27;
+  --del-bg: #4d2020;
+  --del-ln: #512a27;
   --del-ink: #f39a8c;
   --hunk-bg: #242a3b;
   --hunk-ink: #9fadcf;
@@ -2799,11 +2799,25 @@ mark.find-hit.cur {
 .hunk td.remove {
   background: var(--del-bg);
 }
-.hunk tr.add .sign {
+.hunk .sign {
+  font-weight: 700;
+}
+.hunk tr.add .sign,
+.hunk td.add .sign {
   color: var(--add-ink);
 }
-.hunk tr.remove .sign {
+.hunk tr.remove .sign,
+.hunk td.remove .sign {
   color: var(--del-ink);
+}
+/* Split has no sign column: the + or - hangs in the left padding of the code cell. */
+.hunk.split td.code {
+  position: relative;
+  padding-left: calc(24px * var(--diff-zoom, 1));
+}
+.hunk.split td.code .sign {
+  position: absolute;
+  left: calc(8px * var(--diff-zoom, 1));
 }
 .hunk tr.add .ln,
 .hunk td.ln.add {
@@ -2818,11 +2832,11 @@ mark.find-hit.cur {
 /* A bar on the gutter's edge marks changed lines without relying on colour fill alone. */
 .hunk tr.add .ln:last-of-type,
 .hunk td.ln.add {
-  box-shadow: inset -3px 0 0 var(--add-ink);
+  box-shadow: inset -4px 0 0 var(--add-ink);
 }
 .hunk tr.remove .ln:last-of-type,
 .hunk td.ln.remove {
-  box-shadow: inset -3px 0 0 var(--del-ink);
+  box-shadow: inset -4px 0 0 var(--del-ink);
 }
 .hunk tr.nonewline {
   color: var(--ink-2);
@@ -2832,7 +2846,7 @@ mark.find-hit.cur {
   background: repeating-linear-gradient(
     135deg,
     transparent 0 5px,
-    color-mix(in oklab, var(--ink) 6%, transparent) 5px 6px
+    color-mix(in oklab, var(--ink) 11%, transparent) 5px 6px
   ) var(--code-gutter);
 }
 /* Split: fixed halves; long lines wrap inside their half so nothing is clipped. */
@@ -2846,7 +2860,7 @@ mark.find-hit.cur {
   width: auto;
   min-width: 0;
 }
-.hunk.split .code {
+.hunk.wrap .code {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }

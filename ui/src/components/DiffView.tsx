@@ -10,7 +10,7 @@ import {
   type RefObject,
 } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { ChevronDown, ChevronUp, Search, X } from 'lucide-react'
+import { ChevronDown, ChevronUp, Search, WrapText, X } from 'lucide-react'
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { api, errorMessage } from '../api'
 import { dirName, fileName, toSplitRows } from '../lib/git'
@@ -38,6 +38,15 @@ function loadMode(): Mode {
     return localStorage.getItem('diffMode') === 'split' ? 'split' : 'unified'
   } catch {
     return 'unified'
+  }
+}
+
+/** Long lines run off to the right (scroll) unless the user turned wrapping on. */
+function loadWrap(): boolean {
+  try {
+    return localStorage.getItem('diffWrap') === 'on'
+  } catch {
+    return false
   }
 }
 
@@ -129,6 +138,7 @@ export type DiffSource =
 
 export function DiffView({ repo, source, note, conflicted }: { repo: string; source: DiffSource; note?: string; conflicted?: boolean }) {
   const [mode, setMode] = useState<Mode>(loadMode)
+  const [wrap, setWrap] = useState(loadWrap)
   const [extent, setExtent] = useState<Extent>(loadExtent)
   const full = extent === 'full'
   const settled = useSettled()
@@ -216,6 +226,10 @@ export function DiffView({ repo, source, note, conflicted }: { repo: string; sou
     remember('diffMode', m)
     setMode(m)
   }
+  const toggleWrap = () => {
+    remember('diffWrap', wrap ? 'off' : 'on')
+    setWrap(!wrap)
+  }
   const changeExtent = (e: Extent) => {
     remember('diffExtent', e)
     setExtent(e)
@@ -246,6 +260,15 @@ export function DiffView({ repo, source, note, conflicted }: { repo: string; sou
           onClick={() => (find.open ? closeFind() : openFind())}
         >
           <Search className="ico" aria-hidden />
+        </button>
+        <button
+          className="icon"
+          title={wrap ? 'Long lines wrap. Click to scroll sideways instead.' : 'Long lines scroll sideways. Click to wrap them.'}
+          aria-label="Wrap long lines"
+          aria-pressed={wrap}
+          onClick={toggleWrap}
+        >
+          <WrapText className="ico" aria-hidden />
         </button>
         {text.zoom !== DEFAULT_ZOOM && (
           <button className="diff-zoom-level" title="Diff text size (Ctrl + scroll). Click to reset." onClick={text.reset}>
@@ -365,6 +388,7 @@ export function DiffView({ repo, source, note, conflicted }: { repo: string; sou
             key={shown}
             diff={diff.data}
             mode={shown}
+            wrap={wrap}
             syntax={colours}
             header={!full}
             body={body}
@@ -509,6 +533,7 @@ export function widestLine(diff: FileDiff): string {
 function Rows({
   diff,
   mode,
+  wrap,
   syntax,
   header,
   body,
@@ -518,6 +543,7 @@ function Rows({
 }: {
   diff: FileDiff
   mode: Mode
+  wrap: boolean
   syntax: DiffSyntax | undefined
   header: boolean
   body: RefObject<HTMLDivElement | null>
@@ -612,7 +638,7 @@ function Rows({
     const after = rows.getTotalSize() - (shown.at(-1)?.end ?? 0)
     drawn = (
       <>
-        {mode === 'unified' && <Sizer diff={diff} />}
+        {mode === 'unified' && !wrap && <Sizer diff={diff} />}
         {before > 0 && <Spacer height={before} cols={cols} />}
         {shown.map((v) => draw(items[v.index], v.index, true))}
         {after > 0 && <Spacer height={after} cols={cols} />}
@@ -620,18 +646,25 @@ function Rows({
     )
   }
 
+  // Split without wrapping: both halves are as wide as the longest line, so the table scrolls
+  // sideways and a long line is never clipped, whichever rows are drawn.
+  const wide = useMemo(() => (mode === 'split' && !wrap ? widestLine(diff).length + 4 : 0), [diff, mode, wrap])
+
   return mode === 'unified' ? (
-    <table className="hunk unified">
+    <table className={wrap ? 'hunk unified wrap' : 'hunk unified'}>
       <tbody>{drawn}</tbody>
     </table>
   ) : (
     // Fixed column widths, so both sides get half whatever their lines are.
-    <table className="hunk split">
+    <table
+      className={wrap ? 'hunk split wrap' : 'hunk split'}
+      style={wrap ? undefined : { width: `calc(${2 * wide}ch + 2 * 52px * var(--diff-zoom, 1))`, minWidth: '100%' }}
+    >
       <colgroup>
         <col className="ln-col" />
-        <col />
+        <col style={wrap ? undefined : { width: `${wide}ch` }} />
         <col className="ln-col" />
-        <col />
+        <col style={wrap ? undefined : { width: `${wide}ch` }} />
       </colgroup>
       <tbody>{drawn}</tbody>
     </table>
@@ -685,6 +718,7 @@ function Side({
     <>
       <td className={`ln ${line?.kind ?? 'empty'}`}>{no ?? ''}</td>
       <td className={`code selectable ${line?.kind ?? 'empty'}`}>
+        {line && line.kind !== 'context' && <span className="sign">{sign[line.kind]}</span>}
         <Code text={line?.text ?? ''} spans={spansOf(line, syntax)} marks={marks} />
       </td>
     </>
