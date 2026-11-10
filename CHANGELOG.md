@@ -15,7 +15,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - **+ and − in Split.** Added and removed lines carry their sign in Split too.
 
 ### Changed
-- **The diff looks like code.** The diff now sits on its own surface (warm grey in light, near-black in dark) apart from the app's warm chrome, with a tinted line-number gutter, a darker file header, blue-tinted hunk headers, a coloured edge bar on added and removed lines, and a hatched filler for the empty side in Split.
+- **The diff looks like code.** The diff now sits on its own surface (warm grey in light, near-black in dark) apart from the app's warm chrome, with a tinted line-number gutter, a darker file header, blue-tinted hunk headers, a coloured edge bar on added and removed lines, and a flat, slightly deeper fill for the empty side in Split.
+
+### Fixed
+- **Split diff with wrapping off clipped tab-indented lines.** The columns were sized as if a tab were one character, so lines indented with tabs ran past their half. They are now sized by the columns a tab really takes.
 
 ## [0.2.5] - 2026-11-09
 
