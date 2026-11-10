@@ -2843,11 +2843,8 @@ mark.find-hit.cur {
   font-style: italic;
 }
 .hunk td.empty {
-  background: repeating-linear-gradient(
-    135deg,
-    transparent 0 5px,
-    color-mix(in oklab, var(--ink) 11%, transparent) 5px 6px
-  ) var(--code-gutter);
+  background: repeating-linear-gradient(135deg, transparent 0 5px, color-mix(in oklab, var(--ink) 11%, transparent) 5px 6px)
+    var(--code-gutter);
 }
 /* Split: fixed halves; long lines wrap inside their half so nothing is clipped. */
 .hunk.split {
