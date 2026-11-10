@@ -5,6 +5,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.2.7] - 2026-11-10
+
 ### Changed
 - **Empty side in Split.** The empty side of a row is a flat, slightly deeper fill instead of diagonal stripes, which looked harsh in dark mode and did not line up from row to row.
 
