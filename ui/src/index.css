@@ -147,8 +147,12 @@
   --del-bg: #fbece8;
   --del-ln: #f6e0da;
   --del-ink: #a3372b;
-  --hunk-bg: #f1eee9;
-  --hunk-ink: #57524b;
+  --hunk-bg: #e9eef7;
+  --hunk-ink: #46567a;
+  /* The code surface: the diff is its own paper, apart from the app's warm chrome. */
+  --code-bg: #ffffff;
+  --code-gutter: #f2f0ec;
+  --code-head: #ece9e4;
 
   /* Syntax colours in diffs: no green or red, which mean added and removed there. */
   --syn-keyword: #2a4fc4;
@@ -220,8 +224,11 @@
   --del-bg: #3a2725;
   --del-ln: #3f2a27;
   --del-ink: #f39a8c;
-  --hunk-bg: #2e2c28;
-  --hunk-ink: #aaa399;
+  --hunk-bg: #242a3b;
+  --hunk-ink: #9fadcf;
+  --code-bg: #171614;
+  --code-gutter: #1e1c1a;
+  --code-head: #211f1c;
 
   --syn-keyword: #8fb3ff;
   --syn-type: #5cc8cf;
@@ -2605,15 +2612,19 @@ button.ai.generating .ico {
   flex-direction: column;
   height: 100%;
   min-height: 0;
+  background: var(--code-bg);
+  /* A soft inner shadow on the left edge makes the pane read as a recessed code surface. */
+  box-shadow: inset 8px 0 8px -8px rgb(0 0 0 / 0.28);
 }
 .diff-head {
   display: flex;
   align-items: center;
   gap: var(--s4);
   flex: none;
-  height: 34px;
+  height: 36px;
   padding: 0 var(--s3) 0 var(--s5);
-  border-bottom: 1px solid var(--line-soft);
+  border-bottom: 1px solid var(--line-strong);
+  background: var(--code-head);
 }
 .diff-path {
   min-width: 0;
@@ -2715,6 +2726,11 @@ mark.find-hit.cur {
   text-align: right;
   white-space: nowrap;
   user-select: none;
+  background: var(--code-gutter);
+  border-right: 1px solid var(--line);
+}
+.hunk .ln + .ln {
+  border-left: 1px solid var(--line-soft);
 }
 .hunk .code {
   white-space: pre;
@@ -2799,12 +2815,25 @@ mark.find-hit.cur {
   background: var(--del-ln);
   color: var(--del-ink);
 }
+/* A bar on the gutter's edge marks changed lines without relying on colour fill alone. */
+.hunk tr.add .ln:last-of-type,
+.hunk td.ln.add {
+  box-shadow: inset -3px 0 0 var(--add-ink);
+}
+.hunk tr.remove .ln:last-of-type,
+.hunk td.ln.remove {
+  box-shadow: inset -3px 0 0 var(--del-ink);
+}
 .hunk tr.nonewline {
   color: var(--ink-2);
   font-style: italic;
 }
 .hunk td.empty {
-  background: var(--panel);
+  background: repeating-linear-gradient(
+    135deg,
+    transparent 0 5px,
+    color-mix(in oklab, var(--ink) 6%, transparent) 5px 6px
+  ) var(--code-gutter);
 }
 /* Split: fixed halves; long lines wrap inside their half so nothing is clipped. */
 .hunk.split {
