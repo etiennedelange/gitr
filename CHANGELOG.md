@@ -6,6 +6,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [Unreleased]
 
 ### Added
+- **Experiments in Settings.** A new Experiments section holds beta features, off by default. The first is **Spotlight diff**: unchanged lines fade so the changes stand out, removed code is struck through, and the line under the pointer lights up.
+
+### Added
 - **Wrap long lines in the diff.** Lines no longer wrap by default, in Unified or Split: long ones scroll sideways. The wrap button above the diff turns wrapping on and off, and Gitr remembers the choice.
 - **+ and − in Split.** Added and removed lines carry their sign in Split too.
 

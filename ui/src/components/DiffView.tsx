@@ -18,6 +18,7 @@ import type { DiffLine, DiffSyntax, FileDiff, Span } from '../types'
 import { diffMenu } from '../lib/menus'
 import { copyText, showMenu } from '../nativeMenu'
 import { plainInput } from '../lib/inputProps'
+import { useDiffSpotlight } from '../experiments'
 import { createWheelZoomAccumulator, DEFAULT_ZOOM, stepZoom, ZOOM_PRESETS } from '../lib/zoom'
 
 type Mode = 'unified' | 'split'
@@ -139,6 +140,7 @@ export type DiffSource =
 export function DiffView({ repo, source, note, conflicted }: { repo: string; source: DiffSource; note?: string; conflicted?: boolean }) {
   const [mode, setMode] = useState<Mode>(loadMode)
   const [wrap, setWrap] = useState(loadWrap)
+  const spotlight = useDiffSpotlight()
   const [extent, setExtent] = useState<Extent>(loadExtent)
   const full = extent === 'full'
   const settled = useSettled()
@@ -237,7 +239,7 @@ export function DiffView({ repo, source, note, conflicted }: { repo: string; sou
 
   return (
     <div
-      className="diff"
+      className={spotlight ? 'diff spotlight' : 'diff'}
       ref={root}
       data-own-zoom
       style={text.zoom === DEFAULT_ZOOM ? undefined : ({ '--diff-zoom': text.zoom / 100 } as CSSProperties)}
