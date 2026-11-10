@@ -5,6 +5,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.2.6] - 2026-11-10
+
 ### Added
 - **Experiments in Settings.** A new Experiments section holds beta features, off by default. The first is **Spotlight diff**: unchanged lines fade so the changes stand out, removed code is struck through, and the line under the pointer lights up.
 
