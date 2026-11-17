@@ -2651,6 +2651,9 @@ button.ai.generating .ico {
   flex: 1;
   overflow: auto;
 }
+.diff-body.halves {
+  overflow-x: hidden;
+}
 .diff-zoom-level {
   flex: none;
   padding: 0 var(--s3);
@@ -2871,6 +2874,47 @@ mark.find-hit.cur {
 }
 .hunk.split td.ln + td.code {
   border-right: 1px solid var(--line);
+}
+/* Split without wrapping: each half scrolls sideways on its own. The line shifts by its half's
+   scrollbar inside a box that clips it short of the sign (clip, not hidden, so nothing can
+   scroll the box itself). */
+.hunk.split .side-clip {
+  display: block;
+}
+.hunk.side-scroll .side-clip {
+  overflow: clip;
+}
+.hunk.side-scroll .side-text {
+  display: inline-block;
+}
+.hunk.side-scroll td[data-side='0'] .side-text {
+  translate: var(--sx-0, 0) 0;
+}
+.hunk.side-scroll td[data-side='1'] .side-text {
+  translate: var(--sx-1, 0) 0;
+}
+/* The two halves' scrollbars, under their halves and pinned to the bottom of the pane. */
+.split-scroll {
+  position: sticky;
+  bottom: 0;
+  display: grid;
+  grid-template-columns: calc(52px * var(--diff-zoom, 1)) 1fr calc(52px * var(--diff-zoom, 1)) 1fr;
+  margin-top: calc(-1 * var(--s5));
+  font-family: var(--font-mono);
+  font-size: calc(var(--fs-mono) * var(--diff-zoom, 1));
+  pointer-events: none;
+}
+.split-scrollbar {
+  /* As tall as a scrollbar (see ::-webkit-scrollbar), so overlay scrollbars have room too. */
+  height: 12px;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  pointer-events: auto;
+  background: var(--code-bg);
+}
+.split-scrollbar > div {
+  height: 1px;
 }
 .diff-body > .banner {
   border-top: 1px solid var(--line);
