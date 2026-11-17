@@ -2135,12 +2135,27 @@ windows-strings 0.5.1 (Rust crate)
   Source:  https://github.com/microsoft/windows-rs
   Texts:   [272] [273]
 
+windows-sys 0.52.0 (Rust crate)
+  Licence: MIT OR Apache-2.0
+  Source:  https://github.com/microsoft/windows-rs
+  Texts:   [272] [273]
+
+windows-sys 0.59.0 (Rust crate)
+  Licence: MIT OR Apache-2.0
+  Source:  https://github.com/microsoft/windows-rs
+  Texts:   [272] [273]
+
 windows-sys 0.60.2 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/microsoft/windows-rs
   Texts:   [272] [273]
 
 windows-sys 0.61.2 (Rust crate)
+  Licence: MIT OR Apache-2.0
+  Source:  https://github.com/microsoft/windows-rs
+  Texts:   [272] [273]
+
+windows-targets 0.52.6 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/microsoft/windows-rs
   Texts:   [272] [273]
@@ -2156,6 +2171,11 @@ windows-threading 0.2.1 (Rust crate)
   Texts:   [272] [273]
 
 windows-version 0.1.7 (Rust crate)
+  Licence: MIT OR Apache-2.0
+  Source:  https://github.com/microsoft/windows-rs
+  Texts:   [272] [273]
+
+windows_x86_64_msvc 0.52.6 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/microsoft/windows-rs
   Texts:   [272] [273]
@@ -17026,7 +17046,7 @@ PackageDownloadLocation: git+ssh://github.com/tauri-apps/window-vibrancy.git
 Creator: Person: Daniel Thompson-Yvetot
 
 
------ [272] used by: windows 0.62.2, windows-collections 0.3.2, windows-core 0.62.2, windows-future 0.3.2, windows-implement 0.60.2, windows-interface 0.59.3, windows-link 0.2.1, windows-numerics 0.3.1, windows-registry 0.6.1, windows-result 0.4.1, windows-strings 0.5.1, windows-sys 0.60.2, windows-sys 0.61.2, windows-targets 0.53.5, windows-threading 0.2.1, windows-version 0.1.7, windows_x86_64_msvc 0.53.1
+----- [272] used by: windows 0.62.2, windows-collections 0.3.2, windows-core 0.62.2, windows-future 0.3.2, windows-implement 0.60.2, windows-interface 0.59.3, windows-link 0.2.1, windows-numerics 0.3.1, windows-registry 0.6.1, windows-result 0.4.1, windows-strings 0.5.1, windows-sys 0.52.0, windows-sys 0.59.0, windows-sys 0.60.2, windows-sys 0.61.2, windows-targets 0.52.6, windows-targets 0.53.5, windows-threading 0.2.1, windows-version 0.1.7, windows_x86_64_msvc 0.52.6, windows_x86_64_msvc 0.53.1
 
 Apache License
                            Version 2.0, January 2004
@@ -17231,7 +17251,7 @@ Apache License
    limitations under the License.
 
 
------ [273] used by: windows 0.62.2, windows-collections 0.3.2, windows-core 0.62.2, windows-future 0.3.2, windows-implement 0.60.2, windows-interface 0.59.3, windows-link 0.2.1, windows-numerics 0.3.1, windows-registry 0.6.1, windows-result 0.4.1, windows-strings 0.5.1, windows-sys 0.60.2, windows-sys 0.61.2, windows-targets 0.53.5, windows-threading 0.2.1, windows-version 0.1.7, windows_x86_64_msvc 0.53.1
+----- [273] used by: windows 0.62.2, windows-collections 0.3.2, windows-core 0.62.2, windows-future 0.3.2, windows-implement 0.60.2, windows-interface 0.59.3, windows-link 0.2.1, windows-numerics 0.3.1, windows-registry 0.6.1, windows-result 0.4.1, windows-strings 0.5.1, windows-sys 0.52.0, windows-sys 0.59.0, windows-sys 0.60.2, windows-sys 0.61.2, windows-targets 0.52.6, windows-targets 0.53.5, windows-threading 0.2.1, windows-version 0.1.7, windows_x86_64_msvc 0.52.6, windows_x86_64_msvc 0.53.1
 
 MIT License
 
