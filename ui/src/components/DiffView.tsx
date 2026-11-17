@@ -359,7 +359,8 @@ export function DiffView({ repo, source, note, conflicted }: { repo: string; sou
         </div>
       )}
       <div
-        className="diff-body"
+        // Split without wrapping scrolls each half on its own, so the pane never scrolls sideways.
+        className={shown === 'split' && !wrap ? 'diff-body halves' : 'diff-body'}
         ref={body}
         role="region"
         tabIndex={0}
@@ -630,8 +631,8 @@ function Rows({
       case 'pair':
         return (
           <tr key={key} ref={ref} data-index={key}>
-            <Side line={item.left} no={item.left?.oldNo} syntax={syntax} marks={marks.get(`${key}:0`)} />
-            <Side line={item.right} no={item.right?.newNo} syntax={syntax} marks={marks.get(`${key}:1`)} />
+            <Side side={0} line={item.left} no={item.left?.oldNo} syntax={syntax} marks={marks.get(`${key}:0`)} />
+            <Side side={1} line={item.right} no={item.right?.newNo} syntax={syntax} marks={marks.get(`${key}:1`)} />
           </tr>
         )
     }
@@ -654,29 +655,120 @@ function Rows({
     )
   }
 
-  // Split without wrapping: both halves are as wide as the longest line, so the table scrolls
-  // sideways and a long line is never clipped, whichever rows are drawn.
-  const wide = useMemo(() => (mode === 'split' && !wrap ? textCols(widestLine(diff)) + 4 : 0), [diff, mode, wrap])
+  // Split without wrapping: each half scrolls sideways on its own, with its own scrollbar.
+  const scroll = mode === 'split' && !wrap
+  const table = useRef<HTMLTableElement>(null)
+  const bars = [useRef<HTMLDivElement>(null), useRef<HTMLDivElement>(null)]
+  const sideCols = useMemo(() => (scroll ? sideWidths(diff) : [0, 0]), [diff, scroll])
+  useSideScroll(scroll, table, bars, body)
+  // The current match may be off to the side: bring its half round to it.
+  useEffect(() => {
+    if (!scroll || !matches[current]) return
+    let tries = 0
+    let frame = 0
+    const reveal = () => {
+      const hit = table.current?.querySelector<HTMLElement>('mark.find-hit.cur')
+      const text = hit?.closest<HTMLElement>('.side-text')
+      const cell = hit?.closest<HTMLElement>('td')
+      const bar = bars[Number(cell?.dataset.side ?? 0)].current
+      if (!hit || !text || !cell || !bar) {
+        if (++tries < 5) frame = requestAnimationFrame(reveal)
+        return
+      }
+      const from = hit.getBoundingClientRect().left - text.getBoundingClientRect().left
+      const view = bar.clientWidth
+      if (from < bar.scrollLeft || from + hit.offsetWidth > bar.scrollLeft + view) bar.scrollLeft = Math.max(0, from - view / 2)
+    }
+    frame = requestAnimationFrame(reveal)
+    return () => cancelAnimationFrame(frame)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [matches, current, scroll])
 
   return mode === 'unified' ? (
     <table className={wrap ? 'hunk unified wrap' : 'hunk unified'}>
       <tbody>{drawn}</tbody>
     </table>
   ) : (
-    // Fixed column widths, so both sides get half whatever their lines are.
-    <table
-      className={wrap ? 'hunk split wrap' : 'hunk split'}
-      style={wrap ? undefined : { width: `calc(${2 * wide}ch + 2 * 52px * var(--diff-zoom, 1))`, minWidth: '100%' }}
-    >
-      <colgroup>
-        <col className="ln-col" />
-        <col style={wrap ? undefined : { width: `${wide}ch` }} />
-        <col className="ln-col" />
-        <col style={wrap ? undefined : { width: `${wide}ch` }} />
-      </colgroup>
-      <tbody>{drawn}</tbody>
-    </table>
+    <>
+      {/* Fixed column widths, so both sides get half whatever their lines are. */}
+      <table ref={table} className={wrap ? 'hunk split wrap' : 'hunk split side-scroll'}>
+        <colgroup>
+          <col className="ln-col" />
+          <col />
+          <col className="ln-col" />
+          <col />
+        </colgroup>
+        <tbody>{drawn}</tbody>
+      </table>
+      {scroll && (
+        <div className="split-scroll">
+          {sideCols.map((cols, i) => (
+            <Fragment key={i}>
+              <div />
+              <div
+                className="split-scrollbar"
+                ref={bars[i]}
+                aria-hidden="true"
+                data-testid={`split-scrollbar-${i ? 'right' : 'left'}`}
+                onScroll={(e) => table.current?.style.setProperty(`--sx-${i}`, `${-e.currentTarget.scrollLeft}px`)}
+              >
+                <div style={{ width: `calc(${cols}ch + 24px * var(--diff-zoom, 1) + var(--s4))` }} />
+              </div>
+            </Fragment>
+          ))}
+        </div>
+      )}
+    </>
   )
+}
+
+/** The widest line on each side of a split diff, in columns: old lines left, new lines right. */
+export function sideWidths(diff: FileDiff): [number, number] {
+  const w: [number, number] = [0, 0]
+  for (const h of diff.hunks)
+    for (const l of h.lines) {
+      const cols = textCols(l.text)
+      if (l.kind !== 'add') w[0] = Math.max(w[0], cols)
+      if (l.kind !== 'remove') w[1] = Math.max(w[1], cols)
+    }
+  return w
+}
+
+/**
+ * Sideways scrolling for the two halves of a split diff: a sideways wheel or trackpad swipe
+ * (or Shift + wheel) and Left/Right on the focused pane move both halves together; dragging one
+ * half's scrollbar moves only that half. Each half's scrollbar is the one source of its position.
+ */
+function useSideScroll(
+  on: boolean,
+  table: RefObject<HTMLTableElement | null>,
+  bars: RefObject<HTMLDivElement | null>[],
+  body: RefObject<HTMLDivElement | null>,
+) {
+  useEffect(() => {
+    const el = table.current
+    const pane = body.current
+    if (!on || !el || !pane) return
+    const onWheel = (e: WheelEvent) => {
+      if (e.ctrlKey || e.metaKey) return
+      const dx = e.deltaX || (e.shiftKey ? e.deltaY : 0)
+      if (!dx || Math.abs(e.deltaY) > Math.abs(dx) * 2) return
+      e.preventDefault()
+      for (const b of bars) if (b.current) b.current.scrollLeft += dx
+    }
+    const onKey = (e: globalThis.KeyboardEvent) => {
+      if (e.target !== pane || (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight')) return
+      e.preventDefault()
+      for (const b of bars) if (b.current) b.current.scrollLeft += e.key === 'ArrowLeft' ? -40 : 40
+    }
+    el.addEventListener('wheel', onWheel, { passive: false })
+    pane.addEventListener('keydown', onKey)
+    return () => {
+      el.removeEventListener('wheel', onWheel)
+      pane.removeEventListener('keydown', onKey)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [on])
 }
 
 function Spacer({ height, cols }: { height: number; cols: number }) {
@@ -712,11 +804,13 @@ function Sizer({ diff }: { diff: FileDiff }) {
 }
 
 function Side({
+  side,
   line,
   no,
   syntax,
   marks,
 }: {
+  side: 0 | 1
   line: DiffLine | null
   no: number | null | undefined
   syntax: DiffSyntax | undefined
@@ -725,9 +819,13 @@ function Side({
   return (
     <>
       <td className={`ln ${line?.kind ?? 'empty'}`}>{no ?? ''}</td>
-      <td className={`code selectable ${line?.kind ?? 'empty'}`}>
+      <td className={`code selectable ${line?.kind ?? 'empty'}`} data-side={side}>
         {line && line.kind !== 'context' && <span className="sign">{sign[line.kind]}</span>}
-        <Code text={line?.text ?? ''} spans={spansOf(line, syntax)} marks={marks} />
+        <span className="side-clip">
+          <span className="side-text">
+            <Code text={line?.text ?? ''} spans={spansOf(line, syntax)} marks={marks} />
+          </span>
+        </span>
       </td>
     </>
   )
