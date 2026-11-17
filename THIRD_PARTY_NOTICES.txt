@@ -775,7 +775,7 @@ github-copilot-sdk 1.0.29 (Rust crate)
   Source:  https://github.com/github/copilot-sdk
   Texts:   [133]
 
-gix 0.89.0 (Rust crate)
+gix 0.90.0 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/GitoxideLabs/gitoxide
   Texts:   [4] [134]
@@ -800,7 +800,7 @@ gix-command 0.12.1 (Rust crate)
   Source:  https://github.com/GitoxideLabs/gitoxide
   Texts:   [4] [134]
 
-gix-commitgraph 0.41.0 (Rust crate)
+gix-commitgraph 0.42.0 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/GitoxideLabs/gitoxide
   Texts:   [4] [134]
@@ -820,7 +820,7 @@ gix-date 0.18.1 (Rust crate)
   Source:  https://github.com/GitoxideLabs/gitoxide
   Texts:   [4] [134]
 
-gix-diff 0.69.0 (Rust crate)
+gix-diff 0.70.0 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/GitoxideLabs/gitoxide
   Texts:   [4] [134]
@@ -880,12 +880,12 @@ gix-object 0.66.1 (Rust crate)
   Source:  https://github.com/GitoxideLabs/gitoxide
   Texts:   [4] [134]
 
-gix-odb 0.86.0 (Rust crate)
+gix-odb 0.87.0 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/GitoxideLabs/gitoxide
   Texts:   [4] [134]
 
-gix-pack 0.76.0 (Rust crate)
+gix-pack 0.77.0 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/GitoxideLabs/gitoxide
   Texts:   [4] [134]
@@ -905,7 +905,7 @@ gix-path 0.14.1 (Rust crate)
   Source:  https://github.com/GitoxideLabs/gitoxide
   Texts:   [4] [134]
 
-gix-protocol 0.67.0 (Rust crate)
+gix-protocol 0.68.0 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/GitoxideLabs/gitoxide
   Texts:   [4] [134]
@@ -925,12 +925,12 @@ gix-refspec 0.47.1 (Rust crate)
   Source:  https://github.com/GitoxideLabs/gitoxide
   Texts:   [4] [134]
 
-gix-revision 0.51.0 (Rust crate)
+gix-revision 0.52.0 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/GitoxideLabs/gitoxide
   Texts:   [4] [134]
 
-gix-revwalk 0.37.0 (Rust crate)
+gix-revwalk 0.38.0 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/GitoxideLabs/gitoxide
   Texts:   [4] [134]
@@ -955,12 +955,12 @@ gix-trace 0.3.1 (Rust crate)
   Source:  https://github.com/GitoxideLabs/gitoxide
   Texts:   [4] [134] [135]
 
-gix-transport 0.61.0 (Rust crate)
+gix-transport 0.62.0 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/GitoxideLabs/gitoxide
   Texts:   [4] [134]
 
-gix-traverse 0.63.0 (Rust crate)
+gix-traverse 0.64.0 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/GitoxideLabs/gitoxide
   Texts:   [4] [134]
@@ -980,12 +980,12 @@ gix-validate 0.13.1 (Rust crate)
   Source:  https://github.com/GitoxideLabs/gitoxide
   Texts:   [4] [134]
 
-gix-worktree-stream 0.38.0 (Rust crate)
+gix-worktree-stream 0.39.0 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/GitoxideLabs/gitoxide
   Texts:   [4] [134]
 
-gix-zlib 0.3.0 (Rust crate)
+gix-zlib 0.4.0 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/GitoxideLabs/gitoxide
   Texts:   [4] [134]
@@ -2145,27 +2145,12 @@ windows-strings 0.5.1 (Rust crate)
   Source:  https://github.com/microsoft/windows-rs
   Texts:   [274] [275]
 
-windows-sys 0.52.0 (Rust crate)
-  Licence: MIT OR Apache-2.0
-  Source:  https://github.com/microsoft/windows-rs
-  Texts:   [274] [275]
-
-windows-sys 0.59.0 (Rust crate)
-  Licence: MIT OR Apache-2.0
-  Source:  https://github.com/microsoft/windows-rs
-  Texts:   [274] [275]
-
 windows-sys 0.60.2 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/microsoft/windows-rs
   Texts:   [274] [275]
 
 windows-sys 0.61.2 (Rust crate)
-  Licence: MIT OR Apache-2.0
-  Source:  https://github.com/microsoft/windows-rs
-  Texts:   [274] [275]
-
-windows-targets 0.52.6 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/microsoft/windows-rs
   Texts:   [274] [275]
@@ -2181,11 +2166,6 @@ windows-threading 0.2.1 (Rust crate)
   Texts:   [274] [275]
 
 windows-version 0.1.7 (Rust crate)
-  Licence: MIT OR Apache-2.0
-  Source:  https://github.com/microsoft/windows-rs
-  Texts:   [274] [275]
-
-windows_x86_64_msvc 0.52.6 (Rust crate)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/microsoft/windows-rs
   Texts:   [274] [275]
@@ -2493,7 +2473,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 
------ [4] used by: @tauri-apps/api 2.12.4, Lean grammar syntaxes/02_Extra/Lean/LICENSE, Lean/lean4-unicode-input grammar syntaxes/02_Extra/Lean/lean4-unicode-input/LICENSE, Lean/lean4-unicode-input-component grammar syntaxes/02_Extra/Lean/lean4-unicode-input-component/LICENSE, Lean/vscode-lean4 grammar syntaxes/02_Extra/Lean/vscode-lean4/LICENSE, fdeflate 0.3.7, gix 0.89.0, gix-actor 0.44.1, gix-attributes 0.37.1, gix-chunk 0.10.1, gix-command 0.12.1, gix-commitgraph 0.41.0, gix-config 0.62.2, gix-config-value 0.21.1, gix-date 0.18.1, gix-diff 0.69.0, gix-discover 0.57.1, gix-error 0.5.2, gix-filter 0.36.1, gix-fs 0.24.1, gix-glob 0.29.1, gix-hash 0.28.1, gix-hashtable 0.18.1, gix-lock 26.0.1, gix-macros 0.2.0, gix-note 0.3.1, gix-object 0.66.1, gix-odb 0.86.0, gix-pack 0.76.0, gix-packetline 0.24.1, gix-parallel 0.50.1, gix-path 0.14.1, gix-protocol 0.67.0, gix-quote 0.10.1, gix-ref 0.69.1, gix-refspec 0.47.1, gix-revision 0.51.0, gix-revwalk 0.37.0, gix-sec 0.16.1, gix-shallow 0.15.1, gix-tempfile 26.0.1, gix-trace 0.3.1, gix-transport 0.61.0, gix-traverse 0.63.0, gix-url 0.40.1, gix-utils 0.5.2, gix-validate 0.13.1, gix-worktree-stream 0.38.0, gix-zlib 0.3.0, miniz_oxide 0.8.9, miniz_oxide 0.9.1, num-conv 0.2.2, pin-project-lite 0.2.17, raw-window-handle 0.6.2, simdutf8 0.1.5, sync_wrapper 1.0.2, tauri 2.12.2, tauri-codegen 2.7.1, tauri-macros 2.7.1, tauri-plugin-dialog 2.8.4, tauri-plugin-fs 2.7.1, tauri-plugin-opener 2.7.2, tauri-plugin-updater 2.14.1, tauri-plugin-window-state 2.5.0, tauri-runtime 2.12.1, tauri-runtime-wry 2.12.1, tauri-utils 2.10.1, time 0.3.55, time-core 0.1.9, time-macros 0.2.32
+----- [4] used by: @tauri-apps/api 2.12.4, Lean grammar syntaxes/02_Extra/Lean/LICENSE, Lean/lean4-unicode-input grammar syntaxes/02_Extra/Lean/lean4-unicode-input/LICENSE, Lean/lean4-unicode-input-component grammar syntaxes/02_Extra/Lean/lean4-unicode-input-component/LICENSE, Lean/vscode-lean4 grammar syntaxes/02_Extra/Lean/vscode-lean4/LICENSE, fdeflate 0.3.7, gix 0.90.0, gix-actor 0.44.1, gix-attributes 0.37.1, gix-chunk 0.10.1, gix-command 0.12.1, gix-commitgraph 0.42.0, gix-config 0.62.2, gix-config-value 0.21.1, gix-date 0.18.1, gix-diff 0.70.0, gix-discover 0.57.1, gix-error 0.5.2, gix-filter 0.36.1, gix-fs 0.24.1, gix-glob 0.29.1, gix-hash 0.28.1, gix-hashtable 0.18.1, gix-lock 26.0.1, gix-macros 0.2.0, gix-note 0.3.1, gix-object 0.66.1, gix-odb 0.87.0, gix-pack 0.77.0, gix-packetline 0.24.1, gix-parallel 0.50.1, gix-path 0.14.1, gix-protocol 0.68.0, gix-quote 0.10.1, gix-ref 0.69.1, gix-refspec 0.47.1, gix-revision 0.52.0, gix-revwalk 0.38.0, gix-sec 0.16.1, gix-shallow 0.15.1, gix-tempfile 26.0.1, gix-trace 0.3.1, gix-transport 0.62.0, gix-traverse 0.64.0, gix-url 0.40.1, gix-utils 0.5.2, gix-validate 0.13.1, gix-worktree-stream 0.39.0, gix-zlib 0.4.0, miniz_oxide 0.8.9, miniz_oxide 0.9.1, num-conv 0.2.2, pin-project-lite 0.2.17, raw-window-handle 0.6.2, simdutf8 0.1.5, sync_wrapper 1.0.2, tauri 2.12.2, tauri-codegen 2.7.1, tauri-macros 2.7.1, tauri-plugin-dialog 2.8.4, tauri-plugin-fs 2.7.1, tauri-plugin-opener 2.7.2, tauri-plugin-updater 2.14.1, tauri-plugin-window-state 2.5.0, tauri-runtime 2.12.1, tauri-runtime-wry 2.12.1, tauri-utils 2.10.1, time 0.3.55, time-core 0.1.9, time-macros 0.2.32
 
 Apache License
                            Version 2.0, January 2004
@@ -10674,7 +10654,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 
------ [134] used by: gix 0.89.0, gix-actor 0.44.1, gix-attributes 0.37.1, gix-chunk 0.10.1, gix-command 0.12.1, gix-commitgraph 0.41.0, gix-config 0.62.2, gix-config-value 0.21.1, gix-date 0.18.1, gix-diff 0.69.0, gix-discover 0.57.1, gix-error 0.5.2, gix-filter 0.36.1, gix-fs 0.24.1, gix-glob 0.29.1, gix-hash 0.28.1, gix-hashtable 0.18.1, gix-lock 26.0.1, gix-macros 0.2.0, gix-note 0.3.1, gix-object 0.66.1, gix-odb 0.86.0, gix-pack 0.76.0, gix-packetline 0.24.1, gix-parallel 0.50.1, gix-path 0.14.1, gix-protocol 0.67.0, gix-quote 0.10.1, gix-ref 0.69.1, gix-refspec 0.47.1, gix-revision 0.51.0, gix-revwalk 0.37.0, gix-sec 0.16.1, gix-shallow 0.15.1, gix-tempfile 26.0.1, gix-trace 0.3.1, gix-transport 0.61.0, gix-traverse 0.63.0, gix-url 0.40.1, gix-utils 0.5.2, gix-validate 0.13.1, gix-worktree-stream 0.38.0, gix-zlib 0.3.0, siphasher 1.0.4
+----- [134] used by: gix 0.90.0, gix-actor 0.44.1, gix-attributes 0.37.1, gix-chunk 0.10.1, gix-command 0.12.1, gix-commitgraph 0.42.0, gix-config 0.62.2, gix-config-value 0.21.1, gix-date 0.18.1, gix-diff 0.70.0, gix-discover 0.57.1, gix-error 0.5.2, gix-filter 0.36.1, gix-fs 0.24.1, gix-glob 0.29.1, gix-hash 0.28.1, gix-hashtable 0.18.1, gix-lock 26.0.1, gix-macros 0.2.0, gix-note 0.3.1, gix-object 0.66.1, gix-odb 0.87.0, gix-pack 0.77.0, gix-packetline 0.24.1, gix-parallel 0.50.1, gix-path 0.14.1, gix-protocol 0.68.0, gix-quote 0.10.1, gix-ref 0.69.1, gix-refspec 0.47.1, gix-revision 0.52.0, gix-revwalk 0.38.0, gix-sec 0.16.1, gix-shallow 0.15.1, gix-tempfile 26.0.1, gix-trace 0.3.1, gix-transport 0.62.0, gix-traverse 0.64.0, gix-url 0.40.1, gix-utils 0.5.2, gix-validate 0.13.1, gix-worktree-stream 0.39.0, gix-zlib 0.4.0, siphasher 1.0.4
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -17582,7 +17562,7 @@ PackageDownloadLocation: git+ssh://github.com/tauri-apps/window-vibrancy.git
 Creator: Person: Daniel Thompson-Yvetot
 
 
------ [274] used by: windows 0.62.2, windows-collections 0.3.2, windows-core 0.62.2, windows-future 0.3.2, windows-implement 0.60.2, windows-interface 0.59.3, windows-link 0.2.1, windows-numerics 0.3.1, windows-registry 0.6.1, windows-result 0.4.1, windows-strings 0.5.1, windows-sys 0.52.0, windows-sys 0.59.0, windows-sys 0.60.2, windows-sys 0.61.2, windows-targets 0.52.6, windows-targets 0.53.5, windows-threading 0.2.1, windows-version 0.1.7, windows_x86_64_msvc 0.52.6, windows_x86_64_msvc 0.53.1
+----- [274] used by: windows 0.62.2, windows-collections 0.3.2, windows-core 0.62.2, windows-future 0.3.2, windows-implement 0.60.2, windows-interface 0.59.3, windows-link 0.2.1, windows-numerics 0.3.1, windows-registry 0.6.1, windows-result 0.4.1, windows-strings 0.5.1, windows-sys 0.60.2, windows-sys 0.61.2, windows-targets 0.53.5, windows-threading 0.2.1, windows-version 0.1.7, windows_x86_64_msvc 0.53.1
 
 Apache License
                            Version 2.0, January 2004
@@ -17787,7 +17767,7 @@ Apache License
    limitations under the License.
 
 
------ [275] used by: windows 0.62.2, windows-collections 0.3.2, windows-core 0.62.2, windows-future 0.3.2, windows-implement 0.60.2, windows-interface 0.59.3, windows-link 0.2.1, windows-numerics 0.3.1, windows-registry 0.6.1, windows-result 0.4.1, windows-strings 0.5.1, windows-sys 0.52.0, windows-sys 0.59.0, windows-sys 0.60.2, windows-sys 0.61.2, windows-targets 0.52.6, windows-targets 0.53.5, windows-threading 0.2.1, windows-version 0.1.7, windows_x86_64_msvc 0.52.6, windows_x86_64_msvc 0.53.1
+----- [275] used by: windows 0.62.2, windows-collections 0.3.2, windows-core 0.62.2, windows-future 0.3.2, windows-implement 0.60.2, windows-interface 0.59.3, windows-link 0.2.1, windows-numerics 0.3.1, windows-registry 0.6.1, windows-result 0.4.1, windows-strings 0.5.1, windows-sys 0.60.2, windows-sys 0.61.2, windows-targets 0.53.5, windows-threading 0.2.1, windows-version 0.1.7, windows_x86_64_msvc 0.53.1
 
 MIT License
 
