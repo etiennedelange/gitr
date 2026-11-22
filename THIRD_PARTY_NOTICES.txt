@@ -50,7 +50,7 @@ COMPONENTS
   Source:  https://github.com/tauri-apps/plugins-workspace#readme
   Texts:   [7]
 
-@tauri-apps/plugin-opener 2.7.2 (npm package)
+@tauri-apps/plugin-opener 2.7.3 (npm package)
   Licence: MIT OR Apache-2.0
   Source:  https://github.com/tauri-apps/plugins-workspace#readme
   Texts:   [7]
@@ -1235,7 +1235,7 @@ log 0.4.34 (Rust crate)
   Source:  https://github.com/rust-lang/log
   Texts:   [69] [79]
 
-lucide-react 1.70.0 (npm package)
+lucide-react 1.73.0 (npm package)
   Licence: ISC
   Source:  https://lucide.dev
   Texts:   [169]
@@ -2702,7 +2702,7 @@ PackageDownloadLocation: git+ssh://github.com/tauri-apps/tauri.git
 Creator: Person: Daniel Thompson-Yvetot
 
 
------ [7] used by: @tauri-apps/plugin-dialog 2.8.4, @tauri-apps/plugin-opener 2.7.2, tauri-plugin-dialog 2.8.4, tauri-plugin-fs 2.7.1, tauri-plugin-opener 2.7.2, tauri-plugin-updater 2.14.1, tauri-plugin-window-state 2.5.0
+----- [7] used by: @tauri-apps/plugin-dialog 2.8.4, @tauri-apps/plugin-opener 2.7.3, tauri-plugin-dialog 2.8.4, tauri-plugin-fs 2.7.1, tauri-plugin-opener 2.7.2, tauri-plugin-updater 2.14.1, tauri-plugin-window-state 2.5.0
 
 SPDXVersion: SPDX-2.1
 DataLicense: CC0-1.0
@@ -12104,7 +12104,7 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 
 
------ [169] used by: lucide-react 1.70.0
+----- [169] used by: lucide-react 1.73.0
 
 ISC License
 
