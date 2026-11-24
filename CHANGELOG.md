@@ -5,6 +5,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.2.8] - 2026-11-24
+
 ### Fixed
 - **Split diff with wrapping off had one huge scrollbar.** The whole diff grew to fit the longest line, so a long line on one side pushed the other side out of view. Each half now has its own scrollbar under it; a sideways swipe or Shift + mouse wheel scrolls both halves together.
 
